@@ -109,7 +109,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
 
         /// <summary>
         /// Helper reference which will eventually be stored for removal at generation time. This reference will be
-        /// captured when a Timing Control Point is reached that changes the BPM - object too close to the new timing.
+        /// captured when a Timing Control Point is reached that changes the BPM - object too close to the new timing is
+        /// removed.
         /// </summary>
         private Hit? lastHitObjectCreated;
 
@@ -257,7 +258,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
                     currentPattern.Add(hitObject);
 
                     // If there happens to be a BPM change, we will just stop the pattern generation here and allow it
-                    // to be spaced by 1/2, because on some maps this will create a doubled, disrupting the rhythm
+                    // to be spaced by 1/2, because on some maps this will create an almost stacked/doubled object,
+                    // disrupting the rhythm. This will still be broken anyway
                     if (hasTimingPointChanged)
                         break;
 
@@ -265,7 +267,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
                     if (!isTooLateForOneSixthPattern())
                     {
                         // If the 1/6 was recently generated, we will not allow to generate it again for this hit object,
-                        // because the flow makes more sense if there is at least one 1/4 hit object between them
+                        // because the flow makes more sense if there is at least one 1/4 hit object between the 1/6s
                         if (wasOneSixthGeneratedRecently)
                         {
                             wasOneSixthGeneratedRecently = false;
@@ -285,6 +287,9 @@ namespace osu.Game.Rulesets.Taiko.Mods
                             // Each consecutive hit object in this triplet will be spaced by a 1/6 beat
                             lastHitObjectInOneSixthPattern = addOneSixthTriplet(currentPattern);
 
+                            // Appended 1/6 triplets are basically a replacement for one 1/4, so we have to skip the
+                            // extra two hit objects that were added. The third hit object lands on 1/4 anyway, so we
+                            // can't skip it (+3), otherwise we would shorten the calculated stream length during Kiai
                             if (TurnKiaiIntoStreams.Value && isInKiaiTime)
                                 i += 2;
 
@@ -299,11 +304,11 @@ namespace osu.Game.Rulesets.Taiko.Mods
                         }
                     }
 
-                    // Always space everything within a pattern by a 1/4 beat
+                    // Always space everything within a pattern by a 1/4 beat (except the last object)
                     if (i < patternLength - 1)
                         advanceTime(beatOneFourth);
 
-                    // The below is used by 1/6 patterns, which determines the colour of the next hit object
+                    // Stored for eventual colour inversion by 1/6 patterns
                     lastHitObjectInRegularPattern = hitObject;
                 }
 
@@ -316,7 +321,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 advanceTime(spacingBeat);
             }
 
-            // Clear anything that was marked as garbage hits caused by Timing Control Points
+            // Clear anything that was marked as garbage hits caused by Timing Control Points -workaround, doesn't fix
+            // everything :/
             if (faultyHitObjectsToRemove.Count > 0)
                 taikoBeatmap.HitObjects.RemoveAll(h => faultyHitObjectsToRemove.Contains(h));
         }
@@ -328,27 +334,29 @@ namespace osu.Game.Rulesets.Taiko.Mods
             insertionChanceRNG = new Random(InsertionSeed.Value ??= RNG.Next());
             oneSixthRNG = new Random(OneSixthColourSeed.Value ??= RNG.Next());
 
-            // We only need the StartTime of the first/last objects, because we have to insert the hit objects within
-            // the actual playable bounds of this beatmap that are defined by Hits, and not drumrolls or swells
+            // We only need the StartTime of the first/last objects, because we have to insert hit objects within the
+            // actual playable bounds of this beatmap that are defined by Hits, and not drumrolls or swells. In some
+            // beatmaps this might look weird if someone decides to put a drumroll/swell after the actual perceived
+            // start of the beatmap
             startGenerationAt = taikoBeatmap.HitObjects.First(h => h is not IHasDuration).StartTime;
             endGenerationAt = taikoBeatmap.HitObjects.Last(h => h is not IHasDuration).StartTime;
 
-            // Move the current time to the start time of the first object - we will start from there
+            // Move the current time to the start time of the first object - we will start generating from there
             currentTime = startGenerationAt;
 
             // Set the actual BPM where the first object is in case there are multiple Timing Control Points for stuff
-            // like drumrolls, so we don't use BPMs like 9999 from ninja swells. Ninja hit objects
+            // like drumrolls, so we don't use BPMs like 9999 from ninja objects
             currentTimingControlPoint = timingPointAtCurrentTime;
 
-            updateBPMAndBeats(currentTimingControlPoint);
+            updateBPMAndBeatLengths(currentTimingControlPoint);
         }
 
         /// <summary>
         /// Initialises all the "usable" Kiai times that we will be used for the pattern-to-stream conversion. This is
         /// only for the <c>Turn Kiai Into Streams</c> option and is just a workaround for the "misplaced" Effect
         /// Control Points, which will incorrectly offset the hit objects if we just use the regular Kiai start/end
-        /// times, because they are not always snapped, so the streams could potentially start in a wrong spot, on a Blue
-        /// divisor, which makes the beatmap unplayable due to everything being completely off-beat. To also avoid
+        /// times, because they are not always snapped, so the streams could potentially start in a wrong spot: on a
+        /// Blue divisor, which makes the beatmap unplayable due to everything being completely off-beat.
         /// </summary>
         private void initialiseKiaiTimes()
         {
@@ -364,8 +372,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 EffectControlPoint? kiaiEndPoint = effectControlPoints.FirstOrDefault(effectControlPoint
                     => effectControlPoint.Time > kiaiStartingPoint.Time && !effectControlPoint.KiaiMode);
 
-                // There might be a situation where the Kiai just never stops (?), so we will use the end of the beatmap
-                // in that case
+                // There might be a situation where the Kiai just never stops (?), so we will use the earlier defined
+                // end of the beatmap in that case
                 if (kiaiEndPoint == null)
                 {
                     kiaiTimes.Add(new KiaiTime(kiaiSnappedStartTime, endGenerationAt));
@@ -373,9 +381,9 @@ namespace osu.Game.Rulesets.Taiko.Mods
                     return;
                 }
 
-                // Only use this start-end pair if the length of the Kiai is at least 3 full beats (account for rounding
-                // errors). It wouldn't make sense to consider something a stream if it was shorter since we already
-                // allow up to eleven hit objects, which is 2.5 beats
+                // Only use this start-end pair if the length of the Kiai is at least 3 full beats. It wouldn't make
+                // sense to consider something a stream if it was shorter since we already allow up to eleven hit
+                // objects, which is 2.5 beats
                 double snappedKiaiEndTime = taikoBeatmap.ControlPointInfo.GetClosestSnappedTime(kiaiEndPoint.Time, 1);
 
                 if (snappedKiaiEndTime - kiaiStartingPoint.Time >= (beatOne * 3 - beatOneFourth))
@@ -387,7 +395,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// If the <c>Turn Kiai Into Streams</c> option is enabled, this will override the pattern length to the length
         /// of the Kiai section that the current time is in. The calculated pattern length takes only the 1/4 into
         /// account as we will be generating a constant stream of hit objects. Note: probably due to time inaccuracies,
-        /// this can return an even number of notes
+        /// this can return an even number of notes, so it's adjusted later.
         /// </summary>
         private int overrideLongestPatternLengthIfInKiai(int patternLength)
         {
@@ -406,11 +414,12 @@ namespace osu.Game.Rulesets.Taiko.Mods
         }
 
         /// <summary>
-        /// Checks if we are too close to both Start and End of the kiai, which requires at least 3 beats. This is only
-        /// specific to the <c>Turn Kiai Into Streams</c> option.
+        /// Checks if we are too close to both Start and End of the Kiai, which requires at least 3 beats. This is only
+        /// specific to the <c>Turn Kiai Into Streams</c> option, so if this option is <c>off</c>, this will always
+        /// return <c>false</c>.
         /// </summary>
         /// <remarks>
-        /// This is required to not interrupt the 1/6 right before of right at the end of the Kiai, which could
+        /// This is required to not interrupt the 1/6 right before or right at the end of the Kiai, which could
         /// potentially disrupt the rhythm if we override the pattern length to the length of the Kiai section.
         /// </remarks>
         private bool isTooLateForOneSixthPattern()
@@ -423,7 +432,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
             if (kiaiSection == null)
                 return false;
 
-            // Find the closest kiai section that starts the kiai
+            // Find the closest point that starts the Kiai section
             KiaiTime? nextKiaiStart = getNextClosestKiaiOrNull();
 
             if (nextKiaiStart == null)
@@ -439,7 +448,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         }
 
         /// <summary>
-        /// Checks if the current time is too close to the next Kiai point, if any.
+        /// Checks if the current time is too close to the next Kiai start, if any.
         /// </summary>
         private bool isTooCloseToKiai()
         {
@@ -460,7 +469,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         }
 
         /// <summary>
-        /// Finds the Kiai section that the current time is in, if any.
+        /// Returns the Kiai section that the current time is in, if any.
         /// </summary>
         private KiaiTime? getCurrentKiaiTimeOrNull()
         {
@@ -468,7 +477,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         }
 
         /// <summary>
-        /// Finds eventual Kiai section in front of <see cref="currentTime"/>.
+        /// Returns the Kiai section in front of <see cref="currentTime"/>, if any.
         /// </summary>
         private KiaiTime? getNextClosestKiaiOrNull()
         {
@@ -479,7 +488,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// Should be called before advancing the <see cref="currentTime"/> to make sure the hit object is placed
         /// correctly.
         /// </summary>
-        private void updateBPMAndBeats(TimingControlPoint timingPoint)
+        private void updateBPMAndBeatLengths(TimingControlPoint timingPoint)
         {
             double beatLength = timingPoint.BeatLength;
 
@@ -518,6 +527,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// <returns><c>null</c> if the end of the map was reached.</returns>
         private Hit? createRandomHitObject(Random? overrideRNG = null)
         {
+            // Yeah
             lastUsedTimingControlPoint = (TimingControlPoint)currentTimingControlPoint.DeepClone();
 
             // Just don't do anything if we reached the end of the map inside a longer pattern. This will force stop the
@@ -531,7 +541,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
             // created, because the BPM and current time will need to be adjusted so the hit objects are placed
             // correctly. Note: some beatmaps have very off-beat Timing Control Points, so I don't care if like 0.001%
             // of them are broken 🤷‍♂️ the following block is just an attempt to fix most of those beatmaps that have
-            // more Timing Control Points so we have a bit more viable beatmaps
+            // more Timing Control Points so we have a bit more viable beatmaps to play
             if (!currentTimingControlPoint.Equals(timingPointAtCurrentTime))
             {
                 currentTimingControlPoint = timingPointAtCurrentTime;
@@ -543,13 +553,10 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 // unreadable and incorrect anyway. This is just a workaround to the weird timing changes the artist
                 // decided to use in their songs, BUT, there are still cases where this can happen, so I don't care
                 // about those maps. It can also create a small gap, but it's better than stacked hits
-                if (lastHitObjectCreated != null)
-                {
-                    if (currentTime - lastHitObjectCreated.StartTime < beatOneSixth)
-                        faultyHitObjectsToRemove.Add(lastHitObjectCreated);
-                }
+                if (lastHitObjectCreated != null && currentTime - lastHitObjectCreated.StartTime < beatOneSixth)
+                    faultyHitObjectsToRemove.Add(lastHitObjectCreated);
 
-                updateBPMAndBeats(currentTimingControlPoint);
+                updateBPMAndBeatLengths(currentTimingControlPoint);
             }
 
             Hit hitObject = new Hit
@@ -573,7 +580,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
 
             for (int i = 0; i < 3; i++)
             {
-                // Push every hit object in this triplet by 1/6
+                // Triplets have to be pushed by a 1/6 beat
                 advanceTime(beatOneSixth);
 
                 hitObject = createRandomHitObject(oneSixthRNG);
