@@ -427,24 +427,19 @@ namespace osu.Game.Rulesets.Taiko.Mods
             if (!TurnKiaiIntoStreams.Value)
                 return false;
 
+            KiaiTime? nextKiaiStart = getNextClosestKiaiOrNull();
+
+            // We found a Kiai section in front of us, check if we are too close to it
+            if (nextKiaiStart != null)
+                return !isInKiaiTime && isTooCloseToKiaiPoint(nextKiaiStart.StartTime);
+
+            // If there were no more __next__ Kiai sections, check if we were inside one instead
             KiaiTime? kiaiSection = getCurrentKiaiTimeOrNull();
 
             if (kiaiSection == null)
                 return false;
 
-            // Find the closest point that starts the Kiai section
-            KiaiTime? nextKiaiStart = getNextClosestKiaiOrNull();
-
-            if (nextKiaiStart == null)
-                return false;
-
-            if (!isInKiaiTime && isTooCloseToKiaiPoint(nextKiaiStart.StartTime))
-                return true;
-
-            if (isInKiaiTime && isTooCloseToKiaiPoint(kiaiSection.EndTime))
-                return true;
-
-            return false;
+            return isInKiaiTime && isTooCloseToKiaiPoint(kiaiSection.EndTime);
         }
 
         /// <summary>
