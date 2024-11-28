@@ -263,7 +263,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
                     if (hasTimingPointChanged)
                         break;
 
-                    // If we are almost at the end of the Kiai, don't allow generating 1/6
+                    // If we are almost at the start/end of the Kiai, don't allow generating 1/6
                     if (!isTooLateForOneSixthPattern())
                     {
                         // If the 1/6 was recently generated, we will not allow to generate it again for this hit object,
@@ -414,9 +414,9 @@ namespace osu.Game.Rulesets.Taiko.Mods
         }
 
         /// <summary>
-        /// Checks if we are too close to both Start and End of the Kiai, which requires at least 3 beats. This is only
+        /// Checks if we are too close to both Start and End of the Kiai, which requires at least one beat. This is only
         /// specific to the <c>Turn Kiai Into Streams</c> option, so if this option is <c>off</c>, this will always
-        /// return <c>false</c>.
+        /// return <c>false</c>. This only affects 1/6.
         /// </summary>
         /// <remarks>
         /// This is required to not interrupt the 1/6 right before or right at the end of the Kiai, which could
@@ -438,10 +438,10 @@ namespace osu.Game.Rulesets.Taiko.Mods
             if (nextKiaiStart == null)
                 return false;
 
-            if (!isInKiaiTime && isTooCloseToKiaiPoint(nextKiaiStart.StartTime, 3))
+            if (!isInKiaiTime && isTooCloseToKiaiPoint(nextKiaiStart.StartTime))
                 return true;
 
-            if (isInKiaiTime && isTooCloseToKiaiPoint(kiaiSection.EndTime, 3))
+            if (isInKiaiTime && isTooCloseToKiaiPoint(kiaiSection.EndTime))
                 return true;
 
             return false;
@@ -463,9 +463,9 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// <summary>
         /// Checks if the current time is too close to the known Kiai point.
         /// </summary>
-        private bool isTooCloseToKiaiPoint(double referenceKiaiTime, int minimumBeatsBreak)
+        private bool isTooCloseToKiaiPoint(double referenceKiaiTime)
         {
-            return currentTime < referenceKiaiTime && (referenceKiaiTime - currentTime <= beatOne * minimumBeatsBreak);
+            return currentTime < referenceKiaiTime && (referenceKiaiTime - currentTime <= beatOne);
         }
 
         /// <summary>
