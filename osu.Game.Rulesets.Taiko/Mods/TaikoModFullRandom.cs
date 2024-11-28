@@ -21,7 +21,7 @@ using osu.Game.Rulesets.Taiko.Objects;
 namespace osu.Game.Rulesets.Taiko.Mods
 {
     /// <summary>
-    /// [wip] :) a link to the document about this will appear here.
+    /// The reason why this exists: https://gist.github.com/DarkStoorM/060db882956e249bb029a71e471f73c4
     /// </summary>
     public class TaikoModFullRandom : Mod, IApplicableToBeatmap
     {
