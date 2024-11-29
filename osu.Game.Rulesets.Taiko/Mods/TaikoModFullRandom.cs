@@ -303,6 +303,17 @@ namespace osu.Game.Rulesets.Taiko.Mods
                             }
                         }
                     }
+                    else
+                    {
+                        // Zzz... another workaround for the Kiai option. We didn't get to call the colour inversion if
+                        // we were too close. We don't really have to do this, but the colour inversion options exist
+                        // for a reason after all
+                        if (TurnKiaiIntoStreams.Value && wasOneSixthGeneratedRecently && InvertColourOnRhythmChangeStart.Value && InvertColourAfterRhythmChange.Value)
+                        {
+                            wasOneSixthGeneratedRecently = false;
+                            invertHitObjectColour(hitObject, lastHitObjectInOneSixthPattern);
+                        }
+                    }
 
                     // Always space everything within a pattern by a 1/4 beat (except the last object)
                     if (i < patternLength - 1)
