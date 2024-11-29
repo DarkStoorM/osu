@@ -161,6 +161,12 @@ namespace osu.Game.Rulesets.Taiko.Mods
 
         private bool hasTimingPointChanged => !currentTimingControlPoint.Equals(lastUsedTimingControlPoint);
 
+        /// <summary>
+        /// Used by 1/6 pattern generation to prevent the insertion in case there is a Timing Control Point change in
+        /// the next two beats
+        /// </summary>
+        private bool willTimingPointChangeSoon => !currentTimingControlPoint.Equals(taikoBeatmap.ControlPointInfo.TimingPointAt(currentTime + beatOne * 2));
+
         private TimingControlPoint timingPointAtCurrentTime => taikoBeatmap.ControlPointInfo.TimingPointAt(currentTime);
 
         public TaikoModFullRandom()
@@ -275,7 +281,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
                             if (InvertColourAfterRhythmChange.Value)
                                 invertHitObjectColour(hitObject, lastHitObjectInOneSixthPattern);
                         }
-                        else if (InsertOneSixthTriplet.Value && !wasOneSixthGeneratedRecently && insertionChanceRNG.NextDouble() < OneSixthInsertionChance.Value)
+                        else if (InsertOneSixthTriplet.Value && !wasOneSixthGeneratedRecently && !willTimingPointChangeSoon && insertionChanceRNG.NextDouble() < OneSixthInsertionChance.Value)
                         {
                             monocolourCountInPattern = 1;
                             wasOneSixthGeneratedRecently = true;
