@@ -93,6 +93,14 @@ namespace osu.Game.Rulesets.Taiko.Mods
         [SettingSource("Longer 1/6", SettingControlType = typeof(SettingsCheckbox))]
         public BindableBool LongerOneSixth { get; } = new BindableBool();
 
+        [SettingSource("Don to Kat Ratio", SettingControlType = typeof(SettingsSlider<float>))]
+        public BindableFloat DonToKaRatio { get; } = new BindableFloat(0.5f)
+        {
+            MinValue = 0.0f,
+            MaxValue = 1.0f,
+            Precision = 0.001f,
+        };
+
         /// <summary>
         /// List of "faulty" hit objects to remove from the beatmap after the generation is done, captured at timing
         /// changes.
@@ -176,6 +184,9 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 if (MaximumCountOfConsecutiveMonocolours.Value == 0)
                     MaximumCountOfConsecutiveMonocolours.Value = 1;
             };
+
+            DonToKaRatio.ValueChanged += change =>
+                WeightedRandom.AdjustHitObjectRatio(change.NewValue);
         }
 
         public void ApplyToBeatmap(IBeatmap beatmap)
@@ -350,6 +361,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
             patternLengthRNG = new Random(PatternLengthSeed.Value ??= RNG.Next());
             insertionChanceRNG = new Random(InsertionSeed.Value ??= RNG.Next());
             oneSixthRNG = new Random(OneSixthColourSeed.Value ??= RNG.Next());
+
+            WeightedRandom.SetRng(colourRNG);
 
             // We only need the StartTime of the first/last objects, because we have to insert hit objects within the
             // actual playable bounds of this beatmap that are defined by Hits, and not drumrolls or swells. In some
@@ -627,6 +640,48 @@ namespace osu.Game.Rulesets.Taiko.Mods
             {
                 StartTime = start;
                 EndTime = end;
+            }
+        }
+
+        /// <summary>
+        /// Weighted random for colour generation.
+        /// </summary>
+        private static class WeightedRandom
+        {
+            private static Random rng = new Random();
+
+            private static float donWeight;
+            private static float katWeight;
+
+            public static void SetRng(Random random) => rng = random;
+
+            /// <summary>
+            /// Adjusts the weights of the hit object colours based on the new value of the colour ratio slider.
+            /// </summary>
+            /// <param name="ratio">Ratio, where don's value is the left side of the colour ratio slider.</param>
+            public static void AdjustHitObjectRatio(float ratio)
+            {
+                donWeight = ratio;
+                katWeight = 1 - donWeight;
+            }
+
+            public static HitType GetRandomWeightedColour()
+            {
+                float[] items = [donWeight, katWeight];
+                float totalWeight = items.Sum();
+                float threshold = (float)rng.NextDouble() * totalWeight;
+
+                for (int i = 0; i < items.Length; i++)
+                {
+                    // Note: [0] is always Don, [1] is always Kat, so if the first item meets the threshold, just return
+                    // Don
+                    if (threshold < items[i])
+                        return i == 0 ? HitType.Centre : HitType.Rim;
+
+                    threshold -= items[i];
+                }
+
+                throw new InvalidOperationException("This should never happen (?)");
             }
         }
     }
