@@ -93,7 +93,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         [SettingSource("Longer 1/6", SettingControlType = typeof(SettingsCheckbox))]
         public BindableBool LongerOneSixth { get; } = new BindableBool();
 
-        [SettingSource("Don to Kat Ratio", SettingControlType = typeof(SettingsSlider<float>))]
+        [SettingSource("Don to Kat Ratio", "Will not work well with monocolour restriction", SettingControlType = typeof(SettingsSlider<float>))]
         public BindableFloat DonToKaRatio { get; } = new BindableFloat(0.5f)
         {
             MinValue = 0.0f,
@@ -362,7 +362,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
             insertionChanceRNG = new Random(InsertionSeed.Value ??= RNG.Next());
             oneSixthRNG = new Random(OneSixthColourSeed.Value ??= RNG.Next());
 
-            WeightedRandom.SetRng(colourRNG);
+            WeightedRandom.AdjustHitObjectRatio(DonToKaRatio.Value);
 
             // We only need the StartTime of the first/last objects, because we have to insert hit objects within the
             // actual playable bounds of this beatmap that are defined by Hits, and not drumrolls or swells. In some
@@ -587,7 +587,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
             Hit hitObject = new Hit
             {
                 StartTime = currentTime,
-                Type = rng.Next(2) == 0 ? HitType.Centre : HitType.Rim,
+                Type = WeightedRandom.GetRandomWeightedColour(rng),
             };
 
             // The game crashes without this, I don't know if you are supposed to do this, though
@@ -648,12 +648,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// </summary>
         private static class WeightedRandom
         {
-            private static Random rng = new Random();
-
             private static float donWeight;
             private static float katWeight;
-
-            public static void SetRng(Random random) => rng = random;
 
             /// <summary>
             /// Adjusts the weights of the hit object colours based on the new value of the colour ratio slider.
@@ -661,15 +657,22 @@ namespace osu.Game.Rulesets.Taiko.Mods
             /// <param name="ratio">Ratio, where don's value is the left side of the colour ratio slider.</param>
             public static void AdjustHitObjectRatio(float ratio)
             {
-                donWeight = ratio;
-                katWeight = 1 - donWeight;
+                // The Kat weight is always defined by the value of the colour ratio slider, then the rest of the ratio
+                // is reserved for the Don weight
+                katWeight = ratio;
+                donWeight = 1 - katWeight;
             }
 
-            public static HitType GetRandomWeightedColour()
+            /// <summary>
+            /// Returns a random hit object colour based on the weights. The weights are adjusted by the colour ratio
+            /// slider. See: <see cref="DonToKaRatio"/>.
+            /// </summary>
+            /// <param name="rng">Which rng should be used for the colour generation.</param>
+            public static HitType GetRandomWeightedColour(Random rng)
             {
                 float[] items = [donWeight, katWeight];
                 float totalWeight = items.Sum();
-                float threshold = (float)rng.NextDouble() * totalWeight;
+                float threshold = rng.NextSingle() * totalWeight;
 
                 for (int i = 0; i < items.Length; i++)
                 {
