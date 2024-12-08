@@ -42,6 +42,16 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 if (InsertOneSixthTriplet.Value && LongerOneSixth.Value)
                     label += "++";
 
+                // This isn't really needed, but when 1/6 is off, we will display the kat-to-don ratio, with the don
+                // being on the left side. Kind of confusing, but it's just a visual representation of the slider. This
+                // should only be allowed when we actually change the ratio
+                if (!InsertOneSixthTriplet.Value && KatToDonRatio.Value != 0.5f)
+                {
+                    int katRatio = (int)(KatToDonRatio.Value * 100);
+
+                    label += $"{100 - katRatio}:{katRatio}";
+                }
+
                 return label;
             }
         }
@@ -93,8 +103,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
         [SettingSource("Longer 1/6", SettingControlType = typeof(SettingsCheckbox))]
         public BindableBool LongerOneSixth { get; } = new BindableBool();
 
-        [SettingSource("Don to Kat Ratio", "Will not work well with monocolour restriction", SettingControlType = typeof(SettingsSlider<float>))]
-        public BindableFloat DonToKaRatio { get; } = new BindableFloat(0.5f)
+        [SettingSource("Kat to Don Ratio", "Will not work well with monocolour restriction", SettingControlType = typeof(SettingsSlider<float>))]
+        public BindableFloat KatToDonRatio { get; } = new BindableFloat(0.5f)
         {
             MinValue = 0.0f,
             MaxValue = 1.0f,
@@ -185,7 +195,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
                     MaximumCountOfConsecutiveMonocolours.Value = 1;
             };
 
-            DonToKaRatio.ValueChanged += change =>
+            KatToDonRatio.ValueChanged += change =>
                 WeightedRandom.AdjustHitObjectRatio(change.NewValue);
         }
 
@@ -362,7 +372,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
             insertionChanceRNG = new Random(InsertionSeed.Value ??= RNG.Next());
             oneSixthRNG = new Random(OneSixthColourSeed.Value ??= RNG.Next());
 
-            WeightedRandom.AdjustHitObjectRatio(DonToKaRatio.Value);
+            WeightedRandom.AdjustHitObjectRatio(KatToDonRatio.Value);
 
             // We only need the StartTime of the first/last objects, because we have to insert hit objects within the
             // actual playable bounds of this beatmap that are defined by Hits, and not drumrolls or swells. In some
@@ -665,7 +675,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
 
             /// <summary>
             /// Returns a random hit object colour based on the weights. The weights are adjusted by the colour ratio
-            /// slider. See: <see cref="DonToKaRatio"/>.
+            /// slider. See: <see cref="KatToDonRatio"/>.
             /// </summary>
             /// <param name="rng">Which rng should be used for the colour generation.</param>
             public static HitType GetRandomWeightedColour(Random rng)
