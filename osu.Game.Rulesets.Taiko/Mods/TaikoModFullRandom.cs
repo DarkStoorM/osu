@@ -42,6 +42,16 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 if (InsertOneSixthTriplet.Value && LongerOneSixth.Value)
                     label += "++";
 
+                // This isn't really needed, but when 1/6 is off, we will display the kat-to-don ratio, with the don
+                // being on the left side. Kind of confusing, but it's just a visual representation of the slider. This
+                // should only be allowed when we actually change the ratio
+                if (!InsertOneSixthTriplet.Value && KatToDonRatio.Value != 0.5f)
+                {
+                    int katRatio = (int)(KatToDonRatio.Value * 100);
+
+                    label += $"{100 - katRatio}:{katRatio}";
+                }
+
                 return label;
             }
         }
