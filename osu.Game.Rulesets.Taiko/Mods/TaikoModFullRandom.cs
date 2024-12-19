@@ -550,8 +550,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
             KiaiTime? nextKiaiStart = getNextClosestKiaiOrNull();
 
             // We found a Kiai section in front of us, check if we are too close to it
-            if (nextKiaiStart != null)
-                return !isInKiaiTime && isTooCloseToKiaiPoint(nextKiaiStart.StartTime);
+            if (!isInKiaiTime && nextKiaiStart != null)
+                return isTooCloseToKiaiPoint(nextKiaiStart.StartTime);
 
             // If there were no more __next__ Kiai sections, check if we were inside one instead
             KiaiTime? kiaiSection = getCurrentKiaiTimeOrNull();
