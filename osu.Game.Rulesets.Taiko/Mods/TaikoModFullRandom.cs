@@ -442,7 +442,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
 
             // In case the next checked Kiai gets merged, it will become the current iterator and we don't want to check
             // it again, so we will skip it
-            bool shouldSkipNextKiai = false;
+            bool shouldSkipMergedKiai = false;
 
             kiaiTimes.ForEach(kiaiTime =>
             {
@@ -458,9 +458,10 @@ namespace osu.Game.Rulesets.Taiko.Mods
                     return;
                 }
 
-                if (shouldSkipNextKiai)
+                // This flag signals that the current Kiai was already merged, so no need to check it again
+                if (shouldSkipMergedKiai)
                 {
-                    shouldSkipNextKiai = false;
+                    shouldSkipMergedKiai = false;
 
                     return;
                 }
@@ -474,7 +475,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
                     if (nextKiai.StartTime - kiaiTime.EndTime <= kiaiThreshold)
                     {
                         workingKiaiTime = new KiaiTime(kiaiTime.StartTime, nextKiai.EndTime);
-                        shouldSkipNextKiai = true;
+                        shouldSkipMergedKiai = true;
 
                         return;
                     }
@@ -492,7 +493,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 if (nextKiai.StartTime - workingKiaiTime.EndTime <= kiaiThreshold)
                 {
                     workingKiaiTime = new KiaiTime(workingKiaiTime.StartTime, nextKiai.EndTime);
-                    shouldSkipNextKiai = true;
+                    shouldSkipMergedKiai = true;
 
                     return;
                 }
