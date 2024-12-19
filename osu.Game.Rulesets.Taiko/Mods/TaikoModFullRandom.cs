@@ -438,16 +438,77 @@ namespace osu.Game.Rulesets.Taiko.Mods
             // other, disrupting the pattern generation, which can shift the notes by 1/6 or 1/4. If the valid Kiai
             // sections are too close, just merge them into one
             List<KiaiTime> mergedKiaiTimes = [];
+            KiaiTime? workingKiaiTime = null;
+
+            // In case the next checked Kiai gets merged, it will become the current iterator and we don't want to check
+            // it again, so we will skip it
+            bool shouldSkipNextKiai = false;
 
             kiaiTimes.ForEach(kiaiTime =>
             {
                 KiaiTime? nextKiai = kiaiTimes.GetNext(kiaiTime);
 
+                // If we have reached the end of the list, just add the current Kiai, but if there is a working Kiai,
+                // add it instead. This is required as the last Kiai doesn't have anything ahead of it and we would
+                // ignore it with just return on null
                 if (nextKiai == null)
-                    return;
+                {
+                    mergedKiaiTimes.Add(workingKiaiTime ?? kiaiTime);
 
-                // TODO: merge Kiais
+                    return;
+                }
+
+                if (shouldSkipNextKiai)
+                {
+                    shouldSkipNextKiai = false;
+
+                    return;
+                }
+
+                // If we don't have a working Kiai, this means that we are either at the start of the list or the next
+                // Kiai was just too far to be merged
+                if (workingKiaiTime == null)
+                {
+                    // Merge the current and next Kiai into one, creating a new Kiai section, but store it as a Working
+                    // Kiai, because we will eventually keep extending it further if more Kiais in are too close
+                    if (nextKiai.StartTime - kiaiTime.EndTime <= kiaiThreshold)
+                    {
+                        workingKiaiTime = new KiaiTime(kiaiTime.StartTime, nextKiai.EndTime);
+                        shouldSkipNextKiai = true;
+
+                        return;
+                    }
+                    else
+                    {
+                        // The Kiai was too far, so we can just add the current Kiai to the list of merged Kiai sections
+                        // as there is no more stuff to do here
+                        mergedKiaiTimes.Add(kiaiTime);
+
+                        return;
+                    }
+                }
+
+                // At this point we have a working Kiai, so we will eventually extend it if the next Kiai is too close
+                if (nextKiai.StartTime - workingKiaiTime.EndTime <= kiaiThreshold)
+                {
+                    workingKiaiTime = new KiaiTime(workingKiaiTime.StartTime, nextKiai.EndTime);
+                    shouldSkipNextKiai = true;
+
+                    return;
+                }
+                else
+                {
+                    // The next Kiai was too far, so we can just add the working Kiai to the list of merged Kiai
+                    // sections and reset the working Kiai to indicate that we won't merge the next Kiai
+                    mergedKiaiTimes.Add(workingKiaiTime);
+                    workingKiaiTime = null;
+                }
             });
+
+            // Now we just need to swap the initialised Kiais with the merged ones to narrow down the list of possible
+            // "bugs" with pattern generation
+            kiaiTimes.Clear();
+            kiaiTimes.AddRange(mergedKiaiTimes);
         }
 
         /// <summary>
