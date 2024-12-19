@@ -580,7 +580,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// </summary>
         private bool isTooCloseToKiaiPoint(double referenceKiaiTime)
         {
-            return currentTime < referenceKiaiTime && (referenceKiaiTime - currentTime <= beatOne);
+            return currentTime <= referenceKiaiTime && (referenceKiaiTime - currentTime <= beatOne);
         }
 
         /// <summary>
