@@ -338,7 +338,6 @@ namespace osu.Game.Rulesets.Taiko.Mods
                         // for a reason after all
                         if (TurnKiaiIntoStreams.Value && wasOneSixthGeneratedRecently && InvertColourOnRhythmChangeStart.Value && InvertColourAfterRhythmChange.Value)
                         {
-                            wasOneSixthGeneratedRecently = false;
                             invertHitObjectColour(hitObject, lastHitObjectInOneSixthPattern);
                         }
                     }
