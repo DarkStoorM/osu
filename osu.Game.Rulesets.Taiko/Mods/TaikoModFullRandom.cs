@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Framework.Utils;
@@ -403,6 +404,11 @@ namespace osu.Game.Rulesets.Taiko.Mods
             IReadOnlyList<EffectControlPoint> effectControlPoints = taikoBeatmap.ControlPointInfo.EffectPoints;
             List<EffectControlPoint> kiaiSections = effectControlPoints.Where(e => e.KiaiMode).ToList();
 
+            // Kiai needs to be at least 5 full beats (-margin of error) or 3 seconds. It wouldn't make sense to
+            // consider something a stream if it was shorter than that. This is also used to check if the Kiai sections
+            // are too close
+            double kiaiThreshold = Math.Max(3000, beatOne * 5 - beatOneFourth);
+
             kiaiSections.ForEach(kiaiStartingPoint =>
             {
                 // Snap the Kiai start time (and later the end time) to the closest 1/1 beat divisor in case it was
@@ -421,13 +427,26 @@ namespace osu.Game.Rulesets.Taiko.Mods
                     return;
                 }
 
-                // Only use this start-end pair if the length of the Kiai is at least 3 full beats. It wouldn't make
-                // sense to consider something a stream if it was shorter since we already allow up to eleven hit
-                // objects, which is 2.5 beats
                 double snappedKiaiEndTime = taikoBeatmap.ControlPointInfo.GetClosestSnappedTime(kiaiEndPoint.Time, 1);
 
-                if (snappedKiaiEndTime - kiaiStartingPoint.Time >= (beatOne * 3 - beatOneFourth))
+                // Only use this start-end pair if the length of the kiai section is above threshold
+                if (snappedKiaiEndTime - kiaiStartingPoint.Time >= kiaiThreshold)
                     kiaiTimes.Add(new KiaiTime(kiaiSnappedStartTime, snappedKiaiEndTime));
+            });
+
+            // After initialising all the valid Kiai sections, there is another issue of them being too close to each
+            // other, disrupting the pattern generation, which can shift the notes by 1/6 or 1/4. If the valid Kiai
+            // sections are too close, just merge them into one
+            List<KiaiTime> mergedKiaiTimes = [];
+
+            kiaiTimes.ForEach(kiaiTime =>
+            {
+                KiaiTime? nextKiai = kiaiTimes.GetNext(kiaiTime);
+
+                if (nextKiai == null)
+                    return;
+
+                // TODO: merge Kiais
             });
         }
 
