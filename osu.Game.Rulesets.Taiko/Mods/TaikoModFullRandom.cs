@@ -364,6 +364,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
             // everything :/
             if (faultyHitObjectsToRemove.Count > 0)
                 taikoBeatmap.HitObjects.RemoveAll(h => faultyHitObjectsToRemove.Contains(h));
+
+            cleanThingsUp();
         }
 
         private void initialiseSettings()
@@ -733,6 +735,24 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 StartTime = start;
                 EndTime = end;
             }
+        }
+
+        /// <summary>
+        /// Cleans up all the used resources after the generation is done, because it leaves quite a lot of persistent
+        /// garbage that can spike up to 100MB of memory per mod application.
+        /// </summary>
+        private void cleanThingsUp()
+        {
+            faultyHitObjectsToRemove.Clear();
+            kiaiTimes.Clear();
+            taikoBeatmap = null!;
+            colourRNG = null!;
+            patternLengthRNG = null!;
+            insertionChanceRNG = null!;
+            oneSixthRNG = null!;
+            lastHitObjectCreated = null;
+            currentTimingControlPoint = null!;
+            lastUsedTimingControlPoint = null!;
         }
 
         /// <summary>
