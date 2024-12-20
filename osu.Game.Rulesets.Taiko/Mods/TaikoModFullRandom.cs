@@ -497,8 +497,6 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 {
                     workingKiaiTime = new KiaiTime(workingKiaiTime.StartTime, nextKiai.EndTime);
                     shouldSkipMergedKiai = true;
-
-                    return;
                 }
                 else
                 {
