@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
 {
     /// <summary>
     /// The reason why this exists: https://gist.github.com/DarkStoorM/060db882956e249bb029a71e471f73c4
-    /// TODO: Fix Memory leak :D
+    /// TODO: Fix Memory leak :D - line 686 in `hitObject.ApplyDefaults`
     /// </summary>
     public class TaikoModFullRandom : Mod, IApplicableToBeatmap
     {
