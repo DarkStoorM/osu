@@ -443,6 +443,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
             // it again, so we will skip it
             bool shouldSkipMergedKiai = false;
 
+            // TODO: fix a bug with some Kiais being ignored, I probably messed something up with the last Kiai check
             kiaiTimes.ForEach(kiaiTime =>
             {
                 KiaiTime? nextKiai = kiaiTimes.GetNext(kiaiTime);
