@@ -19,7 +19,7 @@ using osuTK;
 
 namespace osu.Game.Screens.Play.HUD
 {
-    public partial class UnstableRateCounter : RollingCounter<int>, ISerialisableDrawable
+    public partial class UnstableRateCounterKat : RollingCounter<int>, ISerialisableDrawable
     {
         public bool UsesFixedAnchor { get; set; }
 
@@ -33,7 +33,7 @@ namespace osu.Game.Screens.Play.HUD
         [Resolved]
         private ScoreProcessor scoreProcessor { get; set; } = null!;
 
-        public UnstableRateCounter()
+        public UnstableRateCounterKat()
         {
             Current.Value = 0;
         }
@@ -66,7 +66,7 @@ namespace osu.Game.Screens.Play.HUD
         {
             unstableRateResult = scoreProcessor.HitEvents.CalculateUnstableRate(unstableRateResult);
 
-            double? unstableRate = unstableRateResult?.Result;
+            double? unstableRate = unstableRateResult?.ResultForKats;
 
             valid.Value = unstableRate != null;
 
