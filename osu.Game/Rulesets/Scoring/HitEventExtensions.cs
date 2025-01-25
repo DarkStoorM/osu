@@ -35,37 +35,12 @@ namespace osu.Game.Rulesets.Scoring
             if (hitEvents.Count < result.EventCount + 1)
                 result = new UnstableRateCalculationResult();
 
-            // TODO: Split this into actual three sections, because it's wrongly calculated
-
             for (int i = result.EventCount; i < hitEvents.Count; i++)
             {
                 HitEvent e = hitEvents[i];
 
                 if (!AffectsUnstableRate(e))
                     continue;
-
-                if (IsKat(e))
-                {
-                    result.KatEventCount++;
-
-                    double currentKatValue = e.TimeOffset / e.GameplayRate!.Value;
-                    double nextKatMean =
-                        result.KatMean + (currentKatValue - result.KatMean) / result.KatEventCount;
-                    result.KatSumOfSquares +=
-                        (currentKatValue - result.KatMean) * (currentKatValue - nextKatMean);
-                    result.KatMean = nextKatMean;
-                }
-                else
-                {
-                    result.DonEventCount++;
-
-                    double currentDonValue = e.TimeOffset / e.GameplayRate!.Value;
-                    double nextDonMean =
-                        result.DonMean + (currentDonValue - result.DonMean) / result.DonEventCount;
-                    result.DonSumOfSquares +=
-                        (currentDonValue - result.DonMean) * (currentDonValue - nextDonMean);
-                    result.DonMean = nextDonMean;
-                }
 
                 result.EventCount++;
 
@@ -83,12 +58,30 @@ namespace osu.Game.Rulesets.Scoring
             return result;
         }
 
-        public static bool IsKat(this HitEvent e) =>
-            e.HitObject.Samples.Where(s =>
-                s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
-            )
-                .ToArray()
-                .Length > 0;
+        public static UnstableRateCalculationResult? CalculateUnstableRateForDrumCentre(
+            this IReadOnlyList<HitEvent> hitEvents,
+            UnstableRateCalculationResult? result = null
+        )
+        {
+            return CalculateUnstableRate(hitEvents.Where(e => e.isDrumCentre()).ToList(), result);
+        }
+
+        public static UnstableRateCalculationResult? CalculateUnstableRateForDrumRim(
+            this IReadOnlyList<HitEvent> hitEvents,
+            UnstableRateCalculationResult? result = null
+        )
+        {
+            return CalculateUnstableRate(hitEvents.Where(e => e.isDrumRim()).ToList(), result);
+        }
+
+        private static bool isDrumRim(this HitEvent e) => eventIsDrumRim(e);
+
+        private static bool isDrumCentre(this HitEvent e) => !eventIsDrumRim(e);
+
+        private static bool eventIsDrumRim(this HitEvent e) =>
+            e.HitObject.Samples.Any(
+                s => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
+            );
 
         /// <summary>
         /// Calculates the average hit offset/error for a sequence of <see cref="HitEvent"/>s, where negative numbers mean the user hit too early on average.
@@ -117,10 +110,10 @@ namespace osu.Game.Rulesets.Scoring
             hitObject.HitWindows != HitWindows.Empty && result.IsHit();
 
         /// <summary>
-        /// Data type returned by <see cref="HitEventExtensions.CalculateUnstableRate"/> which allows efficient incremental processing.
+        /// Data type returned by <see cref="CalculateUnstableRate"/> which allows efficient incremental processing.
         /// </summary>
         /// <remarks>
-        /// This should be passed back into future <see cref="HitEventExtensions.CalculateUnstableRate"/> calls as a parameter.
+        /// This should be passed back into future <see cref="CalculateUnstableRate"/> calls as a parameter.
         ///
         /// The optimisations used here rely on hit events being a consecutive sequence from a single gameplay session.
         /// When a new gameplay session is started, any existing results should be disposed.
@@ -131,34 +124,22 @@ namespace osu.Game.Rulesets.Scoring
             /// Total events processed. For internal incremental calculation use.
             /// </summary>
             public int EventCount;
-            public int DonEventCount;
-            public int KatEventCount;
 
             /// <summary>
             /// Last sum-of-squares value. For internal incremental calculation use.
             /// </summary>
             public double SumOfSquares;
-            public double DonSumOfSquares;
-            public double KatSumOfSquares;
 
             /// <summary>
             /// Last mean value. For internal incremental calculation use.
             /// </summary>
             public double Mean;
-            public double DonMean;
-            public double KatMean;
 
             /// <summary>
             /// The unstable rate.
             /// </summary>
             public double Result =>
                 EventCount == 0 ? 0 : 10.0 * Math.Sqrt(SumOfSquares / EventCount);
-
-            public double ResultForDons =>
-                DonEventCount == 0 ? 0 : 10.0 * Math.Sqrt(DonSumOfSquares / DonEventCount);
-
-            public double ResultForKats =>
-                KatEventCount == 0 ? 0 : 10.0 * Math.Sqrt(KatSumOfSquares / KatEventCount);
         }
     }
 }
