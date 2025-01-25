@@ -35,37 +35,76 @@ namespace osu.Game.Rulesets.Scoring
             if (hitEvents.Count < result.EventCount + 1)
                 result = new UnstableRateCalculationResult();
 
-            // TODO: Split this into actual three sections, because it's wrongly calculated
+            List<HitEvent> donHitEvents = hitEvents.Where(isDon).ToList();
+            List<HitEvent> katHitEvents = hitEvents.Where(isKat).ToList();
 
-            for (int i = result.EventCount; i < hitEvents.Count; i++)
+            calculateDonUnstableRate(ref result, donHitEvents);
+            calculateKatUnstableRate(ref result, katHitEvents);
+            calculateUnstableRate(ref result, hitEvents);
+
+            if (result.EventCount == 0)
+                return null;
+
+            return result;
+        }
+
+        private static void calculateDonUnstableRate(
+            ref UnstableRateCalculationResult result,
+            IReadOnlyList<HitEvent> hitEvents
+        )
+        {
+            for (int i = result.DonEventCount; i < hitEvents.Count; i++)
             {
                 HitEvent e = hitEvents[i];
 
                 if (!AffectsUnstableRate(e))
                     continue;
 
-                if (IsKat(e))
-                {
-                    result.KatEventCount++;
+                result.DonEventCount++;
 
-                    double currentKatValue = e.TimeOffset / e.GameplayRate!.Value;
-                    double nextKatMean =
-                        result.KatMean + (currentKatValue - result.KatMean) / result.KatEventCount;
-                    result.KatSumOfSquares +=
-                        (currentKatValue - result.KatMean) * (currentKatValue - nextKatMean);
-                    result.KatMean = nextKatMean;
-                }
-                else
-                {
-                    result.DonEventCount++;
+                double currentDonValue = e.TimeOffset / e.GameplayRate!.Value;
+                double nextDonMean =
+                    result.DonMean + (currentDonValue - result.DonMean) / result.DonEventCount;
+                result.DonSumOfSquares +=
+                    (currentDonValue - result.DonMean) * (currentDonValue - nextDonMean);
+                result.DonMean = nextDonMean;
+            }
+        }
 
-                    double currentDonValue = e.TimeOffset / e.GameplayRate!.Value;
-                    double nextDonMean =
-                        result.DonMean + (currentDonValue - result.DonMean) / result.DonEventCount;
-                    result.DonSumOfSquares +=
-                        (currentDonValue - result.DonMean) * (currentDonValue - nextDonMean);
-                    result.DonMean = nextDonMean;
-                }
+        private static void calculateKatUnstableRate(
+            ref UnstableRateCalculationResult result,
+            IReadOnlyList<HitEvent> hitEvents
+        )
+        {
+            for (int i = result.KatEventCount; i < hitEvents.Count; i++)
+            {
+                HitEvent e = hitEvents[i];
+
+                if (!AffectsUnstableRate(e))
+                    continue;
+
+                result.KatEventCount++;
+
+                double currentKatValue = e.TimeOffset / e.GameplayRate!.Value;
+                double nextKatMean =
+                    result.KatMean + (currentKatValue - result.KatMean) / result.KatEventCount;
+                result.KatSumOfSquares +=
+                    (currentKatValue - result.KatMean) * (currentKatValue - nextKatMean);
+                result.KatMean = nextKatMean;
+            }
+        }
+
+        private static void calculateUnstableRate(
+            ref UnstableRateCalculationResult result,
+            IReadOnlyList<HitEvent> hitEvents
+        )
+        {
+            for (int i = result.EventCount; i < hitEvents.Count; i++)
+            {
+                HitEvent e = hitEvents[i];
+
+                if (!AffectsUnstableRate(e))
+                    continue;
 
                 result.EventCount++;
 
@@ -76,19 +115,16 @@ namespace osu.Game.Rulesets.Scoring
                 result.SumOfSquares += (currentValue - result.Mean) * (currentValue - nextMean);
                 result.Mean = nextMean;
             }
-
-            if (result.EventCount == 0)
-                return null;
-
-            return result;
         }
 
-        public static bool IsKat(this HitEvent e) =>
-            e.HitObject.Samples.Where(s =>
+        private static bool isKat(this HitEvent e) => eventIsKat(e);
+
+        private static bool isDon(this HitEvent e) => !eventIsKat(e);
+
+        private static bool eventIsKat(this HitEvent e) =>
+            e.HitObject.Samples.Any(s =>
                 s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
-            )
-                .ToArray()
-                .Length > 0;
+            );
 
         /// <summary>
         /// Calculates the average hit offset/error for a sequence of <see cref="HitEvent"/>s, where negative numbers mean the user hit too early on average.
