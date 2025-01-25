@@ -257,10 +257,12 @@ namespace osu.Game.Rulesets.Taiko
                     RelativeSizeAxes = Axes.X,
                     Height = 250
                 }, true),
-                new StatisticItem("Statistics", () => new SimpleStatisticTable(2, new SimpleStatisticItem[]
+                new StatisticItem("Statistics", () => new SimpleStatisticTable(4, new SimpleStatisticItem[]
                 {
                     new AverageHitError(timedHitEvents),
-                    new UnstableRate(timedHitEvents)
+                    new UnstableRateForDrumCentre(timedHitEvents),
+                    new UnstableRateForDrumRim(timedHitEvents),
+                    new UnstableRate(timedHitEvents),
                 }), true)
             };
         }
