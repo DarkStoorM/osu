@@ -12,7 +12,7 @@ namespace osu.Game.Screens.Ranking.Statistics
     public partial class UnstableRateForDrumRim : SimpleStatisticItem<double?>
     {
         /// <summary>
-        /// Creates and computes an <see cref="UnstableRate"/> statistic specifically for Drum Centre (Kats).
+        /// Creates and computes an <see cref="UnstableRate"/> statistic specifically for Drum Rim (Kats).
         /// </summary>
         /// <param name="hitEvents">Sequence of <see cref="HitEvent"/>s to calculate the unstable rate based on.</param>
         public UnstableRateForDrumRim(IReadOnlyList<HitEvent> hitEvents)
