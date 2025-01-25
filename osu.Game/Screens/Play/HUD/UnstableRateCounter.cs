@@ -23,7 +23,7 @@ namespace osu.Game.Screens.Play.HUD
     {
         public bool UsesFixedAnchor { get; set; }
 
-        protected override double RollingDuration => 375;
+        protected override double RollingDuration => 0;
 
         private const float alpha_when_invalid = 0.3f;
         private readonly Bindable<bool> valid = new Bindable<bool>();
@@ -43,7 +43,8 @@ namespace osu.Game.Screens.Play.HUD
         {
             Colour = colours.BlueLighter;
             valid.BindValueChanged(e =>
-                DrawableCount.FadeTo(e.NewValue ? 1 : alpha_when_invalid, 1000, Easing.OutQuint));
+                DrawableCount.FadeTo(e.NewValue ? 1 : alpha_when_invalid, 1000, Easing.OutQuint)
+            );
         }
 
         protected override void LoadComplete()
@@ -73,10 +74,8 @@ namespace osu.Game.Screens.Play.HUD
                 Current.Value = (int)Math.Round(unstableRate.Value);
         }
 
-        protected override IHasText CreateText() => new TextComponent
-        {
-            Alpha = alpha_when_invalid,
-        };
+        protected override IHasText CreateText() =>
+            new TextComponent { Alpha = alpha_when_invalid, };
 
         protected override void Dispose(bool isDisposing)
         {

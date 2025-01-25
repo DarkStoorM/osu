@@ -149,7 +149,7 @@ namespace osu.Game.Screens.Play
                             case @"missing token header":
                             case @"invalid client hash":
                             case @"invalid verification hash":
-                                Logger.Log($"Please ensure that you are using the latest version of the official game releases.\n\n{whatWillHappen}", level: LogLevel.Important);
+                                //Logger.Log($"Please ensure that you are using the latest version of the official game releases.\n\n{whatWillHappen}", level: LogLevel.Important);
                                 break;
 
                             case @"invalid beatmap_hash":
