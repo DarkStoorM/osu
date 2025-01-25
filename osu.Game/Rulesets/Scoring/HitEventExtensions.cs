@@ -35,6 +35,8 @@ namespace osu.Game.Rulesets.Scoring
             if (hitEvents.Count < result.EventCount + 1)
                 result = new UnstableRateCalculationResult();
 
+            // TODO: Split this into actual three sections, because it's wrongly calculated
+
             for (int i = result.EventCount; i < hitEvents.Count; i++)
             {
                 HitEvent e = hitEvents[i];
