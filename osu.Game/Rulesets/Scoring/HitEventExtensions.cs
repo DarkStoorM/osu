@@ -35,70 +35,6 @@ namespace osu.Game.Rulesets.Scoring
             if (hitEvents.Count < result.EventCount + 1)
                 result = new UnstableRateCalculationResult();
 
-            List<HitEvent> donHitEvents = hitEvents.Where(isDon).ToList();
-            List<HitEvent> katHitEvents = hitEvents.Where(isKat).ToList();
-
-            calculateDonUnstableRate(ref result, donHitEvents);
-            calculateKatUnstableRate(ref result, katHitEvents);
-            calculateUnstableRate(ref result, hitEvents);
-
-            if (result.EventCount == 0)
-                return null;
-
-            return result;
-        }
-
-        private static void calculateDonUnstableRate(
-            ref UnstableRateCalculationResult result,
-            IReadOnlyList<HitEvent> hitEvents
-        )
-        {
-            for (int i = result.DonEventCount; i < hitEvents.Count; i++)
-            {
-                HitEvent e = hitEvents[i];
-
-                if (!AffectsUnstableRate(e))
-                    continue;
-
-                result.DonEventCount++;
-
-                double currentDonValue = e.TimeOffset / e.GameplayRate!.Value;
-                double nextDonMean =
-                    result.DonMean + (currentDonValue - result.DonMean) / result.DonEventCount;
-                result.DonSumOfSquares +=
-                    (currentDonValue - result.DonMean) * (currentDonValue - nextDonMean);
-                result.DonMean = nextDonMean;
-            }
-        }
-
-        private static void calculateKatUnstableRate(
-            ref UnstableRateCalculationResult result,
-            IReadOnlyList<HitEvent> hitEvents
-        )
-        {
-            for (int i = result.KatEventCount; i < hitEvents.Count; i++)
-            {
-                HitEvent e = hitEvents[i];
-
-                if (!AffectsUnstableRate(e))
-                    continue;
-
-                result.KatEventCount++;
-
-                double currentKatValue = e.TimeOffset / e.GameplayRate!.Value;
-                double nextKatMean =
-                    result.KatMean + (currentKatValue - result.KatMean) / result.KatEventCount;
-                result.KatSumOfSquares +=
-                    (currentKatValue - result.KatMean) * (currentKatValue - nextKatMean);
-                result.KatMean = nextKatMean;
-            }
-        }
-
-        private static void calculateUnstableRate(
-            ref UnstableRateCalculationResult result,
-            IReadOnlyList<HitEvent> hitEvents
-        )
-        {
             for (int i = result.EventCount; i < hitEvents.Count; i++)
             {
                 HitEvent e = hitEvents[i];
@@ -115,15 +51,36 @@ namespace osu.Game.Rulesets.Scoring
                 result.SumOfSquares += (currentValue - result.Mean) * (currentValue - nextMean);
                 result.Mean = nextMean;
             }
+
+            if (result.EventCount == 0)
+                return null;
+
+            return result;
         }
 
-        private static bool isKat(this HitEvent e) => eventIsKat(e);
+        public static UnstableRateCalculationResult? CalculateUnstableRateForDrumCentre(
+            this IReadOnlyList<HitEvent> hitEvents,
+            UnstableRateCalculationResult? result = null
+        )
+        {
+            return CalculateUnstableRate(hitEvents.Where(e => e.isDrumCentre()).ToList(), result);
+        }
 
-        private static bool isDon(this HitEvent e) => !eventIsKat(e);
+        public static UnstableRateCalculationResult? CalculateUnstableRateForDrumRim(
+            this IReadOnlyList<HitEvent> hitEvents,
+            UnstableRateCalculationResult? result = null
+        )
+        {
+            return CalculateUnstableRate(hitEvents.Where(e => e.isDrumRim()).ToList(), result);
+        }
 
-        private static bool eventIsKat(this HitEvent e) =>
-            e.HitObject.Samples.Any(s =>
-                s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
+        private static bool isDrumRim(this HitEvent e) => eventIsDrumRim(e);
+
+        private static bool isDrumCentre(this HitEvent e) => !eventIsDrumRim(e);
+
+        private static bool eventIsDrumRim(this HitEvent e) =>
+            e.HitObject.Samples.Any(
+                s => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
             );
 
         /// <summary>
@@ -153,10 +110,10 @@ namespace osu.Game.Rulesets.Scoring
             hitObject.HitWindows != HitWindows.Empty && result.IsHit();
 
         /// <summary>
-        /// Data type returned by <see cref="HitEventExtensions.CalculateUnstableRate"/> which allows efficient incremental processing.
+        /// Data type returned by <see cref="CalculateUnstableRate"/> which allows efficient incremental processing.
         /// </summary>
         /// <remarks>
-        /// This should be passed back into future <see cref="HitEventExtensions.CalculateUnstableRate"/> calls as a parameter.
+        /// This should be passed back into future <see cref="CalculateUnstableRate"/> calls as a parameter.
         ///
         /// The optimisations used here rely on hit events being a consecutive sequence from a single gameplay session.
         /// When a new gameplay session is started, any existing results should be disposed.
@@ -167,34 +124,22 @@ namespace osu.Game.Rulesets.Scoring
             /// Total events processed. For internal incremental calculation use.
             /// </summary>
             public int EventCount;
-            public int DonEventCount;
-            public int KatEventCount;
 
             /// <summary>
             /// Last sum-of-squares value. For internal incremental calculation use.
             /// </summary>
             public double SumOfSquares;
-            public double DonSumOfSquares;
-            public double KatSumOfSquares;
 
             /// <summary>
             /// Last mean value. For internal incremental calculation use.
             /// </summary>
             public double Mean;
-            public double DonMean;
-            public double KatMean;
 
             /// <summary>
             /// The unstable rate.
             /// </summary>
             public double Result =>
                 EventCount == 0 ? 0 : 10.0 * Math.Sqrt(SumOfSquares / EventCount);
-
-            public double ResultForDons =>
-                DonEventCount == 0 ? 0 : 10.0 * Math.Sqrt(DonSumOfSquares / DonEventCount);
-
-            public double ResultForKats =>
-                KatEventCount == 0 ? 0 : 10.0 * Math.Sqrt(KatSumOfSquares / KatEventCount);
         }
     }
 }

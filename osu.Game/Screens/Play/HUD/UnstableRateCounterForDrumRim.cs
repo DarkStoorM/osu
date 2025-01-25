@@ -19,7 +19,7 @@ using osuTK;
 
 namespace osu.Game.Screens.Play.HUD
 {
-    public partial class UnstableRateCounterKat : RollingCounter<int>, ISerialisableDrawable
+    public partial class UnstableRateCounterForDrumRim : RollingCounter<int>, ISerialisableDrawable
     {
         public bool UsesFixedAnchor { get; set; }
 
@@ -33,7 +33,7 @@ namespace osu.Game.Screens.Play.HUD
         [Resolved]
         private ScoreProcessor scoreProcessor { get; set; } = null!;
 
-        public UnstableRateCounterKat()
+        public UnstableRateCounterForDrumRim()
         {
             Current.Value = 0;
         }
@@ -42,8 +42,9 @@ namespace osu.Game.Screens.Play.HUD
         private void load(OsuColour colours)
         {
             Colour = colours.BlueLighter;
-            valid.BindValueChanged(e =>
-                DrawableCount.FadeTo(e.NewValue ? 1 : alpha_when_invalid, 1000, Easing.OutQuint)
+            valid.BindValueChanged(
+                e =>
+                    DrawableCount.FadeTo(e.NewValue ? 1 : alpha_when_invalid, 1000, Easing.OutQuint)
             );
         }
 
@@ -64,9 +65,11 @@ namespace osu.Game.Screens.Play.HUD
 
         private void updateDisplay()
         {
-            unstableRateResult = scoreProcessor.HitEvents.CalculateUnstableRate(unstableRateResult);
+            unstableRateResult = scoreProcessor.HitEvents.CalculateUnstableRateForDrumRim(
+                unstableRateResult
+            );
 
-            double? unstableRate = unstableRateResult?.ResultForKats;
+            double? unstableRate = unstableRateResult?.Result;
 
             valid.Value = unstableRate != null;
 
