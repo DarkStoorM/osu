@@ -1,4 +1,4 @@
-﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -78,10 +78,21 @@ namespace osu.Game.Rulesets.Scoring
 
         private static bool isDrumCentre(this HitEvent e) => !eventIsDrumRim(e);
 
-        private static bool eventIsDrumRim(this HitEvent e) =>
-            e.HitObject.Samples.Any(
-                s => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
-            );
+        private static bool eventIsDrumRim(this HitEvent e)
+        {
+            return e.HitObject.Samples.Any(s =>
+            {
+                return s switch
+                {
+                    // We don't care about Drumrolls or Swells anyway, because we only have to check for Hits and they
+                    // don't have the duration property. We also don't have to worry about capturing Finishers, because
+                    // it's sufficient enough to check for HIT_NORMAL, but "in reverse", because all HitObjects have
+                    // this sample
+                    not IHasDuration => false,
+                    _ => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
+                };
+            });
+        }
 
         /// <summary>
         /// Calculates the average hit offset/error for a sequence of <see cref="HitEvent"/>s, where negative numbers mean the user hit too early on average.
