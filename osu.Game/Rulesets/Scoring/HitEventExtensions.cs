@@ -81,8 +81,8 @@ namespace osu.Game.Rulesets.Scoring
         // TODO: this is apparently still wrong with finishers, fix this
         private static bool eventIsDrumRim(this HitEvent e)
         {
-            return e.HitObject.Samples.Any(
-                s => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
+            return e.HitObject.Samples.Any(s =>
+                s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
             );
         }
 

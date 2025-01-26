@@ -9,6 +9,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
+using osu.Game.Configuration;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
@@ -21,6 +22,17 @@ namespace osu.Game.Screens.Play.HUD
 {
     public partial class UnstableRateCounter : RollingCounter<int>, ISerialisableDrawable
     {
+        public enum UnstableRateSettingType
+        {
+            Global,
+            DrumCentre,
+            DrumRim,
+        }
+
+        [SettingSource("Unstable rate")]
+        public Bindable<UnstableRateSettingType> UnstableRateType { get; set; } =
+            new Bindable<UnstableRateSettingType>(UnstableRateSettingType.Global);
+
         public bool UsesFixedAnchor { get; set; }
 
         protected override double RollingDuration => 0;
@@ -45,6 +57,7 @@ namespace osu.Game.Screens.Play.HUD
             valid.BindValueChanged(e =>
                 DrawableCount.FadeTo(e.NewValue ? 1 : alpha_when_invalid, 1000, Easing.OutQuint)
             );
+            UnstableRateType.ValueChanged += _ => updateDisplay();
         }
 
         protected override void LoadComplete()
@@ -64,7 +77,16 @@ namespace osu.Game.Screens.Play.HUD
 
         private void updateDisplay()
         {
-            unstableRateResult = scoreProcessor.HitEvents.CalculateUnstableRate(unstableRateResult);
+            unstableRateResult = unstableRateResult = UnstableRateType.Value switch
+            {
+                UnstableRateSettingType.DrumCentre
+                    => scoreProcessor.HitEvents.CalculateUnstableRateForDrumCentre(
+                        unstableRateResult
+                    ),
+                UnstableRateSettingType.DrumRim
+                    => scoreProcessor.HitEvents.CalculateUnstableRateForDrumRim(unstableRateResult),
+                _ => scoreProcessor.HitEvents.CalculateUnstableRate(unstableRateResult),
+            };
 
             double? unstableRate = unstableRateResult?.Result;
 
