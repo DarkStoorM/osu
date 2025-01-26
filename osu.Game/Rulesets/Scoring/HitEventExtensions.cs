@@ -80,18 +80,9 @@ namespace osu.Game.Rulesets.Scoring
 
         private static bool eventIsDrumRim(this HitEvent e)
         {
-            return e.HitObject.Samples.Any(s =>
-            {
-                return s switch
-                {
-                    // We don't care about Drumrolls or Swells anyway, because we only have to check for Hits and they
-                    // don't have the duration property. We also don't have to worry about capturing Finishers, because
-                    // it's sufficient enough to check for HIT_NORMAL, but "in reverse", because all HitObjects have
-                    // this sample
-                    not IHasDuration => false,
-                    _ => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
-                };
-            });
+            return e.HitObject.Samples.Any(
+                s => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
+            );
         }
 
         /// <summary>
