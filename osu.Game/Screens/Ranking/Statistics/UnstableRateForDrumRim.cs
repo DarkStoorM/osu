@@ -16,7 +16,7 @@ namespace osu.Game.Screens.Ranking.Statistics
         /// </summary>
         /// <param name="hitEvents">Sequence of <see cref="HitEvent"/>s to calculate the unstable rate based on.</param>
         public UnstableRateForDrumRim(IReadOnlyList<HitEvent> hitEvents)
-            : base("Unstable Rate for Kats")
+            : base("Kat UR")
         {
             Value = hitEvents.CalculateUnstableRateForDrumRim()?.Result;
         }
