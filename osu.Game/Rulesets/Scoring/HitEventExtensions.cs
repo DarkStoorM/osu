@@ -78,10 +78,12 @@ namespace osu.Game.Rulesets.Scoring
 
         private static bool isDrumCentre(this HitEvent e) => !eventIsDrumRim(e);
 
-        private static bool eventIsDrumRim(this HitEvent e) =>
-            e.HitObject.Samples.Any(
-                s => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
+        private static bool eventIsDrumRim(this HitEvent e)
+        {
+            return e.HitObject.Samples.Any(s =>
+                s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
             );
+        }
 
         /// <summary>
         /// Calculates the average hit offset/error for a sequence of <see cref="HitEvent"/>s, where negative numbers mean the user hit too early on average.
@@ -102,6 +104,14 @@ namespace osu.Game.Rulesets.Scoring
 
             return timeOffsets.Average();
         }
+
+        public static double? CalculateAverageHitErrorForDrumCentre(
+            this IEnumerable<HitEvent> hitEvents
+        ) => CalculateAverageHitError(hitEvents.Where(e => e.isDrumCentre()));
+
+        public static double? CalculateAverageHitErrorForDrumRim(
+            this IEnumerable<HitEvent> hitEvents
+        ) => CalculateAverageHitError(hitEvents.Where(e => e.isDrumRim()));
 
         public static bool AffectsUnstableRate(HitEvent e) =>
             AffectsUnstableRate(e.HitObject, e.Result);

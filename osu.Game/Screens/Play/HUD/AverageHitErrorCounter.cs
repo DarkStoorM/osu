@@ -9,6 +9,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
+using osu.Game.Configuration;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
@@ -19,21 +20,31 @@ using osuTK;
 
 namespace osu.Game.Screens.Play.HUD
 {
-    public partial class UnstableRateCounterForDrumRim : RollingCounter<int>, ISerialisableDrawable
+    public partial class AverageHitErrorCounter : RollingCounter<int>, ISerialisableDrawable
     {
+        public enum HitErrorType
+        {
+            Global,
+            DrumCentre,
+            DrumRim,
+        }
+
+        [SettingSource("Average Hit Error")]
+        public Bindable<HitErrorType> AverageHitErrorType { get; set; } =
+            new Bindable<HitErrorType>(HitErrorType.Global);
+
         public bool UsesFixedAnchor { get; set; }
 
         protected override double RollingDuration => 0;
 
         private const float alpha_when_invalid = 0.3f;
-        private readonly Bindable<bool> valid = new Bindable<bool>();
 
-        private HitEventExtensions.UnstableRateCalculationResult? unstableRateResult;
+        private readonly Bindable<bool> valid = new Bindable<bool>();
 
         [Resolved]
         private ScoreProcessor scoreProcessor { get; set; } = null!;
 
-        public UnstableRateCounterForDrumRim()
+        public AverageHitErrorCounter()
         {
             Current.Value = 0;
         }
@@ -42,10 +53,10 @@ namespace osu.Game.Screens.Play.HUD
         private void load(OsuColour colours)
         {
             Colour = colours.BlueLighter;
-            valid.BindValueChanged(
-                e =>
-                    DrawableCount.FadeTo(e.NewValue ? 1 : alpha_when_invalid, 1000, Easing.OutQuint)
+            valid.BindValueChanged(e =>
+                DrawableCount.FadeTo(e.NewValue ? 1 : alpha_when_invalid, 1000, Easing.OutQuint)
             );
+            AverageHitErrorType.ValueChanged += _ => updateDisplay();
         }
 
         protected override void LoadComplete()
@@ -54,6 +65,7 @@ namespace osu.Game.Screens.Play.HUD
 
             scoreProcessor.NewJudgement += updateDisplay;
             scoreProcessor.JudgementReverted += updateDisplay;
+
             updateDisplay();
         }
 
@@ -65,16 +77,19 @@ namespace osu.Game.Screens.Play.HUD
 
         private void updateDisplay()
         {
-            unstableRateResult = scoreProcessor.HitEvents.CalculateUnstableRateForDrumRim(
-                unstableRateResult
-            );
+            double? hitError = AverageHitErrorType.Value switch
+            {
+                HitErrorType.DrumCentre
+                    => scoreProcessor.HitEvents.CalculateAverageHitErrorForDrumCentre(),
+                HitErrorType.DrumRim
+                    => scoreProcessor.HitEvents.CalculateAverageHitErrorForDrumRim(),
+                _ => scoreProcessor.HitEvents.CalculateAverageHitError(),
+            };
 
-            double? unstableRate = unstableRateResult?.Result;
+            valid.Value = hitError != null;
 
-            valid.Value = unstableRate != null;
-
-            if (unstableRate != null)
-                Current.Value = (int)Math.Round(unstableRate.Value);
+            if (hitError != null)
+                Current.Value = (int)Math.Round(hitError.Value);
         }
 
         protected override IHasText CreateText() =>
@@ -122,7 +137,7 @@ namespace osu.Game.Screens.Play.HUD
                             Anchor = Anchor.BottomLeft,
                             Origin = Anchor.BottomLeft,
                             Font = OsuFont.Numeric.With(size: 8, fixedWidth: true),
-                            Text = @"UR",
+                            Text = @"ms avg",
                             Padding = new MarginPadding { Bottom = 1.5f }, // align baseline better
                         }
                     }
