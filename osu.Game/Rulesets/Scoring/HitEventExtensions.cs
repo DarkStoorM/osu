@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -78,6 +78,7 @@ namespace osu.Game.Rulesets.Scoring
 
         private static bool isDrumCentre(this HitEvent e) => !eventIsDrumRim(e);
 
+        // TODO: this is apparently still wrong with finishers, fix this
         private static bool eventIsDrumRim(this HitEvent e)
         {
             return e.HitObject.Samples.Any(
@@ -104,6 +105,14 @@ namespace osu.Game.Rulesets.Scoring
 
             return timeOffsets.Average();
         }
+
+        public static double? CalculateAverageHitErrorForDrumCentre(
+            this IEnumerable<HitEvent> hitEvents
+        ) => CalculateAverageHitError(hitEvents.Where(e => e.isDrumCentre()));
+
+        public static double? CalculateAverageHitErrorForDrumRim(
+            this IEnumerable<HitEvent> hitEvents
+        ) => CalculateAverageHitError(hitEvents.Where(e => e.isDrumRim()));
 
         public static bool AffectsUnstableRate(HitEvent e) =>
             AffectsUnstableRate(e.HitObject, e.Result);
