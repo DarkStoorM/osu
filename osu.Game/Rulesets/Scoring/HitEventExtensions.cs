@@ -78,7 +78,6 @@ namespace osu.Game.Rulesets.Scoring
 
         private static bool isDrumCentre(this HitEvent e) => !eventIsDrumRim(e);
 
-        // TODO: this is apparently still wrong with finishers, fix this
         private static bool eventIsDrumRim(this HitEvent e)
         {
             return e.HitObject.Samples.Any(s =>
