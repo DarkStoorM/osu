@@ -74,14 +74,20 @@ namespace osu.Game.Rulesets.Scoring
             return CalculateUnstableRate(hitEvents.Where(e => e.isDrumRim()).ToList(), result);
         }
 
+        public static int DrumCentreHitCount(this IEnumerable<HitEvent> hitEvents) =>
+            hitEvents.Count(e => e.isDrumCentre());
+
+        public static int DrumRimHitCount(this IEnumerable<HitEvent> hitEvents) =>
+            hitEvents.Count(e => e.isDrumRim());
+
         private static bool isDrumRim(this HitEvent e) => eventIsDrumRim(e);
 
         private static bool isDrumCentre(this HitEvent e) => !eventIsDrumRim(e);
 
         private static bool eventIsDrumRim(this HitEvent e)
         {
-            return e.HitObject.Samples.Any(s =>
-                s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
+            return e.HitObject.Samples.Any(
+                s => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
             );
         }
 
