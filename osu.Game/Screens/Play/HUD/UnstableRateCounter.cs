@@ -77,7 +77,7 @@ namespace osu.Game.Screens.Play.HUD
 
         private void updateDisplay()
         {
-            unstableRateResult = unstableRateResult = UnstableRateType.Value switch
+            unstableRateResult = UnstableRateType.Value switch
             {
                 UnstableRateSettingType.DrumCentre
                     => scoreProcessor.HitEvents.CalculateUnstableRateForDrumCentre(
