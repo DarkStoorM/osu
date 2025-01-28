@@ -52,9 +52,8 @@ namespace osu.Game.Screens.Play.HUD
         private void load(OsuColour colours)
         {
             Colour = colours.BlueLighter;
-            valid.BindValueChanged(
-                e =>
-                    DrawableCount.FadeTo(e.NewValue ? 1 : alpha_when_invalid, 1000, Easing.OutQuint)
+            valid.BindValueChanged(e =>
+                DrawableCount.FadeTo(e.NewValue ? 1 : alpha_when_invalid, 1000, Easing.OutQuint)
             );
             UnstableRateType.ValueChanged += _ => updateDisplay();
         }
@@ -81,7 +80,7 @@ namespace osu.Game.Screens.Play.HUD
             {
                 HitEventCountType.DrumCentre => scoreProcessor.HitEvents.DrumCentreHitCount(),
                 HitEventCountType.DrumRim => scoreProcessor.HitEvents.DrumRimHitCount(),
-                _ => scoreProcessor.HitEvents.Count,
+                _ => scoreProcessor.HitEvents.TotalDrumHitCount(),
             };
 
             valid.Value = hitCount != 0;

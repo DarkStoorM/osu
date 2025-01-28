@@ -74,11 +74,25 @@ namespace osu.Game.Rulesets.Scoring
             return CalculateUnstableRate(hitEvents.Where(e => e.isDrumRim()).ToList(), result);
         }
 
+        /// <summary>
+        /// See: <see cref="TotalDrumHitCount"/>.
+        /// </summary>
         public static int DrumCentreHitCount(this IEnumerable<HitEvent> hitEvents) =>
-            hitEvents.Count(e => e.isDrumCentre());
+            hitEvents.Count(e => e.isDrumCentre() && AffectsUnstableRate(e));
 
+        /// <summary>
+        /// See: <see cref="TotalDrumHitCount"/>.
+        /// </summary>
         public static int DrumRimHitCount(this IEnumerable<HitEvent> hitEvents) =>
-            hitEvents.Count(e => e.isDrumRim());
+            hitEvents.Count(e => e.isDrumRim() && AffectsUnstableRate(e));
+
+        /// <summary>
+        /// Returns the total number of drum hits in a sequence of <see cref="HitEvent"/>s that affect unstable rate.
+        /// The reason for checking if the hit affects unstable rate is to avoid counting hits that are not actually
+        /// judged, e.g. ticks, Swells or the duplicate events from finishers.
+        /// </summary>
+        public static int TotalDrumHitCount(this IEnumerable<HitEvent> hitEvents) =>
+            hitEvents.Count(AffectsUnstableRate);
 
         private static bool isDrumRim(this HitEvent e) => eventIsDrumRim(e);
 
@@ -86,8 +100,8 @@ namespace osu.Game.Rulesets.Scoring
 
         private static bool eventIsDrumRim(this HitEvent e)
         {
-            return e.HitObject.Samples.Any(
-                s => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
+            return e.HitObject.Samples.Any(s =>
+                s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
             );
         }
 
