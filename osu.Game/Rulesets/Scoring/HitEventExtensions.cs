@@ -35,6 +35,14 @@ namespace osu.Game.Rulesets.Scoring
             if (hitEvents.Count < result.EventCount + 1)
                 result = new UnstableRateCalculationResult();
 
+            // The reason for this filter is that we are still passing the duplicate events from finishers, which
+            // introduces an inaccuracy to the in-game UR counter. Every finisher increases the hitEvents.Count by 1,
+            // but luckily, this does not affect the actual unstable rate on the result screen, it already contains the
+            // correct hitEvents. Example: 10 finishers-only map will pass 20 hitEvents to the UR counter, but the
+            // result screen will still have 10, so that's where the difference in unstable rate comes from in the
+            // counter vs result screen.
+            hitEvents = hitEvents.Where(AffectsUnstableRate).ToList();
+
             for (int i = result.EventCount; i < hitEvents.Count; i++)
             {
                 HitEvent e = hitEvents[i];
