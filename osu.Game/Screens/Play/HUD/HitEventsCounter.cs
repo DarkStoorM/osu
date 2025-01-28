@@ -29,8 +29,8 @@ namespace osu.Game.Screens.Play.HUD
             DrumRim,
         }
 
-        [SettingSource("Unstable rate")]
-        public Bindable<HitEventCountType> UnstableRateType { get; set; } =
+        [SettingSource("Hit event type")]
+        public Bindable<HitEventCountType> HitEventType { get; set; } =
             new Bindable<HitEventCountType>(HitEventCountType.Total);
 
         public bool UsesFixedAnchor { get; set; }
@@ -55,7 +55,7 @@ namespace osu.Game.Screens.Play.HUD
             valid.BindValueChanged(e =>
                 DrawableCount.FadeTo(e.NewValue ? 1 : alpha_when_invalid, 1000, Easing.OutQuint)
             );
-            UnstableRateType.ValueChanged += _ => updateDisplay();
+            HitEventType.ValueChanged += _ => updateDisplay();
         }
 
         protected override void LoadComplete()
@@ -76,7 +76,7 @@ namespace osu.Game.Screens.Play.HUD
 
         private void updateDisplay()
         {
-            double hitCount = UnstableRateType.Value switch
+            double hitCount = HitEventType.Value switch
             {
                 HitEventCountType.DrumCentre => scoreProcessor.HitEvents.DrumCentreHitCount(),
                 HitEventCountType.DrumRim => scoreProcessor.HitEvents.DrumRimHitCount(),
