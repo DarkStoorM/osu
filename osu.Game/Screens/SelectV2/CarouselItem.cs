@@ -30,14 +30,19 @@ namespace osu.Game.Screens.SelectV2
         public float DrawHeight { get; set; } = DEFAULT_HEIGHT;
 
         /// <summary>
-        /// Whether this item should be a valid target for user group selection hotkeys.
+        /// Defines the display depth relative to other <see cref="CarouselItem"/>s.
         /// </summary>
-        public bool IsGroupSelectionTarget { get; set; }
+        public int DepthLayer { get; set; }
 
         /// <summary>
-        /// Whether this item is visible or collapsed (hidden).
+        /// Whether this item is visible or hidden.
         /// </summary>
         public bool IsVisible { get; set; } = true;
+
+        /// <summary>
+        /// Whether this item is expanded or not. Should only be used for headers of groups.
+        /// </summary>
+        public bool IsExpanded { get; set; }
 
         public CarouselItem(object model)
         {
