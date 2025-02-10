@@ -179,6 +179,11 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
                                                                         Anchor = Anchor.CentreLeft,
                                                                         Origin = Anchor.CentreLeft
                                                                     },
+                                                                    new FreestyleStatusPill(Room)
+                                                                    {
+                                                                        Anchor = Anchor.CentreLeft,
+                                                                        Origin = Anchor.CentreLeft
+                                                                    },
                                                                     endDateInfo = new EndDateInfo(Room)
                                                                     {
                                                                         Anchor = Anchor.CentreLeft,
@@ -356,7 +361,7 @@ namespace osu.Game.Screens.OnlinePlay.Lounge.Components
 
                 return items.ToArray();
 
-                string formatRoomUrl(long id) => $@"{api.WebsiteRootUrl}/multiplayer/rooms/{id}";
+                string formatRoomUrl(long id) => $@"{api.Endpoints.WebsiteUrl}/multiplayer/rooms/{id}";
             }
         }
 
