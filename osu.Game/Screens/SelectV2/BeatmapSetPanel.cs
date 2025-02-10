@@ -1,7 +1,6 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using System;
 using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -25,6 +24,7 @@ namespace osu.Game.Screens.SelectV2
         private BeatmapCarousel carousel { get; set; } = null!;
 
         private OsuSpriteText text = null!;
+        private Box box = null!;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -34,7 +34,7 @@ namespace osu.Game.Screens.SelectV2
 
             InternalChildren = new Drawable[]
             {
-                new Box
+                box = new Box
                 {
                     Colour = Color4.Yellow.Darken(5),
                     Alpha = 0.8f,
@@ -47,6 +47,11 @@ namespace osu.Game.Screens.SelectV2
                     Origin = Anchor.CentreLeft,
                 }
             };
+
+            Expanded.BindValueChanged(value =>
+            {
+                box.FadeColour(value.NewValue ? Color4.Yellow.Darken(2) : Color4.Yellow.Darken(5), 500, Easing.OutQuint);
+            });
 
             KeyboardSelected.BindValueChanged(value =>
             {
@@ -67,7 +72,6 @@ namespace osu.Game.Screens.SelectV2
             base.PrepareForUse();
 
             Debug.Assert(Item != null);
-            Debug.Assert(Item.IsGroupSelectionTarget);
 
             var beatmapSetInfo = (BeatmapSetInfo)Item.Model;
 
@@ -78,7 +82,7 @@ namespace osu.Game.Screens.SelectV2
 
         protected override bool OnClick(ClickEvent e)
         {
-            carousel.CurrentSelection = Item!.Model;
+            carousel.Activate(Item!);
             return true;
         }
 
@@ -86,14 +90,13 @@ namespace osu.Game.Screens.SelectV2
 
         public CarouselItem? Item { get; set; }
         public BindableBool Selected { get; } = new BindableBool();
+        public BindableBool Expanded { get; } = new BindableBool();
         public BindableBool KeyboardSelected { get; } = new BindableBool();
 
         public double DrawYPosition { get; set; }
 
         public void Activated()
         {
-            // sets should never be activated.
-            throw new InvalidOperationException();
         }
 
         #endregion
