@@ -83,7 +83,7 @@ namespace osu.Game.Screens.Play.HUD
                     => scoreProcessor.HitEvents.CalculateAverageHitErrorForDrumCentre(),
                 HitErrorType.DrumRim
                     => scoreProcessor.HitEvents.CalculateAverageHitErrorForDrumRim(),
-                _ => scoreProcessor.HitEvents.CalculateAverageHitError(),
+                _ => scoreProcessor.HitEvents.CalculateMedianHitError(),
             };
 
             valid.Value = hitError != null;
