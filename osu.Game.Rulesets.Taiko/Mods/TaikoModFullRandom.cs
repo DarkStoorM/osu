@@ -57,11 +57,13 @@ namespace osu.Game.Rulesets.Taiko.Mods
             }
         }
 
-        public override Type[] IncompatibleMods => [.. base.IncompatibleMods, typeof(TaikoModRandom), typeof(TaikoModSwap)];
+        public override Type[] IncompatibleMods =>
+            [.. base.IncompatibleMods, typeof(TaikoModRandom), typeof(TaikoModSwap)];
         public override IconUsage? Icon => OsuIcon.Dice;
 
         [SettingSource("Longest Pattern Length")]
-        public Bindable<PatternLength> LongestPatternLength { get; } = new Bindable<PatternLength>(PatternLength.Seven);
+        public Bindable<PatternLength> LongestPatternLength { get; } =
+            new Bindable<PatternLength>(PatternLength.Seven);
 
         [SettingSource("Colour Seed", SettingControlType = typeof(SettingsNumberBox))]
         public Bindable<int?> ColourSeed { get; } = new Bindable<int?>();
@@ -69,10 +71,17 @@ namespace osu.Game.Rulesets.Taiko.Mods
         [SettingSource("Pattern Length Seed", SettingControlType = typeof(SettingsNumberBox))]
         public Bindable<int?> PatternLengthSeed { get; } = new Bindable<int?>();
 
-        [SettingSource("Maximum Count Of Consecutive Monocolours", SettingControlType = typeof(SettingsNumberBox))]
+        [SettingSource(
+            "Maximum Count Of Consecutive Monocolours",
+            SettingControlType = typeof(SettingsNumberBox)
+        )]
         public Bindable<int?> MaximumCountOfConsecutiveMonocolours { get; } = new Bindable<int?>();
 
-        [SettingSource("Turn Kiai Into Streams (EXPERIMENTAL)", "Incompatible with Timing Control Point spam!", SettingControlType = typeof(SettingsCheckbox))]
+        [SettingSource(
+            "Turn Kiai Into Streams (EXPERIMENTAL)",
+            "Incompatible with Timing Control Point spam!",
+            SettingControlType = typeof(SettingsCheckbox)
+        )]
         public BindableBool TurnKiaiIntoStreams { get; } = new BindableBool();
 
         [SettingSource("Generate At Double BPM", SettingControlType = typeof(SettingsCheckbox))]
@@ -82,12 +91,13 @@ namespace osu.Game.Rulesets.Taiko.Mods
         public BindableBool InsertOneSixthTriplet { get; } = new BindableBool();
 
         [SettingSource("1/6 Insertion Chance", SettingControlType = typeof(SettingsSlider<float>))]
-        public BindableFloat OneSixthInsertionChance { get; } = new BindableFloat(0.05f)
-        {
-            MinValue = 0.0f,
-            MaxValue = 0.5f,
-            Precision = 0.01f,
-        };
+        public BindableFloat OneSixthInsertionChance { get; } =
+            new BindableFloat(0.05f)
+            {
+                MinValue = 0.0f,
+                MaxValue = 0.5f,
+                Precision = 0.01f,
+            };
 
         [SettingSource("1/6 Insertion Seed", SettingControlType = typeof(SettingsNumberBox))]
         public Bindable<int?> InsertionSeed { get; } = new Bindable<int?>();
@@ -95,22 +105,33 @@ namespace osu.Game.Rulesets.Taiko.Mods
         [SettingSource("1/6 Colour Seed", SettingControlType = typeof(SettingsNumberBox))]
         public Bindable<int?> OneSixthColourSeed { get; } = new Bindable<int?>();
 
-        [SettingSource("Invert Starting Rhythm Change Colour", SettingControlType = typeof(SettingsCheckbox))]
+        [SettingSource(
+            "Invert Starting Rhythm Change Colour",
+            SettingControlType = typeof(SettingsCheckbox)
+        )]
         public BindableBool InvertColourOnRhythmChangeStart { get; } = new BindableBool(true);
 
-        [SettingSource("Invert Colour After Rhythm Change", SettingControlType = typeof(SettingsCheckbox))]
+        [SettingSource(
+            "Invert Colour After Rhythm Change",
+            SettingControlType = typeof(SettingsCheckbox)
+        )]
         public BindableBool InvertColourAfterRhythmChange { get; } = new BindableBool(true);
 
         [SettingSource("Longer 1/6", SettingControlType = typeof(SettingsCheckbox))]
         public BindableBool LongerOneSixth { get; } = new BindableBool();
 
-        [SettingSource("Kat to Don Ratio", "Will not work well with monocolour restriction", SettingControlType = typeof(SettingsSlider<float>))]
-        public BindableFloat KatToDonRatio { get; } = new BindableFloat(0.5f)
-        {
-            MinValue = 0.0f,
-            MaxValue = 1.0f,
-            Precision = 0.001f,
-        };
+        [SettingSource(
+            "Kat to Don Ratio",
+            "Will not work well with monocolour restriction",
+            SettingControlType = typeof(SettingsSlider<float>)
+        )]
+        public BindableFloat KatToDonRatio { get; } =
+            new BindableFloat(0.5f)
+            {
+                MinValue = 0.0f,
+                MaxValue = 1.0f,
+                Precision = 0.001f,
+            };
 
         /// <summary>
         /// List of "faulty" hit objects to remove from the beatmap after the generation is done, captured at timing
@@ -166,7 +187,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// Checks if we have actual two hit objects that we can use for the bounds. We only care about Hits, and not
         /// drumrolls or swells.
         /// </summary>
-        private bool hasAtLeastTwoHitObjects => taikoBeatmap.HitObjects.Select(h => h is Hit).Count() >= 2;
+        private bool hasAtLeastTwoHitObjects =>
+            taikoBeatmap.HitObjects.Select(h => h is Hit).Count() >= 2;
 
         /// <summary>
         /// Will interrupt any object insertion.
@@ -176,17 +198,23 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// <summary>
         /// True if we are currently inside a "valid" Kiai section. See <see cref="initialiseKiaiTimes"/>.
         /// </summary>
-        private bool isInKiaiTime => kiaiTimes.Any(k => currentTime >= k.StartTime && currentTime <= k.EndTime);
+        private bool isInKiaiTime =>
+            kiaiTimes.Any(k => currentTime >= k.StartTime && currentTime <= k.EndTime);
 
-        private bool hasTimingPointChanged => !currentTimingControlPoint.Equals(lastUsedTimingControlPoint);
+        private bool hasTimingPointChanged =>
+            !currentTimingControlPoint.Equals(lastUsedTimingControlPoint);
 
         /// <summary>
         /// Used by 1/6 pattern generation to prevent the insertion in case there is a Timing Control Point change in
         /// the next two beats
         /// </summary>
-        private bool willTimingPointChangeSoon => !currentTimingControlPoint.Equals(taikoBeatmap.ControlPointInfo.TimingPointAt(currentTime + beatOne * 2));
+        private bool willTimingPointChangeSoon =>
+            !currentTimingControlPoint.Equals(
+                taikoBeatmap.ControlPointInfo.TimingPointAt(currentTime + beatOne * 2)
+            );
 
-        private TimingControlPoint timingPointAtCurrentTime => taikoBeatmap.ControlPointInfo.TimingPointAt(currentTime);
+        private TimingControlPoint timingPointAtCurrentTime =>
+            taikoBeatmap.ControlPointInfo.TimingPointAt(currentTime);
 
         public TaikoModFullRandom()
         {
@@ -267,7 +295,10 @@ namespace osu.Game.Rulesets.Taiko.Mods
                         break;
 
                     // If the max monocolour number was set, the colour will be inverted on reaching the limit
-                    if (hitObject.Type == currentHitType && MaximumCountOfConsecutiveMonocolours.Value != null)
+                    if (
+                        hitObject.Type == currentHitType
+                        && MaximumCountOfConsecutiveMonocolours.Value != null
+                    )
                     {
                         monocolourCountInPattern++;
 
@@ -303,7 +334,12 @@ namespace osu.Game.Rulesets.Taiko.Mods
                             if (InvertColourAfterRhythmChange.Value)
                                 invertHitObjectColour(hitObject, lastHitObjectInOneSixthPattern);
                         }
-                        else if (InsertOneSixthTriplet.Value && !wasOneSixthGeneratedRecently && !willTimingPointChangeSoon && insertionChanceRNG.NextDouble() < OneSixthInsertionChance.Value)
+                        else if (
+                            InsertOneSixthTriplet.Value
+                            && !wasOneSixthGeneratedRecently
+                            && !willTimingPointChangeSoon
+                            && insertionChanceRNG.NextDouble() < OneSixthInsertionChance.Value
+                        )
                         {
                             monocolourCountInPattern = 1;
                             wasOneSixthGeneratedRecently = true;
@@ -322,7 +358,11 @@ namespace osu.Game.Rulesets.Taiko.Mods
                                 i += 2;
 
                             // Extend the initial 1/6 by 3 extra hit objects, but less frequently
-                            if (LongerOneSixth.Value && insertionChanceRNG.NextDouble() < OneSixthInsertionChance.Value / 2)
+                            if (
+                                LongerOneSixth.Value
+                                && insertionChanceRNG.NextDouble()
+                                    < OneSixthInsertionChance.Value / 2
+                            )
                             {
                                 lastHitObjectInOneSixthPattern = addOneSixthTriplet(currentPattern);
 
@@ -336,7 +376,12 @@ namespace osu.Game.Rulesets.Taiko.Mods
                         // Zzz... another workaround for the Kiai option. We didn't get to call the colour inversion if
                         // we were too close. We don't really have to do this, but the colour inversion options exist
                         // for a reason after all
-                        if (TurnKiaiIntoStreams.Value && wasOneSixthGeneratedRecently && InvertColourOnRhythmChangeStart.Value && InvertColourAfterRhythmChange.Value)
+                        if (
+                            TurnKiaiIntoStreams.Value
+                            && wasOneSixthGeneratedRecently
+                            && InvertColourOnRhythmChangeStart.Value
+                            && InvertColourAfterRhythmChange.Value
+                        )
                         {
                             invertHitObjectColour(hitObject, lastHitObjectInOneSixthPattern);
                         }
@@ -402,8 +447,12 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// </summary>
         private void initialiseKiaiTimes()
         {
-            IReadOnlyList<EffectControlPoint> effectControlPoints = taikoBeatmap.ControlPointInfo.EffectPoints;
-            List<EffectControlPoint> kiaiSections = effectControlPoints.Where(e => e.KiaiMode).ToList();
+            IReadOnlyList<EffectControlPoint> effectControlPoints = taikoBeatmap
+                .ControlPointInfo
+                .EffectPoints;
+            List<EffectControlPoint> kiaiSections = effectControlPoints
+                .Where(e => e.KiaiMode)
+                .ToList();
 
             // Kiai needs to be at least 5 full beats (-margin of error) or 3 seconds. It wouldn't make sense to
             // consider something a stream if it was shorter than that. This is also used to check if the Kiai sections
@@ -415,9 +464,15 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 // Snap the Kiai start time (and later the end time) to the closest 1/1 beat divisor in case it was
                 // placed off-beat, which is often done to control when the SV change happens, people like doing that.
                 // Without it, it could potentially offset the next pattern by 1/4 in a wrong spot
-                double kiaiSnappedStartTime = taikoBeatmap.ControlPointInfo.GetClosestSnappedTime(kiaiStartingPoint.Time, 1);
-                EffectControlPoint? kiaiEndPoint = effectControlPoints.FirstOrDefault(effectControlPoint
-                    => effectControlPoint.Time > kiaiStartingPoint.Time && !effectControlPoint.KiaiMode);
+                double kiaiSnappedStartTime = taikoBeatmap.ControlPointInfo.GetClosestSnappedTime(
+                    kiaiStartingPoint.Time,
+                    1
+                );
+                EffectControlPoint? kiaiEndPoint = effectControlPoints.FirstOrDefault(
+                    effectControlPoint =>
+                        effectControlPoint.Time > kiaiStartingPoint.Time
+                        && !effectControlPoint.KiaiMode
+                );
 
                 // There might be a situation where the Kiai just never stops (?), so we will use the earlier defined
                 // end of the beatmap in that case
@@ -428,7 +483,10 @@ namespace osu.Game.Rulesets.Taiko.Mods
                     return;
                 }
 
-                double snappedKiaiEndTime = taikoBeatmap.ControlPointInfo.GetClosestSnappedTime(kiaiEndPoint.Time, 1);
+                double snappedKiaiEndTime = taikoBeatmap.ControlPointInfo.GetClosestSnappedTime(
+                    kiaiEndPoint.Time,
+                    1
+                );
 
                 // Only use this start-end pair if the length of the kiai section is above threshold
                 if (snappedKiaiEndTime - kiaiStartingPoint.Time >= kiaiThreshold)
@@ -531,7 +589,13 @@ namespace osu.Game.Rulesets.Taiko.Mods
 
             // The extra subtraction is used to eventually move the start forward in case the previously generated
             // pattern was too long and overlapped with the Kiai Start
-            return (int)((kiaiSection.EndTime - kiaiSection.StartTime - (currentTime - kiaiSection.StartTime)) / beatOneFourth);
+            return (int)(
+                (
+                    kiaiSection.EndTime
+                    - kiaiSection.StartTime
+                    - (currentTime - kiaiSection.StartTime)
+                ) / beatOneFourth
+            );
         }
 
         /// <summary>
@@ -589,7 +653,9 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// </summary>
         private KiaiTime? getCurrentKiaiTimeOrNull()
         {
-            return kiaiTimes.FirstOrDefault(kiaiTime => currentTime >= kiaiTime.StartTime && currentTime <= kiaiTime.EndTime);
+            return kiaiTimes.FirstOrDefault(
+                kiaiTime => currentTime >= kiaiTime.StartTime && currentTime <= kiaiTime.EndTime
+            );
         }
 
         /// <summary>
@@ -597,7 +663,9 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// </summary>
         private KiaiTime? getNextClosestKiaiOrNull()
         {
-            return kiaiTimes.FirstOrDefault(kiaiTime => currentTime < kiaiTime.StartTime && currentTime < kiaiTime.EndTime);
+            return kiaiTimes.FirstOrDefault(
+                kiaiTime => currentTime < kiaiTime.StartTime && currentTime < kiaiTime.EndTime
+            );
         }
 
         /// <summary>
@@ -618,7 +686,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
 
         private void invertHitObjectColour(Hit hitObjectToInvert)
         {
-            hitObjectToInvert.Type = hitObjectToInvert.Type == HitType.Centre ? HitType.Rim : HitType.Centre;
+            hitObjectToInvert.Type =
+                hitObjectToInvert.Type == HitType.Centre ? HitType.Rim : HitType.Centre;
         }
 
         /// <summary>
@@ -669,7 +738,10 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 // unreadable and incorrect anyway. This is just a workaround to the weird timing changes the artist
                 // decided to use in their songs, BUT, there are still cases where this can happen, so I don't care
                 // about those maps. It can also create a small gap, but it's better than stacked hits
-                if (lastHitObjectCreated != null && currentTime - lastHitObjectCreated.StartTime < beatOneSixth)
+                if (
+                    lastHitObjectCreated != null
+                    && currentTime - lastHitObjectCreated.StartTime < beatOneSixth
+                )
                     faultyHitObjectsToRemove.Add(lastHitObjectCreated);
 
                 updateBPMAndBeatLengths(currentTimingControlPoint);
