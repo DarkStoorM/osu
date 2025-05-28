@@ -107,8 +107,9 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                             {
                                 Carousel = new TestBeatmapCarousel
                                 {
-                                    NewItemsPresented = () => NewItemsPresentedInvocationCount++,
-                                    ChooseRecommendedBeatmap = beatmaps => BeatmapRecommendationFunction?.Invoke(beatmaps) ?? beatmaps.First(),
+                                    NewItemsPresented = _ => NewItemsPresentedInvocationCount++,
+                                    RequestSelection = b => Carousel.CurrentSelection = b,
+                                    RequestRecommendedSelection = beatmaps => Carousel.CurrentSelection = BeatmapRecommendationFunction?.Invoke(beatmaps) ?? beatmaps.First(),
                                     BleedTop = 50,
                                     BleedBottom = 50,
                                     Anchor = Anchor.Centre,
@@ -219,7 +220,8 @@ namespace osu.Game.Tests.Visual.SongSelectV2
                 // offset by one because the group itself is included in the items list.
                 CarouselItem item = groupingFilter.GroupItems[g].ElementAt(panel + 1);
 
-                return ReferenceEquals(Carousel.CurrentSelection, item.Model);
+                return (Carousel.CurrentSelection as BeatmapInfo)?
+                    .Equals(item.Model as BeatmapInfo) == true;
             });
         }
 
@@ -228,7 +230,10 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             AddUntilStep($"selected is set{set}{(diff.HasValue ? $" diff{diff.Value}" : "")}", () =>
             {
                 if (diff != null)
-                    return ReferenceEquals(Carousel.CurrentSelection, BeatmapSets[set].Beatmaps[diff.Value]);
+                {
+                    return (Carousel.CurrentSelection as BeatmapInfo)?
+                        .Equals(BeatmapSets[set].Beatmaps[diff.Value]) == true;
+                }
 
                 return BeatmapSets[set].Beatmaps.Contains(Carousel.CurrentSelection);
             });
@@ -362,9 +367,12 @@ namespace osu.Game.Tests.Visual.SongSelectV2
         {
             public IEnumerable<BeatmapInfo> PostFilterBeatmaps = null!;
 
-            protected override Task<IEnumerable<CarouselItem>> FilterAsync()
+            public new BeatmapSetInfo? ExpandedBeatmapSet => base.ExpandedBeatmapSet;
+            public new GroupDefinition? ExpandedGroup => base.ExpandedGroup;
+
+            protected override Task<IEnumerable<CarouselItem>> FilterAsync(bool clearExistingPanels = false)
             {
-                var filterAsync = base.FilterAsync();
+                var filterAsync = base.FilterAsync(clearExistingPanels);
                 filterAsync.ContinueWith(result =>
                 {
                     if (result.IsCompletedSuccessfully)
