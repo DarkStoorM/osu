@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Pooling;
@@ -27,9 +29,14 @@ namespace osu.Game.Screens.SelectV2
         public Action<BeatmapInfo>? RequestPresentBeatmap { private get; init; }
 
         /// <summary>
-        /// From the provided beatmaps, return the most appropriate one for the user's skill.
+        /// From the provided beatmaps, select the most appropriate one for the user's skill.
         /// </summary>
-        public Func<IEnumerable<BeatmapInfo>, BeatmapInfo>? ChooseRecommendedBeatmap { private get; init; }
+        public required Action<IEnumerable<BeatmapInfo>> RequestRecommendedSelection { private get; init; }
+
+        /// <summary>
+        /// Selection requested for the provided beatmap.
+        /// </summary>
+        public required Action<BeatmapInfo> RequestSelection { private get; init; }
 
         public const float SPACING = 3f;
 
@@ -74,10 +81,11 @@ namespace osu.Game.Screens.SelectV2
         }
 
         [BackgroundDependencyLoader]
-        private void load(BeatmapStore beatmapStore, CancellationToken? cancellationToken)
+        private void load(BeatmapStore beatmapStore, AudioManager audio, CancellationToken? cancellationToken)
         {
             setupPools();
             setupBeatmaps(beatmapStore, cancellationToken);
+            loadSamples(audio);
         }
 
         #region Beatmap source hookup
@@ -139,7 +147,7 @@ namespace osu.Game.Screens.SelectV2
                             // TODO: should this exist in song select instead of here?
                             // we need to ensure the global beatmap is also updated alongside changes.
                             if (CurrentSelection != null && CheckModelEquality(beatmap, CurrentSelection))
-                                CurrentSelection = matchingNewBeatmap;
+                                RequestSelection(matchingNewBeatmap);
 
                             Items.ReplaceRange(previousIndex, 1, [matchingNewBeatmap]);
                             newSetBeatmaps.Remove(matchingNewBeatmap);
@@ -166,44 +174,52 @@ namespace osu.Game.Screens.SelectV2
 
         #region Selection handling
 
-        private GroupDefinition? lastSelectedGroup;
-        private BeatmapInfo? lastSelectedBeatmap;
+        protected GroupDefinition? ExpandedGroup { get; private set; }
+
+        protected BeatmapSetInfo? ExpandedBeatmapSet { get; private set; }
 
         protected override void HandleItemActivated(CarouselItem item)
         {
-            switch (item.Model)
+            try
             {
-                case GroupDefinition group:
-                    // Special case – collapsing an open group.
-                    if (lastSelectedGroup == group)
-                    {
-                        setExpansionStateOfGroup(lastSelectedGroup, false);
-                        lastSelectedGroup = null;
+                switch (item.Model)
+                {
+                    case GroupDefinition group:
+                        // Special case – collapsing an open group.
+                        if (ExpandedGroup == group)
+                        {
+                            setExpansionStateOfGroup(ExpandedGroup, false);
+                            ExpandedGroup = null;
+                            return;
+                        }
+
+                        setExpandedGroup(group);
                         return;
-                    }
 
-                    setExpandedGroup(group);
-                    return;
+                    case BeatmapSetInfo setInfo:
+                        // Selecting a set isn't valid – let's re-select the first visible difficulty.
+                        if (grouping.SetItems.TryGetValue(setInfo, out var items))
+                        {
+                            var beatmaps = items.Select(i => i.Model).OfType<BeatmapInfo>();
+                            RequestRecommendedSelection(beatmaps);
+                        }
 
-                case BeatmapSetInfo setInfo:
-                    // Selecting a set isn't valid – let's re-select the first visible difficulty.
-                    if (grouping.SetItems.TryGetValue(setInfo, out var items))
-                    {
-                        var beatmaps = items.Select(i => i.Model).OfType<BeatmapInfo>();
-                        CurrentSelection = ChooseRecommendedBeatmap?.Invoke(beatmaps) ?? beatmaps.First();
-                    }
-
-                    return;
-
-                case BeatmapInfo beatmapInfo:
-                    if (CurrentSelection != null && CheckModelEquality(CurrentSelection, beatmapInfo))
-                    {
-                        RequestPresentBeatmap?.Invoke(beatmapInfo);
                         return;
-                    }
 
-                    CurrentSelection = beatmapInfo;
-                    return;
+                    case BeatmapInfo beatmapInfo:
+                        if (CurrentSelection != null && CheckModelEquality(CurrentSelection, beatmapInfo))
+                        {
+                            RequestPresentBeatmap?.Invoke(beatmapInfo);
+                            return;
+                        }
+
+                        RequestSelection(beatmapInfo);
+                        return;
+                }
+            }
+            finally
+            {
+                playActivationSound(item);
             }
         }
 
@@ -228,6 +244,22 @@ namespace osu.Game.Screens.SelectV2
             }
         }
 
+        protected override void HandleFilterCompleted()
+        {
+            base.HandleFilterCompleted();
+
+            // Store selected group before handling selection (it may implicitly change the expanded group).
+            var groupForReselection = ExpandedGroup;
+
+            // Ensure correct post-selection logic is handled on the new items list.
+            // This will update the visual state of the selected item.
+            HandleItemSelected(CurrentSelection);
+
+            // If a group was selected that is not the one containing the selection, reselect it.
+            if (groupForReselection != null)
+                setExpandedGroup(groupForReselection);
+        }
+
         protected override bool CheckValidForGroupSelection(CarouselItem item)
         {
             switch (item.Model)
@@ -248,9 +280,9 @@ namespace osu.Game.Screens.SelectV2
 
         private void setExpandedGroup(GroupDefinition group)
         {
-            if (lastSelectedGroup != null)
-                setExpansionStateOfGroup(lastSelectedGroup, false);
-            lastSelectedGroup = group;
+            if (ExpandedGroup != null)
+                setExpansionStateOfGroup(ExpandedGroup, false);
+            ExpandedGroup = group;
             setExpansionStateOfGroup(group, true);
         }
 
@@ -304,10 +336,10 @@ namespace osu.Game.Screens.SelectV2
 
         private void setExpandedSet(BeatmapInfo beatmapInfo)
         {
-            if (lastSelectedBeatmap != null)
-                setExpansionStateOfSetItems(lastSelectedBeatmap.BeatmapSet!, false);
-            lastSelectedBeatmap = beatmapInfo;
-            setExpansionStateOfSetItems(beatmapInfo.BeatmapSet!, true);
+            if (ExpandedBeatmapSet != null)
+                setExpansionStateOfSetItems(ExpandedBeatmapSet, false);
+            ExpandedBeatmapSet = beatmapInfo.BeatmapSet!;
+            setExpansionStateOfSetItems(ExpandedBeatmapSet, true);
         }
 
         private void setExpansionStateOfSetItems(BeatmapSetInfo set, bool expanded)
@@ -321,6 +353,51 @@ namespace osu.Game.Screens.SelectV2
                     else
                         i.IsVisible = expanded;
                 }
+            }
+        }
+
+        #endregion
+
+        #region Audio
+
+        private Sample? sampleChangeDifficulty;
+        private Sample? sampleChangeSet;
+        private Sample? sampleOpen;
+        private Sample? sampleClose;
+
+        private double audioFeedbackLastPlaybackTime;
+
+        private void loadSamples(AudioManager audio)
+        {
+            sampleChangeDifficulty = audio.Samples.Get(@"SongSelect/select-difficulty");
+            sampleChangeSet = audio.Samples.Get(@"SongSelect/select-expand");
+            sampleOpen = audio.Samples.Get(@"UI/menu-open");
+            sampleClose = audio.Samples.Get(@"UI/menu-close");
+        }
+
+        private void playActivationSound(CarouselItem item)
+        {
+            if (Time.Current - audioFeedbackLastPlaybackTime >= OsuGameBase.SAMPLE_DEBOUNCE_TIME)
+            {
+                switch (item.Model)
+                {
+                    case GroupDefinition:
+                        if (item.IsExpanded)
+                            sampleOpen?.Play();
+                        else
+                            sampleClose?.Play();
+                        return;
+
+                    case BeatmapSetInfo:
+                        sampleChangeSet?.Play();
+                        return;
+
+                    case BeatmapInfo:
+                        sampleChangeDifficulty?.Play();
+                        return;
+                }
+
+                audioFeedbackLastPlaybackTime = Time.Current;
             }
         }
 
@@ -355,13 +432,22 @@ namespace osu.Game.Screens.SelectV2
 
         private ScheduledDelegate? loadingDebounce;
 
+        /// <summary>
+        /// We need to track this state locally since `FilterCriteria` is passed by reference and not accurate.
+        /// It should really be a struct.
+        /// </summary>
+        private bool splitOutDifficulties;
+
         public void Filter(FilterCriteria criteria)
         {
+            bool resetDisplay = criteria.SplitOutDifficulties != splitOutDifficulties;
+            splitOutDifficulties = criteria.SplitOutDifficulties;
+
             Criteria = criteria;
 
             loadingDebounce ??= Scheduler.AddDelayed(() => loading.Show(), 250);
 
-            FilterAsync().ContinueWith(_ => Schedule(() =>
+            FilterAsync(resetDisplay).ContinueWith(_ => Schedule(() =>
             {
                 loadingDebounce?.Cancel();
                 loadingDebounce = null;
@@ -403,6 +489,12 @@ namespace osu.Game.Screens.SelectV2
 
             if (x is BeatmapInfo beatmapX && y is BeatmapInfo beatmapY)
                 return beatmapX.Equals(beatmapY);
+
+            if (x is GroupDefinition groupX && y is GroupDefinition groupY)
+                return groupX.Equals(groupY);
+
+            if (x is StarDifficultyGroupDefinition starX && y is StarDifficultyGroupDefinition starY)
+                return starX.Equals(starY);
 
             return base.CheckModelEquality(x, y);
         }

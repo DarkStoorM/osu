@@ -7,9 +7,11 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Carousel;
@@ -20,7 +22,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Screens.SelectV2
 {
-    public abstract partial class Panel : PoolableDrawable, ICarouselPanel
+    public abstract partial class Panel : PoolableDrawable, ICarouselPanel, IHasContextMenu
     {
         private const float corner_radius = 10;
 
@@ -45,9 +47,15 @@ namespace osu.Game.Screens.SelectV2
 
         protected Container Content { get; private set; } = null!;
 
-        public Drawable Background { set => backgroundContainer.Child = value; }
+        public Drawable Background
+        {
+            set => backgroundContainer.Child = value;
+        }
 
-        public Drawable Icon { set => iconContainer.Child = value; }
+        public Drawable Icon
+        {
+            set => iconContainer.Child = value;
+        }
 
         private Color4? accentColour;
 
@@ -150,10 +158,10 @@ namespace osu.Game.Screens.SelectV2
                     selectionLayer = new Box
                     {
                         Alpha = 0,
-                        Colour = ColourInfo.GradientHorizontal(colours.Yellow.Opacity(0), colours.Yellow.Opacity(0.5f)),
+                        Colour = ColourInfo.GradientHorizontal(colours.BlueDark.Opacity(0), colours.BlueDark.Opacity(0.6f)),
                         Blending = BlendingParameters.Additive,
                         RelativeSizeAxes = Axes.Both,
-                        Width = 0.7f,
+                        Width = 0.3f,
                         Anchor = Anchor.TopRight,
                         Origin = Anchor.TopRight,
                     },
@@ -208,7 +216,18 @@ namespace osu.Game.Screens.SelectV2
         protected override void PrepareForUse()
         {
             base.PrepareForUse();
-            this.FadeInFromZero(DURATION, Easing.OutQuint);
+
+            this.FadeIn(DURATION, Easing.OutQuint);
+        }
+
+        protected override void FreeAfterUse()
+        {
+            base.FreeAfterUse();
+
+            Hide();
+
+            // Important to set this to null to handle reuse scenarios correctly, see `Item` implementation.
+            item = null;
         }
 
         protected override bool OnClick(ClickEvent e)
@@ -271,9 +290,34 @@ namespace osu.Game.Screens.SelectV2
             backgroundLayerHorizontalPadding.Padding = new MarginPadding { Left = iconContainer.DrawWidth };
         }
 
+        public abstract MenuItem[]? ContextMenuItems { get; }
+
         #region ICarouselPanel
 
-        public CarouselItem? Item { get; set; }
+        private CarouselItem? item;
+
+        public CarouselItem? Item
+        {
+            get => item;
+            set
+            {
+                if (ReferenceEquals(item, value))
+                    return;
+
+                // If a new item is set and we already have an item, this is a case of reuse.
+                // To keep things simple, assume that we need to do a full refresh.
+                //
+                // In the future, this could be more contextual and check whether the associated model has actually changed.
+                if (item != null && value != null)
+                {
+                    item = value;
+                    PrepareForUse();
+                }
+                else
+                    item = value;
+            }
+        }
+
         public BindableBool Selected { get; } = new BindableBool();
         public BindableBool Expanded { get; } = new BindableBool();
         public BindableBool KeyboardSelected { get; } = new BindableBool();
