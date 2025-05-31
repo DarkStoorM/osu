@@ -21,6 +21,7 @@ using osu.Framework.Screens;
 using osu.Framework.Threading;
 using osu.Game.Beatmaps;
 using osu.Game.Collections;
+using osu.Game.Database;
 using osu.Game.Graphics.Carousel;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Cursor;
@@ -70,15 +71,20 @@ namespace osu.Game.Screens.SelectV2
         /// </summary>
         protected bool ControlGlobalMusic { get; init; } = true;
 
-        private readonly ModSelectOverlay modSelectOverlay = new UserModSelectOverlay(OverlayColourScheme.Aquamarine)
+        // Colour scheme for mod overlay is left as default (green) to match mods button.
+        // Not sure about this, but we'll iterate based on feedback.
+        private readonly ModSelectOverlay modSelectOverlay = new UserModSelectOverlay
         {
             ShowPresets = true,
         };
 
         private ModSpeedHotkeyHandler modSpeedHotkeyHandler = null!;
 
+        // Blue is the most neutral choice, so I'm using that for now.
+        // Purple makes the most sense to match the "gameplay" flow, but it's a bit too strong for the current design.
+        // TODO: Colour scheme choice should probably be customisable by the user.
         [Cached]
-        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Aquamarine);
+        private readonly OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);
 
         private BeatmapCarousel carousel = null!;
 
@@ -146,9 +152,9 @@ namespace osu.Game.Screens.SelectV2
                                     RelativeSizeAxes = Axes.Both,
                                     ColumnDimensions = new[]
                                     {
-                                        new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 850),
+                                        new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 660),
                                         new Dimension(),
-                                        new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 750),
+                                        new Dimension(GridSizeMode.Relative, 0.5f, maxSize: 620),
                                     },
                                     Content = new[]
                                     {
@@ -162,6 +168,11 @@ namespace osu.Game.Screens.SelectV2
                                                 // screen-wide scroll handling.
                                                 Depth = float.MinValue,
                                                 Shear = OsuGame.SHEAR,
+                                                Padding = new MarginPadding
+                                                {
+                                                    Top = -CORNER_RADIUS_HIDE_OFFSET,
+                                                    Left = -CORNER_RADIUS_HIDE_OFFSET,
+                                                },
                                                 Children = new Drawable[]
                                                 {
                                                     new Container
@@ -177,11 +188,6 @@ namespace osu.Game.Screens.SelectV2
                                                     wedgesContainer = new FillFlowContainer
                                                     {
                                                         RelativeSizeAxes = Axes.Both,
-                                                        Margin = new MarginPadding
-                                                        {
-                                                            Top = -CORNER_RADIUS_HIDE_OFFSET,
-                                                            Left = -CORNER_RADIUS_HIDE_OFFSET
-                                                        },
                                                         Spacing = new Vector2(0f, 4f),
                                                         Direction = FillDirection.Vertical,
                                                         Children = new Drawable[]
@@ -196,8 +202,13 @@ namespace osu.Game.Screens.SelectV2
                                             new Container
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Children = new CompositeDrawable[]
+                                                Children = new Drawable[]
                                                 {
+                                                    new Box
+                                                    {
+                                                        Colour = ColourInfo.GradientHorizontal(Color4.Black.Opacity(0.0f), Color4.Black.Opacity(0.5f)),
+                                                        RelativeSizeAxes = Axes.Both,
+                                                    },
                                                     new Container
                                                     {
                                                         RelativeSizeAxes = Axes.Both,
@@ -218,7 +229,10 @@ namespace osu.Game.Screens.SelectV2
                                                                 RequestRecommendedSelection = selectRecommendedBeatmap,
                                                                 NewItemsPresented = newItemsPresented,
                                                             },
-                                                            noResultsPlaceholder = new NoResultsPlaceholder(),
+                                                            noResultsPlaceholder = new NoResultsPlaceholder
+                                                            {
+                                                                RequestClearFilterText = () => filterControl.Search(string.Empty)
+                                                            }
                                                         }
                                                     },
                                                     filterControl = new FilterControl
@@ -259,7 +273,11 @@ namespace osu.Game.Screens.SelectV2
                 Current = Mods,
                 RequestDeselectAllMods = () => Mods.Value = Array.Empty<Mod>()
             },
-            new FooterButtonRandom(),
+            new FooterButtonRandom
+            {
+                NextRandom = () => carousel.NextRandom(),
+                PreviousRandom = () => carousel.PreviousRandom()
+            },
             new FooterButtonOptions
             {
                 Hotkey = GlobalAction.ToggleBeatmapOptions,
@@ -274,6 +292,9 @@ namespace osu.Game.Screens.SelectV2
 
             modSelectOverlay.State.BindValueChanged(v =>
             {
+                if (!this.IsCurrentScreen())
+                    return;
+
                 logo?.ScaleTo(v.NewValue == Visibility.Visible ? 0f : logo_scale, 400, Easing.OutQuint)
                     .FadeTo(v.NewValue == Visibility.Visible ? 0f : 1f, 200, Easing.OutQuint);
             });
@@ -369,6 +390,9 @@ namespace osu.Game.Screens.SelectV2
 
         private void selectBeatmap(BeatmapInfo beatmap)
         {
+            if (!this.IsCurrentScreen())
+                return;
+
             if (beatmap.BeatmapSet!.Protected)
                 return;
 
@@ -395,6 +419,7 @@ namespace osu.Game.Screens.SelectV2
                     backgroundModeBeatmap.BlurAmount.Value = 0;
                     backgroundModeBeatmap.Beatmap = beatmap;
                     backgroundModeBeatmap.IgnoreUserSettings.Value = true;
+                    backgroundModeBeatmap.DimWhenUserSettingsIgnored.Value = 0.1f;
                     backgroundModeBeatmap.FadeColour(Color4.White, 250);
                 });
             }
@@ -421,7 +446,10 @@ namespace osu.Game.Screens.SelectV2
 
             // force reselection if entering song select with a protected beatmap
             if (Beatmap.Value.BeatmapInfo.BeatmapSet!.Protected)
-                Beatmap.SetDefault();
+            {
+                if (!carousel.NextRandom())
+                    Beatmap.SetDefault();
+            }
             else
                 updateSelection();
         }
@@ -501,8 +529,7 @@ namespace osu.Game.Screens.SelectV2
 
             logo.Action = () =>
             {
-                if (this.IsCurrentScreen())
-                    OnStart();
+                OnStart();
                 return false;
             };
         }
@@ -539,12 +566,18 @@ namespace osu.Game.Screens.SelectV2
 
         private void criteriaChanged(FilterCriteria criteria)
         {
+            // The first filter needs to be applied immediately as this triggers the initial carousel load.
+            double filterDelay = filterDebounce == null ? 0 : filter_delay;
+
             filterDebounce?.Cancel();
-            filterDebounce = Scheduler.AddDelayed(() => { carousel.Filter(criteria); }, filter_delay);
+            filterDebounce = Scheduler.AddDelayed(() => { carousel.Filter(criteria); }, filterDelay);
         }
 
         private void newItemsPresented(IEnumerable<CarouselItem> carouselItems)
         {
+            if (carousel.Criteria == null)
+                return;
+
             int count = carousel.MatchedBeatmapsCount;
 
             if (count == 0)
@@ -559,15 +592,21 @@ namespace osu.Game.Screens.SelectV2
             // but also in this case we want support for formatting a number within a string).
             filterControl.StatusText = count != 1 ? $"{count:#,0} matches" : $"{count:#,0} match";
 
+            // Refetch to be confident that the current selection is still valid. It may have been deleted or hidden.
+            var currentBeatmap = beatmaps.GetWorkingBeatmap(Beatmap.Value.BeatmapInfo, true);
+            bool currentBeatmapNotValid = currentBeatmap.BeatmapInfo.Hidden || currentBeatmap.BeatmapSetInfo?.DeletePending == true;
+
+            // If all results are filtered away don't deselect the current global beatmap selection...
             if (!carouselItems.Any())
             {
-                Beatmap.SetDefault();
+                // ...unless it has been deleted or hidden
+                if (currentBeatmapNotValid)
+                    Beatmap.SetDefault();
                 return;
             }
 
-            if (Beatmap.IsDefault || Beatmap.Value.BeatmapSetInfo?.DeletePending == true)
-                // TODO: this should probably use random, not recommended like this.
-                selectRecommendedBeatmap(carouselItems.Select(i => i.Model).OfType<BeatmapInfo>());
+            if (Beatmap.IsDefault || currentBeatmapNotValid)
+                carousel.NextRandom();
         }
 
         #endregion
@@ -638,11 +677,20 @@ namespace osu.Game.Screens.SelectV2
         /// </summary>
         public void SelectAndStart(BeatmapInfo beatmap)
         {
+            if (!this.IsCurrentScreen())
+                return;
+
             Beatmap.Value = beatmaps.GetWorkingBeatmap(beatmap);
             OnStart();
         }
 
         #region Beatmap management
+
+        [Resolved]
+        private ManageCollectionsDialog? manageCollectionsDialog { get; set; }
+
+        [Resolved]
+        private RealmAccess realm { get; set; } = null!;
 
         public virtual IEnumerable<OsuMenuItem> GetForwardActions(BeatmapInfo beatmap)
         {
@@ -660,6 +708,23 @@ namespace osu.Game.Screens.SelectV2
                 if (beatmap.GetOnlineURL(api, Ruleset.Value) is string url)
                     yield return new OsuMenuItem(CommonStrings.CopyLink, MenuItemType.Standard, () => (game as OsuGame)?.CopyToClipboard(url));
             }
+
+            yield return new OsuMenuItemSpacer();
+
+            foreach (var i in CreateCollectionMenuActions(beatmap))
+                yield return i;
+        }
+
+        protected IEnumerable<OsuMenuItem> CreateCollectionMenuActions(BeatmapInfo beatmap)
+        {
+            var collectionItems = realm.Realm.All<BeatmapCollection>()
+                                       .OrderBy(c => c.Name)
+                                       .AsEnumerable()
+                                       .Select(c => new CollectionToggleMenuItem(c.ToLive(realm), beatmap)).Cast<OsuMenuItem>().ToList();
+
+            collectionItems.Add(new OsuMenuItem("Manage...", MenuItemType.Standard, () => manageCollectionsDialog?.Show()));
+
+            yield return new OsuMenuItem("Collections") { Items = collectionItems };
         }
 
         public void ManageCollections() => collectionsDialog?.Show();
