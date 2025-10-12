@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Screens;
 using osu.Framework.Testing;
@@ -21,11 +22,15 @@ using osu.Game.Screens.Menu;
 using osu.Game.Screens.Play;
 using osu.Game.Screens.Ranking;
 using osu.Game.Screens.Select;
+using osu.Game.Screens.Select.Filter;
 using osu.Game.Screens.Select.Leaderboards;
 using osu.Game.Screens.SelectV2;
+using osu.Game.Tests.Resources;
 using osuTK.Input;
+using BeatmapCarousel = osu.Game.Screens.SelectV2.BeatmapCarousel;
 using FooterButtonMods = osu.Game.Screens.SelectV2.FooterButtonMods;
 using FooterButtonOptions = osu.Game.Screens.SelectV2.FooterButtonOptions;
+using FooterButtonRandom = osu.Game.Screens.SelectV2.FooterButtonRandom;
 
 namespace osu.Game.Tests.Visual.SongSelectV2
 {
@@ -137,6 +142,41 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             AddUntilStep("wait for osu beatmap selected", () => Beatmap.Value.BeatmapInfo.Ruleset.OnlineID, () => Is.EqualTo(0));
 
             void onScreenPushed(IScreen lastScreen, IScreen newScreen) => screensPushed.Add(lastScreen);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestHoveringLeftSideReexpandsGroupSelectionIsIn(bool mouseOverPanel)
+        {
+            ImportBeatmapForRuleset(0);
+
+            LoadSongSelect();
+            SortAndGroupBy(SortMode.Difficulty, GroupMode.Difficulty);
+
+            AddStep("move mouse to carousel", () => InputManager.MoveMouseTo(Carousel));
+
+            AddUntilStep("expanded group is below 1 star",
+                () => (Carousel.ChildrenOfType<PanelGroupStarDifficulty>().SingleOrDefault(p => p.Expanded.Value)?.Item?.Model as StarDifficultyGroupDefinition)?.Difficulty.Stars,
+                () => Is.EqualTo(0));
+
+            AddStep("select next group", () =>
+            {
+                InputManager.PressKey(Key.ShiftLeft);
+                InputManager.Key(Key.Right);
+                InputManager.ReleaseKey(Key.ShiftLeft);
+            });
+            AddUntilStep("expanded group is 3 star",
+                () => (Carousel.ChildrenOfType<PanelGroupStarDifficulty>().SingleOrDefault(p => p.Expanded.Value)?.Item?.Model as StarDifficultyGroupDefinition)?.Difficulty.Stars,
+                () => Is.EqualTo(3));
+
+            if (mouseOverPanel)
+                AddStep("move mouse over left panel", () => InputManager.MoveMouseTo(this.ChildrenOfType<BeatmapTitleWedge>().Single()));
+            else
+                AddStep("move mouse to left side container", () => InputManager.MoveMouseTo(this.ChildrenOfType<Screens.Select.SongSelect.LeftSideInteractionContainer>().Single()));
+
+            AddUntilStep("expanded group is below 1 star",
+                () => (Carousel.ChildrenOfType<PanelGroupStarDifficulty>().Single(p => p.Expanded.Value).Item?.Model as StarDifficultyGroupDefinition)?.Difficulty.Stars,
+                () => Is.EqualTo(0));
         }
 
         #region Hotkeys
@@ -301,6 +341,29 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             });
         }
 
+        /// <summary>
+        /// Last played and rank achieved may have changed, so we want to make sure filtering runs on resume to song select.
+        /// </summary>
+        [Test]
+        public void TestFilteringRunsAfterReturningFromGameplay()
+        {
+            AddStep("import actual beatmap", () => Beatmaps.Import(TestResources.GetQuickTestBeatmapForImport()).WaitSafely());
+
+            LoadSongSelect();
+
+            AddUntilStep("wait for filtered", () => SongSelect.ChildrenOfType<BeatmapCarousel>().Single().FilterCount, () => Is.EqualTo(1));
+
+            AddStep("enter gameplay", () => InputManager.Key(Key.Enter));
+
+            AddUntilStep("wait for player", () => Stack.CurrentScreen is Player);
+            AddUntilStep("wait for fail", () => ((Player)Stack.CurrentScreen).GameplayState.HasFailed);
+
+            AddStep("exit gameplay", () => Stack.CurrentScreen.Exit());
+
+            AddUntilStep("wait for song select", () => Stack.CurrentScreen is Screens.SelectV2.SongSelect);
+            AddUntilStep("wait for filtered", () => SongSelect.ChildrenOfType<BeatmapCarousel>().Single().FilterCount, () => Is.EqualTo(2));
+        }
+
         [Test]
         public void TestAutoplayShortcut()
         {
@@ -451,71 +514,113 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             AddStep("Hide", () => this.ChildrenOfType<ModSelectOverlay>().Single().Hide());
         }
 
-        // add these test cases when functionality is implemented.
-        // [Test]
-        // public void TestFooterRandom()
-        // {
-        //     loadSongSelect();
-        //
-        //     AddStep("press F2", () => InputManager.Key(Key.F2));
-        //     AddAssert("next random invoked", () => nextRandomCalled && !previousRandomCalled);
-        // }
-        //
-        // [Test]
-        // public void TestFooterRandomViaMouse()
-        // {
-        //     loadSongSelect();
-        //
-        //     AddStep("click button", () =>
-        //     {
-        //         InputManager.MoveMouseTo(randomButton);
-        //         InputManager.Click(MouseButton.Left);
-        //     });
-        //     AddAssert("next random invoked", () => nextRandomCalled && !previousRandomCalled);
-        // }
-        //
-        // [Test]
-        // public void TestFooterRewind()
-        // {
-        //     loadSongSelect();
-        //
-        //     AddStep("press Shift+F2", () =>
-        //     {
-        //         InputManager.PressKey(Key.LShift);
-        //         InputManager.PressKey(Key.F2);
-        //         InputManager.ReleaseKey(Key.F2);
-        //         InputManager.ReleaseKey(Key.LShift);
-        //     });
-        //     AddAssert("previous random invoked", () => previousRandomCalled && !nextRandomCalled);
-        // }
-        //
-        // [Test]
-        // public void TestFooterRewindViaShiftMouseLeft()
-        // {
-        //     loadSongSelect();
-        //
-        //     AddStep("shift + click button", () =>
-        //     {
-        //         InputManager.PressKey(Key.LShift);
-        //         InputManager.MoveMouseTo(randomButton);
-        //         InputManager.Click(MouseButton.Left);
-        //         InputManager.ReleaseKey(Key.LShift);
-        //     });
-        //     AddAssert("previous random invoked", () => previousRandomCalled && !nextRandomCalled);
-        // }
-        //
-        // [Test]
-        // public void TestFooterRewindViaMouseRight()
-        // {
-        //     loadSongSelect();
-        //
-        //     AddStep("right click button", () =>
-        //     {
-        //         InputManager.MoveMouseTo(randomButton);
-        //         InputManager.Click(MouseButton.Right);
-        //     });
-        //     AddAssert("previous random invoked", () => previousRandomCalled && !nextRandomCalled);
-        // }
+        [Test]
+        public void TestFooterRandom()
+        {
+            LoadSongSelect();
+
+            bool nextRandomCalled = false;
+            bool previousRandomCalled = false;
+            AddStep("hook events", () =>
+            {
+                randomButton.NextRandom = () => nextRandomCalled = true;
+                randomButton.PreviousRandom = () => previousRandomCalled = true;
+            });
+
+            AddStep("press F2", () => InputManager.Key(Key.F2));
+            AddAssert("next random invoked", () => nextRandomCalled && !previousRandomCalled);
+        }
+
+        [Test]
+        public void TestFooterRandomViaMouse()
+        {
+            LoadSongSelect();
+
+            bool nextRandomCalled = false;
+            bool previousRandomCalled = false;
+            AddStep("hook events", () =>
+            {
+                randomButton.NextRandom = () => nextRandomCalled = true;
+                randomButton.PreviousRandom = () => previousRandomCalled = true;
+            });
+
+            AddStep("click button", () =>
+            {
+                InputManager.MoveMouseTo(randomButton);
+                InputManager.Click(MouseButton.Left);
+            });
+            AddAssert("next random invoked", () => nextRandomCalled && !previousRandomCalled);
+        }
+
+        [Test]
+        public void TestFooterRewind()
+        {
+            LoadSongSelect();
+
+            bool nextRandomCalled = false;
+            bool previousRandomCalled = false;
+            AddStep("hook events", () =>
+            {
+                randomButton.NextRandom = () => nextRandomCalled = true;
+                randomButton.PreviousRandom = () => previousRandomCalled = true;
+            });
+
+            AddStep("press Shift+F2", () =>
+            {
+                InputManager.PressKey(Key.LShift);
+                InputManager.PressKey(Key.F2);
+                InputManager.ReleaseKey(Key.F2);
+                InputManager.ReleaseKey(Key.LShift);
+            });
+
+            AddAssert("previous random invoked", () => previousRandomCalled && !nextRandomCalled);
+        }
+
+        [Test]
+        public void TestFooterRewindViaShiftMouseLeft()
+        {
+            LoadSongSelect();
+
+            bool nextRandomCalled = false;
+            bool previousRandomCalled = false;
+            AddStep("hook events", () =>
+            {
+                randomButton.NextRandom = () => nextRandomCalled = true;
+                randomButton.PreviousRandom = () => previousRandomCalled = true;
+            });
+
+            AddStep("shift + click button", () =>
+            {
+                InputManager.PressKey(Key.LShift);
+                InputManager.MoveMouseTo(randomButton);
+                InputManager.Click(MouseButton.Left);
+                InputManager.ReleaseKey(Key.LShift);
+            });
+            AddAssert("previous random invoked", () => previousRandomCalled && !nextRandomCalled);
+        }
+
+        [Test]
+        public void TestFooterRewindViaMouseRight()
+        {
+            LoadSongSelect();
+
+            bool nextRandomCalled = false;
+            bool previousRandomCalled = false;
+            AddStep("hook events", () =>
+            {
+                randomButton.NextRandom = () => nextRandomCalled = true;
+                randomButton.PreviousRandom = () => previousRandomCalled = true;
+            });
+
+            AddStep("right click button", () =>
+            {
+                InputManager.MoveMouseTo(randomButton);
+                InputManager.Click(MouseButton.Right);
+            });
+            AddAssert("previous random invoked", () => previousRandomCalled && !nextRandomCalled);
+        }
+
+        private FooterButtonRandom randomButton => Footer.ChildrenOfType<FooterButtonRandom>().Single();
 
         [Test]
         public void TestFooterOptions()
@@ -523,7 +628,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
             LoadSongSelect();
 
             ImportBeatmapForRuleset(0);
-            AddAssert("options enabled", () => this.ChildrenOfType<FooterButtonOptions>().Single().Enabled.Value);
+            AddUntilStep("options enabled", () => this.ChildrenOfType<FooterButtonOptions>().Single().Enabled.Value);
 
             AddStep("click", () => this.ChildrenOfType<FooterButtonOptions>().Single().TriggerClick());
             AddUntilStep("popover displayed", () => this.ChildrenOfType<FooterButtonOptions.Popover>().Any(p => p.IsPresent));
@@ -580,7 +685,7 @@ namespace osu.Game.Tests.Visual.SongSelectV2
 
             ImportBeatmapForRuleset(0);
 
-            AddAssert("options enabled", () => this.ChildrenOfType<FooterButtonOptions>().Single().Enabled.Value);
+            AddUntilStep("options enabled", () => this.ChildrenOfType<FooterButtonOptions>().Single().Enabled.Value);
             AddStep("delete all beatmaps", () => Beatmaps.Delete());
 
             AddAssert("beatmap selected", () => !Beatmap.IsDefault);
