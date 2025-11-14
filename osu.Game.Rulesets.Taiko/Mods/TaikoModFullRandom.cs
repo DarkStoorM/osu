@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Framework.Utils;
@@ -59,7 +58,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
 
         public override Type[] IncompatibleMods =>
             [.. base.IncompatibleMods, typeof(TaikoModRandom), typeof(TaikoModSwap)];
-        public override IconUsage? Icon => OsuIcon.Dice;
+        public override IconUsage? Icon => OsuIcon.ModRandom;
 
         [SettingSource("Longest Pattern Length")]
         public Bindable<PatternLength> LongestPatternLength { get; } =
