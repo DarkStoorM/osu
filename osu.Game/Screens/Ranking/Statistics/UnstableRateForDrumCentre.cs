@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System.Collections.Generic;
+using osu.Framework.Localisation;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Screens.Ranking.Statistics
@@ -21,6 +22,6 @@ namespace osu.Game.Screens.Ranking.Statistics
             Value = hitEvents.CalculateUnstableRateForDrumCentre()?.Result;
         }
 
-        protected override string DisplayValue(double? value) => value == null ? "(not available)" : value.Value.ToString(@"N2");
+        protected override LocalisableString DisplayValue(double? value) => value == null ? "(not available)" : value.Value.ToString(@"N2");
     }
 }

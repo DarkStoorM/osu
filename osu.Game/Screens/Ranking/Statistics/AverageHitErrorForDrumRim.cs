@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using osu.Framework.Localisation;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Screens.Ranking.Statistics
@@ -22,6 +23,6 @@ namespace osu.Game.Screens.Ranking.Statistics
             Value = hitEvents.CalculateAverageHitErrorForDrumRim();
         }
 
-        protected override string DisplayValue(double? value) => value == null ? "(not available)" : $"{Math.Abs(value.Value):N2} ms {(value.Value < 0 ? "early" : "late")}";
+        protected override LocalisableString DisplayValue(double? value) => value == null ? "(not available)" : $"{Math.Abs(value.Value):N2} ms {(value.Value < 0 ? "early" : "late")}";
     }
 }
