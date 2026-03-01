@@ -12,6 +12,13 @@ namespace osu.Game.Rulesets.Scoring
 {
     public static class HitEventExtensions
     {
+        public enum DrumSection
+        {
+            Rim,
+            Centre,
+            Both
+        }
+
         /// <summary>
         /// Calculates the "unstable rate" for a sequence of <see cref="HitEvent"/>s.
         /// </summary>
@@ -24,7 +31,8 @@ namespace osu.Game.Rulesets.Scoring
         /// </returns>
         public static UnstableRateCalculationResult? CalculateUnstableRate(
             this IReadOnlyList<HitEvent> hitEvents,
-            UnstableRateCalculationResult? result = null
+            UnstableRateCalculationResult? result = null,
+            DrumSection drumSection = DrumSection.Both
         )
         {
             Debug.Assert(hitEvents.All(ev => ev.GameplayRate != null));
@@ -39,6 +47,12 @@ namespace osu.Game.Rulesets.Scoring
             {
                 result.LastProcessedIndex = i;
                 HitEvent e = hitEvents[i];
+
+                if (drumSection == DrumSection.Centre && !e.isDrumCentre())
+                    continue;
+
+                if (drumSection == DrumSection.Rim && !e.isDrumRim())
+                    continue;
 
                 if (!AffectsUnstableRate(e))
                     continue;
@@ -64,7 +78,7 @@ namespace osu.Game.Rulesets.Scoring
             UnstableRateCalculationResult? result = null
         )
         {
-            return CalculateUnstableRate(hitEvents.Where(e => e.isDrumCentre()).ToList(), result);
+            return CalculateUnstableRate(hitEvents, result, DrumSection.Centre);
         }
 
         public static UnstableRateCalculationResult? CalculateUnstableRateForDrumRim(
@@ -72,7 +86,7 @@ namespace osu.Game.Rulesets.Scoring
             UnstableRateCalculationResult? result = null
         )
         {
-            return CalculateUnstableRate(hitEvents.Where(e => e.isDrumRim()).ToList(), result);
+            return CalculateUnstableRate(hitEvents, result, DrumSection.Rim);
         }
 
         private static bool isDrumRim(this HitEvent e) => eventIsDrumRim(e);
@@ -95,7 +109,10 @@ namespace osu.Game.Rulesets.Scoring
         /// </returns>
         public static double? CalculateAverageHitError(this IEnumerable<HitEvent> hitEvents)
         {
-            double[] timeOffsets = hitEvents.Where(AffectsUnstableRate).Select(ev => ev.TimeOffset).ToArray();
+            double[] timeOffsets = hitEvents
+                .Where(AffectsUnstableRate)
+                .Select(ev => ev.TimeOffset)
+                .ToArray();
 
             if (timeOffsets.Length == 0)
                 return null;
