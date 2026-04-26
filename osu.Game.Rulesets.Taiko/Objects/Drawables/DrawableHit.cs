@@ -159,6 +159,8 @@ namespace osu.Game.Rulesets.Taiko.Objects.Drawables
                     break;
 
                 case ArmedState.Hit:
+                    Alpha = 0;
+
                     // If we're far enough away from the left stage, we should bring ourselves in front of it
                     ProxyContent();
 
