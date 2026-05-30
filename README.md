@@ -145,3 +145,13 @@ Our team believes in **human contributions**. Any contribution – be it an issu
 Please note that this *does not cover* the usage of the "osu!" or "ppy" branding in any software, resources, advertising or promotion, as this is protected by trademark law.
 
 Please also note that game resources are covered by a separate licence. Please see the [ppy/osu-resources](https://github.com/ppy/osu-resources) repository for clarifications.
+
+## Licence boundary note
+
+This project contains third-party GPL-3.0 word lists in under:
+
+```
+osu.Game.Rulesets.Typing\Resources\GPL
+```
+
+These files are not part of the MIT-licensed `osu.Game.Rulesets.Typing` ruleset code.
