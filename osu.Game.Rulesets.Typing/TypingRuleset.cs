@@ -1,0 +1,88 @@
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// See the LICENCE file in the repository root for full licence text.
+
+using System;
+using System.Collections.Generic;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Bindings;
+using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Typing.Beatmaps;
+using osu.Game.Rulesets.Typing.Mods;
+using osu.Game.Rulesets.Typing.UI;
+using osu.Game.Rulesets.UI;
+
+namespace osu.Game.Rulesets.Typing
+{
+    public class TypingRuleset : Ruleset
+    {
+        public override string Description => "gather the osu!coins";
+
+        public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods = null) => new DrawableTypingRuleset(this, beatmap, mods);
+
+        public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) => new TypingBeatmapConverter(beatmap, this);
+
+        public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new TypingDifficultyCalculator(RulesetInfo, beatmap);
+
+        public override IEnumerable<Mod> GetModsFor(ModType type)
+        {
+            // TODO: This section will later contain the following mods:
+            // - Random Letters (random letters instead of generated words) - incompatible with nK mods!!!
+            // - English Simple (the first tier of words)
+            // - English 1k
+            // - English 5k
+            // - English 10k
+            // - English 25k
+            // - English 45k
+            switch (type)
+            {
+                case ModType.Automation:
+                    return new[] { new TypingModAutoplay() };
+
+                default:
+                    return Array.Empty<Mod>();
+            }
+        }
+
+        public override string ShortName => "typing";
+
+        public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) =>
+            new[]
+            {
+                new KeyBinding(InputKey.Q, TypingAction.Q),
+                new KeyBinding(InputKey.W, TypingAction.W),
+                new KeyBinding(InputKey.E, TypingAction.E),
+                new KeyBinding(InputKey.R, TypingAction.R),
+                new KeyBinding(InputKey.T, TypingAction.T),
+                new KeyBinding(InputKey.Y, TypingAction.Y),
+                new KeyBinding(InputKey.U, TypingAction.U),
+                new KeyBinding(InputKey.I, TypingAction.I),
+                new KeyBinding(InputKey.O, TypingAction.O),
+                new KeyBinding(InputKey.P, TypingAction.P),
+                new KeyBinding(InputKey.A, TypingAction.A),
+                new KeyBinding(InputKey.S, TypingAction.S),
+                new KeyBinding(InputKey.D, TypingAction.D),
+                new KeyBinding(InputKey.F, TypingAction.F),
+                new KeyBinding(InputKey.G, TypingAction.G),
+                new KeyBinding(InputKey.H, TypingAction.H),
+                new KeyBinding(InputKey.J, TypingAction.J),
+                new KeyBinding(InputKey.K, TypingAction.K),
+                new KeyBinding(InputKey.L, TypingAction.L),
+                new KeyBinding(InputKey.Z, TypingAction.Z),
+                new KeyBinding(InputKey.X, TypingAction.X),
+                new KeyBinding(InputKey.C, TypingAction.C),
+                new KeyBinding(InputKey.V, TypingAction.V),
+                new KeyBinding(InputKey.B, TypingAction.B),
+                new KeyBinding(InputKey.N, TypingAction.N),
+                new KeyBinding(InputKey.M, TypingAction.M),
+                new KeyBinding(InputKey.Space, TypingAction.Space),
+            };
+
+        public override Drawable CreateIcon() => new SpriteIcon { Icon = FontAwesome.Regular.Keyboard };
+
+        // Leave this line intact. It will bake the correct version into the ruleset on each build/release.
+        public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
+    }
+}

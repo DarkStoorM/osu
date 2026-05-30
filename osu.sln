@@ -100,6 +100,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeAnalysis", "CodeAnalysi
 		CodeAnalysis\osu.globalconfig = CodeAnalysis\osu.globalconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "osu.Game.Rulesets.Typing", "osu.Game.Rulesets.Typing\osu.Game.Rulesets.Typing.csproj", "{B51D9888-BC24-4EF3-9875-15D35E12C1E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "osu.Game.Rulesets.Typing.Tests", "osu.Game.Rulesets.Typing.Tests\osu.Game.Rulesets.Typing.Tests.csproj", "{0FA225E2-2838-485E-9998-606FC7F48612}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -254,6 +258,14 @@ Global
 		{1743BF7C-E6AE-4A06-BAD9-166D62894303}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1743BF7C-E6AE-4A06-BAD9-166D62894303}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1743BF7C-E6AE-4A06-BAD9-166D62894303}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B51D9888-BC24-4EF3-9875-15D35E12C1E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B51D9888-BC24-4EF3-9875-15D35E12C1E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B51D9888-BC24-4EF3-9875-15D35E12C1E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B51D9888-BC24-4EF3-9875-15D35E12C1E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FA225E2-2838-485E-9998-606FC7F48612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FA225E2-2838-485E-9998-606FC7F48612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FA225E2-2838-485E-9998-606FC7F48612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FA225E2-2838-485E-9998-606FC7F48612}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
