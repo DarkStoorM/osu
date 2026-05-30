@@ -148,10 +148,8 @@ Please also note that game resources are covered by a separate licence. Please s
 
 ## Licence boundary note
 
-This project contains third-party GPL-3.0 word lists in under:
+This repository contains third-party word lists licenced under GPL-3.0 and are maintained separately from the MIT-licenced ruleset source code. The files are located under the following directory:
 
 ```
 osu.Game.Rulesets.Typing\Resources\GPL
 ```
-
-These files are not part of the MIT-licensed `osu.Game.Rulesets.Typing` ruleset code.
