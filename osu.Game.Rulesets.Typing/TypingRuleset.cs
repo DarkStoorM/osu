@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>.Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
+using osu.Framework.IO.Stores;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
@@ -25,6 +26,17 @@ namespace osu.Game.Rulesets.Typing
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) => new TypingBeatmapConverter(beatmap, this);
 
         public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new TypingDifficultyCalculator(RulesetInfo, beatmap);
+
+        public static DictionaryManager Dictionaries { get; private set; } = null!;
+
+        public TypingRuleset()
+        {
+            var resources = new ResourceStore<byte[]>(new DllResourceStore(typeof(TypingRuleset).Assembly));
+
+            Dictionaries = new DictionaryManager(resources);
+        }
+
+        public override IResourceStore<byte[]> CreateResourceStore() => new DllResourceStore(typeof(TypingRuleset).Assembly);
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {

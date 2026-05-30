@@ -10,6 +10,6 @@ namespace osu.Game.Rulesets.Typing.Mods
         public override string Name => "English 450k";
         public override string Acronym => "450K";
         public override LocalisableString Description => "English 450k dictionary";
-        protected override DictionarySize DictionarySize => DictionarySize.E450K;
+        public override DictionarySize DictionarySize => DictionarySize.E450K;
     }
 }

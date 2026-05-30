@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>.Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -9,9 +9,9 @@ using osu.Game.Rulesets.Mods;
 
 namespace osu.Game.Rulesets.Typing.Mods
 {
-    public abstract class TypingEnglishMod : Mod, IApplicableToBeatmap
+    public abstract class TypingEnglishMod : Mod, IApplicableToBeatmap, ITypingDictionaryMod
     {
-        protected abstract DictionarySize DictionarySize { get; }
+        public abstract DictionarySize DictionarySize { get; }
         public override ModType Type => ModType.Conversion;
         public override string Acronym => Name;
         public override bool Ranked => false;
@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         public void ApplyToBeatmap(IBeatmap beatmap)
         {
-            Logger.Log($"Should apply {DictionarySize} to beatmap.");
+            Logger.Log($"This will eventually apply {DictionarySize} to this beatmap.");
         }
     }
 
