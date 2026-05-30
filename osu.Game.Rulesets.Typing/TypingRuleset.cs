@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>.Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.Typing
 {
     public class TypingRuleset : Ruleset
     {
-        public override string Description => "gather the osu!coins";
+        public override string Description => "Type to the beat";
 
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods = null) => new DrawableTypingRuleset(this, beatmap, mods);
 
@@ -28,18 +28,26 @@ namespace osu.Game.Rulesets.Typing
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
-            // TODO: This section will later contain the following mods:
-            // - Random Letters (random letters instead of generated words) - incompatible with nK mods!!!
-            // - English Simple (the first tier of words)
-            // - English 1k
-            // - English 5k
-            // - English 10k
-            // - English 25k
-            // - English 45k
             switch (type)
             {
                 case ModType.Automation:
-                    return new[] { new TypingModAutoplay() };
+                    return new Mod[]
+                    {
+                        new TypingModAutoplay(),
+                    };
+
+                case ModType.Conversion:
+                    return new Mod[]
+                    {
+                        new MultiMod(
+                            new TypingModEnglish0K(),
+                            new TypingModEnglish1K(),
+                            new TypingModEnglish5K(),
+                            new TypingModEnglish10K(),
+                            new TypingModEnglish25K(),
+                            new TypingModEnglish450K()
+                        )
+                    };
 
                 default:
                     return Array.Empty<Mod>();

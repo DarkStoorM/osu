@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>.Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -36,6 +36,10 @@ namespace osu.Game.Rulesets.Typing.Beatmaps
             };
         }
 
+        /// <summary>
+        /// Returns a random key before the words provider is implemented, which will change how letters are picked.
+        /// </summary>
+        /// <param name="includeSpace">This will eventually be implemented to the callers, but for now ignore the fact that Space exists</param>
         private TypingAction randomTypingAction(bool includeSpace = false)
         {
             var values = includeSpace
