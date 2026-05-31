@@ -19,11 +19,7 @@ namespace osu.Game.Rulesets.Typing.Replays
             Frames.Add(new TypingReplayFrame());
 
             foreach (TypingHitObject hitObject in Beatmap.HitObjects)
-            {
-                double time = hitObject.StartTime - 5;
-
-                addFrame(time, hitObject.Letter);
-            }
+                addFrame(hitObject.StartTime, hitObject.Letter);
         }
 
         private void addFrame(double time, TypingAction direction)
