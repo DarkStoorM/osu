@@ -20,39 +20,47 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
 {
     public partial class DrawableTypingHitObject : DrawableHitObject<TypingHitObject>, IKeyBindingHandler<TypingAction>
     {
+        private const float hit_object_width = 70;
+        private const float hit_object_height = 100;
+        private const float hit_object_judgment_line_width = 2;
+        private const float font_size = 90;
+
+        private readonly Color4 hitObjectBoxColour = new Colour4(50, 50, 50, 255);
+        private readonly Color4 hitObjectJudgmentColour = new Colour4(255, 255, 255, 50);
+
         public DrawableTypingHitObject(TypingHitObject hitObject)
             : base(hitObject) { }
 
         [BackgroundDependencyLoader]
         private void load()
         {
-            Size = new Vector2(70, 100);
+            Size = new Vector2(hit_object_width, hit_object_height);
             Origin = Anchor.Centre;
 
             AddRangeInternal(new Drawable[]
             {
                 new Box
                 {
+                    Colour = hitObjectBoxColour,
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4(50, 50, 50, 255),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 },
 
                 new Box
                 {
-                    Size = new Vector2(2, 100),
-                    Colour = new Colour4(255, 255, 255, 50),
+                    Colour = hitObjectJudgmentColour,
+                    Size = new Vector2(hit_object_judgment_line_width, hit_object_height),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 },
 
                 new OsuSpriteText
                 {
+                    Font = OsuFont.Inter.With(size: font_size, fixedWidth: true),
+                    Text = HitObject.Letter.ToString().ToUpperInvariant(),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Text = HitObject.Letter.ToString().ToUpperInvariant(),
-                    Font = OsuFont.Inter.With(size: 100, fixedWidth: true),
                 }
             });
         }
@@ -95,8 +103,8 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
 
                     const double duration = 500;
 
-                    this.ScaleTo(0.8f, duration, Easing.OutQuint);
-                    this.MoveToOffset(new Vector2(0, 10), duration, Easing.In);
+                    this.ScaleTo(0.5f, duration, Easing.OutQuint);
+                    this.MoveToOffset(new Vector2(0, 75), duration, Easing.Out);
                     this.FadeColour(Color4.Red, duration / 2, Easing.OutQuint).Then().FadeOut(duration / 2, Easing.InQuint).Expire();
 
                     break;
