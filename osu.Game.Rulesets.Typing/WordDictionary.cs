@@ -10,13 +10,14 @@ using osu.Game.Rulesets.Typing.Mods;
 
 namespace osu.Game.Rulesets.Typing
 {
-    public class WordDictionary
+    public static class WordDictionary
     {
         private const string resources_path = "Resources/GPL/";
-        private readonly Dictionary<DictionarySize, string[]> dictionaries = new Dictionary<DictionarySize, string[]>();
 
-        public WordDictionary(ResourceStore<byte[]> resources)
+        public static Dictionary<DictionarySize, string[]> CreateDictionaries(ResourceStore<byte[]> resources)
         {
+            Dictionary<DictionarySize, string[]> wordDictionaries = new Dictionary<DictionarySize, string[]>();
+
             foreach (var dictionarySize in Enum.GetValues<DictionarySize>())
             {
                 string filename = getFilename(dictionarySize);
@@ -31,12 +32,11 @@ namespace osu.Game.Rulesets.Typing
                 string json = reader.ReadToEnd();
                 string[] words = JsonSerializer.Deserialize<string[]>(json) ?? throw new InvalidOperationException($"Failed to deserialize {filename}");
 
-                dictionaries[dictionarySize] = words;
+                wordDictionaries[dictionarySize] = words;
             }
-        }
 
-        public string[] GetWords(DictionarySize size)
-            => dictionaries[size];
+            return wordDictionaries;
+        }
 
         private static string getFilename(DictionarySize size) => size switch
         {
