@@ -20,33 +20,20 @@ namespace osu.Game.Rulesets.Typing
 
             foreach (var dictionarySize in Enum.GetValues<DictionarySize>())
             {
-                string filename = getFilename(dictionarySize);
-
-                using var resourceStream = resources.GetStream($"{resources_path}{filename}");
+                using var resourceStream = resources.GetStream($"{resources_path}{dictionarySize}.json");
 
                 if (resourceStream == null)
-                    throw new InvalidOperationException($"Failed to create the dictionary. The file {filename} was missing.");
+                    throw new InvalidOperationException($"Failed to create the dictionary. The resource file for {dictionarySize} dictionary was missing.");
 
                 using var reader = new StreamReader(resourceStream);
 
                 string json = reader.ReadToEnd();
-                string[] words = JsonSerializer.Deserialize<string[]>(json) ?? throw new InvalidOperationException($"Failed to deserialize {filename}");
+                string[] words = JsonSerializer.Deserialize<string[]>(json) ?? throw new InvalidOperationException($"Failed to deserialize {dictionarySize} dictionary.");
 
                 wordDictionaries[dictionarySize] = words;
             }
 
             return wordDictionaries;
         }
-
-        private static string getFilename(DictionarySize size) => size switch
-        {
-            DictionarySize.E0K => "E0K.json",
-            DictionarySize.E1K => "E1K.json",
-            DictionarySize.E5K => "E5K.json",
-            DictionarySize.E10K => "E10K.json",
-            DictionarySize.E25K => "E25K.json",
-            DictionarySize.E450K => "E450K.json",
-            _ => throw new ArgumentOutOfRangeException(nameof(size)),
-        };
     }
 }
