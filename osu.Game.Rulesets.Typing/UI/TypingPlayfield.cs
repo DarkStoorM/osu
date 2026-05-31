@@ -15,7 +15,9 @@ namespace osu.Game.Rulesets.Typing.UI
     [Cached]
     public partial class TypingPlayfield : ScrollingPlayfield
     {
+        private const float judgment_box_width = 70;
         private const float lane_height = 150;
+        private const float lane_left_padding = 200;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -34,13 +36,40 @@ namespace osu.Game.Rulesets.Typing.UI
                             AutoSizeAxes = Axes.Y,
                             Padding = new MarginPadding
                             {
-                                Left = 200,
+                                Left = lane_left_padding,
                                 Top = lane_height / 2,
                                 Bottom = lane_height / 2
                             },
-                            Children = new Drawable[] { HitObjectContainer, }
+                            Children = new Drawable[]
+                            {
+                                HitObjectContainer,
+                            }
                         },
                     },
+                    new Box
+                    {
+                        Margin = new MarginPadding
+                        {
+                            Left = lane_left_padding,
+                        },
+                        Height = lane_height,
+                        Width = 2,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Colour = new Colour4(255, 255, 255, 50),
+                    },
+                    new Box
+                    {
+                        Margin = new MarginPadding
+                        {
+                            Left = lane_left_padding - judgment_box_width / 2,
+                        },
+                        Height = 100,
+                        Width = judgment_box_width,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Colour = new Colour4(255, 255, 255, 25),
+                    }
                 }
             );
         }

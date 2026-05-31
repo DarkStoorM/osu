@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Game.Audio;
@@ -25,16 +26,35 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
         [BackgroundDependencyLoader]
         private void load()
         {
-            Size = new Vector2(100);
+            Size = new Vector2(70, 100);
             Origin = Anchor.Centre;
 
-            AddInternal(new OsuSpriteText
+            AddRangeInternal(new Drawable[]
+            {
+                new Box
                 {
                     RelativeSizeAxes = Axes.Both,
+                    Colour = new Colour4(50, 50, 50, 255),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                },
+
+                new Box
+                {
+                    Size = new Vector2(2, 100),
+                    Colour = new Colour4(255, 255, 255, 50),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                },
+
+                new OsuSpriteText
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
                     Text = HitObject.Letter.ToString().ToUpperInvariant(),
-                    Font = OsuFont.Default.With(size: 100, weight: FontWeight.Bold),
+                    Font = OsuFont.Inter.With(size: 100, fixedWidth: true),
                 }
-            );
+            });
         }
 
         public override IEnumerable<HitSampleInfo> GetSamples() => new[] { new HitSampleInfo(HitSampleInfo.HIT_NORMAL) };
@@ -73,7 +93,7 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
 
                 case ArmedState.Miss:
 
-                    const double duration = 1000;
+                    const double duration = 500;
 
                     this.ScaleTo(0.8f, duration, Easing.OutQuint);
                     this.MoveToOffset(new Vector2(0, 10), duration, Easing.In);
