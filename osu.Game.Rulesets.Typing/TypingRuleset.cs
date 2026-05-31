@@ -31,10 +31,13 @@ namespace osu.Game.Rulesets.Typing
 
         public TypingRuleset()
         {
+            // Note: ruleset seems to be instantiated every time a beatmapset is selected, so the dictionaries should only be created once
+            if (Dictionaries == null)
+                return;
+
             var resources = new ResourceStore<byte[]>(new DllResourceStore(typeof(TypingRuleset).Assembly));
 
-            // Note: ruleset seems to be instantiated every time a beatmapset is selected, so the dictionaries should only be created once
-            Dictionaries ??= new WordDictionary(resources);
+            Dictionaries = new WordDictionary(resources);
         }
 
         public override IResourceStore<byte[]> CreateResourceStore() => new DllResourceStore(typeof(TypingRuleset).Assembly);
