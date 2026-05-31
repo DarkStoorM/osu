@@ -19,7 +19,8 @@ namespace osu.Game.Rulesets.Typing
 {
     public class TypingRuleset : Ruleset
     {
-        public override string Description => "Type to the beat";
+        public override string Description => "osu!typing";
+        public override string ShortName => "typing";
 
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods = null) => new DrawableTypingRuleset(this, beatmap, mods);
 
@@ -69,8 +70,6 @@ namespace osu.Game.Rulesets.Typing
                     return Array.Empty<Mod>();
             }
         }
-
-        public override string ShortName => "typing";
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) =>
             new[]
