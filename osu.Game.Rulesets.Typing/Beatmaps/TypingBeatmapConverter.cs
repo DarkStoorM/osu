@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Typing.Objects;
 
 namespace osu.Game.Rulesets.Typing.Beatmaps
@@ -24,16 +26,11 @@ namespace osu.Game.Rulesets.Typing.Beatmaps
 
         protected override IEnumerable<TypingHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
         {
-            // TODO: this is currently using a randomly taken letter, which was only made to have something on the scene
-            // Change this later to get the next letter from some Word Provider that will be applied to this beatmap.
-            // This may be overridden later through mods that regenerate the whole beatmap, so this will serve as a
-            // non-destructive conversion if the player wants to preserve HitObjects, but it will split the words
-            yield return new TypingHitObject
-            {
-                Samples = original.Samples,
-                StartTime = original.StartTime,
-                Letter = randomTypingAction(),
-            };
+            yield return createHitObject(original.Samples, original.StartTime);
+
+            // For conversion of beatmaps with sliders/etc, it might be good to have an extra object for the tail
+            if (original is IHasDuration objectEnd)
+                yield return createHitObject(original.Samples, objectEnd.EndTime);
         }
 
         protected override Beatmap<TypingHitObject> CreateBeatmap() => new TypingBeatmap();
@@ -49,6 +46,16 @@ namespace osu.Game.Rulesets.Typing.Beatmaps
                 : allActionsWithoutSpace;
 
             return values[Random.Shared.Next(values.Length)];
+        }
+
+        private TypingHitObject createHitObject(IList<HitSampleInfo> samples, double startTime)
+        {
+            return new TypingHitObject
+            {
+                Samples = samples,
+                StartTime = startTime,
+                Letter = randomTypingAction(),
+            };
         }
     }
 }
