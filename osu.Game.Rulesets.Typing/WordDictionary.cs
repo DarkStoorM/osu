@@ -10,34 +10,28 @@ using osu.Game.Rulesets.Typing.Mods;
 
 namespace osu.Game.Rulesets.Typing
 {
-    public class DictionaryManager
+    public class WordDictionary
     {
+        private const string resources_path = "Resources/GPL/";
         private readonly Dictionary<DictionarySize, string[]> dictionaries = new Dictionary<DictionarySize, string[]>();
 
-        public DictionaryManager(ResourceStore<byte[]> resources)
+        public WordDictionary(ResourceStore<byte[]> resources)
         {
-            load(resources);
-        }
-
-        private void load(ResourceStore<byte[]> resources)
-        {
-            foreach (var size in Enum.GetValues<DictionarySize>())
+            foreach (var dictionarySize in Enum.GetValues<DictionarySize>())
             {
-                string filename = getFilename(size);
+                string filename = getFilename(dictionarySize);
 
-                using var stream = resources.GetStream($"Resources/GPL/{filename}");
+                using var resourceStream = resources.GetStream($"{resources_path}{filename}");
 
-                if (stream == null)
-                    throw new Exception($"Missing dictionary resource: {filename}");
+                if (resourceStream == null)
+                    throw new InvalidOperationException($"Failed to create the dictionary. The file {filename} was missing.");
 
-                using var reader = new StreamReader(stream);
+                using var reader = new StreamReader(resourceStream);
 
                 string json = reader.ReadToEnd();
+                string[] words = JsonSerializer.Deserialize<string[]>(json) ?? throw new InvalidOperationException($"Failed to deserialize {filename}");
 
-                string[] words = JsonSerializer.Deserialize<string[]>(json)
-                                 ?? throw new Exception($"Failed to deserialize {filename}");
-
-                dictionaries[size] = words;
+                dictionaries[dictionarySize] = words;
             }
         }
 

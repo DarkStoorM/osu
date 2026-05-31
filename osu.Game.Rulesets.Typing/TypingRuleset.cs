@@ -27,14 +27,14 @@ namespace osu.Game.Rulesets.Typing
 
         public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new TypingDifficultyCalculator(RulesetInfo, beatmap);
 
-        public static DictionaryManager? Dictionaries { get; private set; }
+        public static WordDictionary? Dictionaries { get; private set; }
 
         public TypingRuleset()
         {
             var resources = new ResourceStore<byte[]>(new DllResourceStore(typeof(TypingRuleset).Assembly));
 
             // Note: ruleset seems to be instantiated every time a beatmapset is selected, so the dictionaries should only be created once
-            Dictionaries ??= new DictionaryManager(resources);
+            Dictionaries ??= new WordDictionary(resources);
         }
 
         public override IResourceStore<byte[]> CreateResourceStore() => new DllResourceStore(typeof(TypingRuleset).Assembly);
