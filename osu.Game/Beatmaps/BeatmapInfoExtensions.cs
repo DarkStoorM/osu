@@ -72,6 +72,10 @@ namespace osu.Game.Beatmaps
             if (beatmap.Ruleset.ShortName == ruleset.ShortName)
                 return true;
 
+            // I know, I know, sorry
+            if (beatmap.Ruleset.ShortName == "taiko" && ruleset.ShortName == "typing")
+                return true;
+
             if (allowConversion && beatmap.Ruleset.OnlineID == 0 && ruleset.OnlineID != 0)
                 return true;
 
