@@ -120,7 +120,7 @@ namespace osu.Game.Rulesets.Typing.UI
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
-                            Height = 0.95f,
+                            Height = 1,
                         },
                     };
                 }
