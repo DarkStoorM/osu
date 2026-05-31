@@ -8,7 +8,6 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Rulesets.UI.Scrolling;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Typing.UI
 {
@@ -16,6 +15,9 @@ namespace osu.Game.Rulesets.Typing.UI
     public partial class TypingPlayfield : ScrollingPlayfield
     {
         private const float judgment_box_width = 70;
+        private readonly Colour4 judgmentBoxColour = new Colour4(255, 255, 255, 25);
+        private readonly Colour4 judgmentLineColour = new Colour4(255, 255, 255, 50);
+
         private const float lane_height = 150;
         private const float lane_left_padding = 200;
 
@@ -26,10 +28,10 @@ namespace osu.Game.Rulesets.Typing.UI
                 {
                     new LaneContainer
                     {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
                         Child = new Container
                         {
                             RelativeSizeAxes = Axes.X,
@@ -46,29 +48,31 @@ namespace osu.Game.Rulesets.Typing.UI
                             }
                         },
                     },
+                    // Judgment Line
                     new Box
                     {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
                         Margin = new MarginPadding
                         {
                             Left = lane_left_padding,
                         },
                         Height = lane_height,
                         Width = 2,
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Colour = new Colour4(255, 255, 255, 50),
+                        Colour = judgmentLineColour,
                     },
+                    // Judgment Box
                     new Box
                     {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
                         Margin = new MarginPadding
                         {
                             Left = lane_left_padding - judgment_box_width / 2,
                         },
                         Height = 100,
                         Width = judgment_box_width,
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        Colour = new Colour4(255, 255, 255, 25),
+                        Colour = judgmentBoxColour,
                     }
                 }
             );
@@ -116,7 +120,6 @@ namespace osu.Game.Rulesets.Typing.UI
                     {
                         new Box
                         {
-                            Colour = Color4.White,
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
