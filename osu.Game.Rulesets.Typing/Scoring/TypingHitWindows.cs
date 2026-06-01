@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
     public class TypingHitWindows : HitWindows
     {
         // Note on the values and why they are quite larger:
-        // There are quite a bit of layers stacked on top of each other, that the cognitive load might be overwhelming.
+        // There are quite a bit of layers stacked on top of each other, so the cognitive load might be overwhelming.
         // It might seem like it's similar to osu!mania where players are able to play with lots of keys, but we have
         // to take other factors into account:
         // - One finger can map to multiple keys, depending on typing style
