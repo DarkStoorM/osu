@@ -25,13 +25,11 @@ namespace osu.Game.Rulesets.Typing.Scoring
         // The rest overlaps with other mods, e.g. hand coordination, but here we have to compensate for the fact,
         // that typing is really, really unstable. Players have to correct themselves, intentionally slowing down from
         // usual typing style.
-        // These values are a subject to change, most likely to adjust to some median typing speed, but right now,
-        // are just arbitrary values, increased from base osu! HitWindows
-        public static readonly DifficultyRange GREAT_WINDOW_RANGE = new DifficultyRange(110, 70, 30);
-        public static readonly DifficultyRange OK_WINDOW_RANGE = new DifficultyRange(180, 130, 80);
-        public static readonly DifficultyRange MEH_WINDOW_RANGE = new DifficultyRange(260, 200, 140);
+        public static readonly DifficultyRange GREAT_WINDOW_RANGE = new DifficultyRange(130, 90, 55);
+        public static readonly DifficultyRange OK_WINDOW_RANGE = new DifficultyRange(210, 150, 95);
+        public static readonly DifficultyRange MEH_WINDOW_RANGE = new DifficultyRange(320, 240, 170);
 
-        public const double MISS_WINDOW = 300;
+        public const double MISS_WINDOW = 360;
 
         private double great;
         private double ok;
