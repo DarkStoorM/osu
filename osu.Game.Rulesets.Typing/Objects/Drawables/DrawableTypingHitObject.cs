@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
@@ -20,13 +21,12 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
 {
     public partial class DrawableTypingHitObject : DrawableHitObject<TypingHitObject>, IKeyBindingHandler<TypingAction>
     {
-        private const float hit_object_width = 70;
-        private const float hit_object_height = 100;
         private const float hit_object_judgment_line_width = 2;
-        private const float font_size = 90;
+        private const float hit_object_judgment_line_height = 200;
+        private const float font_size = 100;
 
-        private readonly Color4 hitObjectBoxColour = new Colour4(50, 50, 50, 255);
-        private readonly Color4 hitObjectJudgmentColour = new Colour4(255, 255, 255, 50);
+        private readonly Colour4 hitObjectJudgmentColour = Color4Extensions.FromHex("#A6E3A111");
+        private readonly Colour4 letterColor = Color4Extensions.FromHex("#CDD6F4");
 
         public DrawableTypingHitObject(TypingHitObject hitObject)
             : base(hitObject) { }
@@ -34,33 +34,28 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
         [BackgroundDependencyLoader]
         private void load()
         {
-            Size = new Vector2(hit_object_width, hit_object_height);
             Origin = Anchor.Centre;
 
             AddRangeInternal(new Drawable[]
             {
                 new Box
                 {
-                    Colour = hitObjectBoxColour,
-                    RelativeSizeAxes = Axes.Both,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                },
-
-                new Box
-                {
                     Colour = hitObjectJudgmentColour,
-                    Size = new Vector2(hit_object_judgment_line_width, hit_object_height),
+                    Size = new Vector2(hit_object_judgment_line_width, hit_object_judgment_line_height),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 },
 
                 new OsuSpriteText
                 {
-                    Font = OsuFont.Inter.With(size: font_size, fixedWidth: true),
+                    Font = OsuFont.Inter.With(size: font_size, weight: FontWeight.SemiBold),
+                    Colour = letterColor,
                     Text = HitObject.Letter.ToString().ToUpperInvariant(),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
+                    // Intentionally shrink the letter, because some glyphs are too wide
+                    // TODO: manually map scale to certain glyphs, e.g. W/M as 0.8, 1 by default, etc.
+                    Scale = new Vector2(0.8f, 1f),
                 }
             });
         }
