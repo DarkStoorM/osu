@@ -21,6 +21,9 @@ namespace osu.Game.Rulesets.Typing.Judgements
                 case HitResult.Miss:
                     return -0.75;
 
+                case HitResult.Meh:
+                    return 1.0;
+
                 case HitResult.Ok:
                     return 1.5;
 

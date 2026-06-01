@@ -7,15 +7,35 @@ using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Typing.Scoring
 {
+    /// <summary>
+    /// Typing HitWindows based on osu!
+    /// </summary>
     public class TypingHitWindows : HitWindows
     {
-        public static readonly DifficultyRange GREAT_WINDOW_RANGE = new DifficultyRange(50, 35, 20);
-        public static readonly DifficultyRange OK_WINDOW_RANGE = new DifficultyRange(120, 80, 50);
-        public static readonly DifficultyRange MISS_WINDOW_RANGE = new DifficultyRange(135, 95, 70);
+        // Note on the values and why they are quite larger:
+        // There are quite a bit of layers stacked on top of each other, that the cognitive load might be overwhelming.
+        // It might seem like it's similar to osu!mania where players are able to play with lots of keys, but we have
+        // to take other factors into account:
+        // - One finger can map to multiple keys, depending on typing style
+        // - Variable finger travel due to the above
+        // - Player has to actively parse language
+        // - Player has to recognise character, select the finger and map to the correct key
+        // - Player has to overcome the habit of unstable chording, forcing the on-beat keypress
+        // - Inputs are not equally easy, unlike other rulesets,
+        // The rest overlaps with other mods, e.g. hand coordination, but here we have to compensate for the fact,
+        // that typing is really, really unstable. Players have to correct themselves, intentionally slowing down from
+        // usual typing style.
+        // These values are a subject to change, most likely to adjust to some median typing speed, but right now,
+        // are just arbitrary values, increased from base osu! HitWindows
+        public static readonly DifficultyRange GREAT_WINDOW_RANGE = new DifficultyRange(110, 70, 30);
+        public static readonly DifficultyRange OK_WINDOW_RANGE = new DifficultyRange(180, 130, 80);
+        public static readonly DifficultyRange MEH_WINDOW_RANGE = new DifficultyRange(260, 200, 140);
+
+        public const double MISS_WINDOW = 300;
 
         private double great;
         private double ok;
-        private double miss;
+        private double meh;
 
         public override bool IsHitResultAllowed(HitResult result)
         {
@@ -23,6 +43,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
             {
                 case HitResult.Great:
                 case HitResult.Ok:
+                case HitResult.Meh:
                 case HitResult.Miss:
                     return true;
             }
@@ -34,7 +55,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
         {
             great = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(difficulty, GREAT_WINDOW_RANGE)) - 0.5;
             ok = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(difficulty, OK_WINDOW_RANGE)) - 0.5;
-            miss = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(difficulty, MISS_WINDOW_RANGE)) - 0.5;
+            meh = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(difficulty, MEH_WINDOW_RANGE)) - 0.5;
         }
 
         public override double WindowFor(HitResult result)
@@ -47,8 +68,11 @@ namespace osu.Game.Rulesets.Typing.Scoring
                 case HitResult.Ok:
                     return ok;
 
+                case HitResult.Meh:
+                    return meh;
+
                 case HitResult.Miss:
-                    return miss;
+                    return MISS_WINDOW;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
