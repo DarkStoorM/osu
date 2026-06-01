@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using osu.Game.Beatmaps;
-using osu.Game.Localisation;
 using osu.Game.Rulesets.Typing.Objects;
 
 namespace osu.Game.Rulesets.Typing.Beatmaps
@@ -18,7 +17,7 @@ namespace osu.Game.Rulesets.Typing.Beatmaps
             {
                 new BeatmapStatistic
                 {
-                    Name = BeatmapStatisticStrings.Hits,
+                    Name = "Characters",
                     CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles),
                     Content = hits.ToString(),
                     BarDisplayLength = hits,
