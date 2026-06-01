@@ -10,8 +10,10 @@ using osu.Framework.IO.Stores;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Typing.Beatmaps;
 using osu.Game.Rulesets.Typing.Mods;
+using osu.Game.Rulesets.Typing.Scoring;
 using osu.Game.Rulesets.Typing.UI;
 using osu.Game.Rulesets.UI;
 
@@ -27,6 +29,8 @@ namespace osu.Game.Rulesets.Typing
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) => new TypingBeatmapConverter(beatmap, this);
 
         public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new TypingDifficultyCalculator(RulesetInfo, beatmap);
+
+        public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new TypingHealthProcessor();
 
         public static Dictionary<DictionarySize, string[]> Dictionaries { get; private set; } = new Dictionary<DictionarySize, string[]>();
 

@@ -3,6 +3,9 @@
 
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Typing.Judgements;
+using osu.Game.Rulesets.Typing.Scoring;
 
 namespace osu.Game.Rulesets.Typing.Objects
 {
@@ -10,6 +13,8 @@ namespace osu.Game.Rulesets.Typing.Objects
     {
         public TypingAction Letter;
 
-        public override Judgement CreateJudgement() => new Judgement();
+        public override Judgement CreateJudgement() => new TypingJudgement();
+
+        protected override HitWindows CreateHitWindows() => new TypingHitWindows();
     }
 }
