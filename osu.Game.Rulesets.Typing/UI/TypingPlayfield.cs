@@ -2,10 +2,10 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Rulesets.UI.Scrolling;
 
@@ -14,11 +14,13 @@ namespace osu.Game.Rulesets.Typing.UI
     [Cached]
     public partial class TypingPlayfield : ScrollingPlayfield
     {
+        public static readonly Colour4 LANE_FILL_COLOR = Color4Extensions.FromHex("#1E1E2E");
+
         private const float judgment_box_width = 70;
         private readonly Colour4 judgmentBoxColour = new Colour4(255, 255, 255, 25);
-        private readonly Colour4 judgmentLineColour = new Colour4(255, 255, 255, 50);
+        private readonly Colour4 judgmentLineColour = Color4Extensions.FromHex("#A6E3A177");
 
-        private const float lane_height = 150;
+        private const float lane_height = 200;
         private const float lane_left_padding = 200;
 
         [BackgroundDependencyLoader]
@@ -90,7 +92,7 @@ namespace osu.Game.Rulesets.Typing.UI
             protected override Container<Drawable> Content => content;
 
             [BackgroundDependencyLoader]
-            private void load(OsuColour colours)
+            private void load()
             {
                 InternalChildren = new Drawable[]
                 {
@@ -98,7 +100,7 @@ namespace osu.Game.Rulesets.Typing.UI
                     {
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
-                        Colour = colours.Gray2,
+                        Colour = LANE_FILL_COLOR,
                         Direction = FillDirection.Vertical,
                     },
                     content,
