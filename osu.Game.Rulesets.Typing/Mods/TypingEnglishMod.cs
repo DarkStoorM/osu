@@ -4,8 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using osu.Framework.Bindables;
+using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Configuration;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Typing.Beatmaps;
 using osu.Game.Rulesets.Typing.Objects;
@@ -13,7 +16,7 @@ using osu.Game.Rulesets.Typing.Objects;
 namespace osu.Game.Rulesets.Typing.Mods
 {
     // Note: This class contains code copy-pasted from TaikoModFullRandom, because I'm lazy
-    public abstract class TypingEnglishMod : Mod, IApplicableToBeatmap, IApplicableToBeatmapConverter, ITypingDictionaryMod
+    public abstract class TypingEnglishMod : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter, ITypingDictionaryMod
     {
         public abstract DictionarySize DictionarySize { get; }
         public override ModType Type => ModType.Conversion;
@@ -22,6 +25,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         public override Type[] IncompatibleMods => new[]
         {
+            typeof(TypingModWords),
             typeof(TypingModEnglish0K),
             typeof(TypingModEnglish1K),
             typeof(TypingModEnglish5K),
@@ -29,6 +33,12 @@ namespace osu.Game.Rulesets.Typing.Mods
             typeof(TypingModEnglish25K),
             typeof(TypingModEnglish450K),
         }.Except(new[] { GetType() }).ToArray();
+
+        [SettingSource("Adjust Beat Length", "Makes spacing shorter or longer between the objects. Half = twice as fast, Double = twice as slow")]
+        public Bindable<BeatLength> AdjustBeatLength { get; } = new Bindable<BeatLength>(BeatLength.Full);
+
+        [SettingSource("Skip all even length words", "Makes everything land on-beat. Disable this to include even length words, for more off-beat patterns and variety.")]
+        public BindableBool SkipEvenLengthWords { get; } = new BindableBool(true);
 
         private TypingBeatmap typingBeatmap = null!;
         private readonly List<TypingHitObject?> faultyHitObjectsToRemove = new List<TypingHitObject?>();
@@ -43,17 +53,26 @@ namespace osu.Game.Rulesets.Typing.Mods
         private double endGenerationAt;
 
         /// <summary>
-        /// Base beat division for the current timing point (1/1).
+        /// Base beat division for the current timing point (1/1). This length may be adjusted by <see cref="AdjustBeatLength"/>.
         /// </summary>
-        private double baseBeatLength;
+        private double beatFull => currentTimingControlPoint.BeatLength * AdjustBeatLength.Value switch
+        {
+            BeatLength.Half => 0.5,
+            BeatLength.Full => 1,
+            BeatLength.Double => 2,
+            _ => 1
+        };
 
-        private double beatOneHalf => baseBeatLength / 2;
-        private double beatOneFourth => baseBeatLength / 4;
+        private double beatHalf => beatFull / 2;
+        private double beatFourth => beatFull / 4;
 
         private bool isStillWithinPlayingBounds => currentTime <= endGenerationAt;
 
         private TimingControlPoint currentTimingControlPoint = null!;
+        private TimingControlPoint lastUsedTimingControlPoint = null!;
         private TimingControlPoint timingPointAtCurrentTime => typingBeatmap.ControlPointInfo.TimingPointAt(currentTime);
+
+        private bool hasTimingPointChanged => !currentTimingControlPoint.Equals(lastUsedTimingControlPoint);
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
@@ -63,8 +82,6 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         public void ApplyToBeatmap(IBeatmap beatmap)
         {
-            beatmap.Breaks.Clear();
-
             typingBeatmap = (TypingBeatmap)beatmap;
 
             if (typingBeatmap.HitObjects.Count < 2)
@@ -74,33 +91,101 @@ namespace osu.Game.Rulesets.Typing.Mods
 
             typingBeatmap.HitObjects.Clear();
 
+            string[] dictionary = TypingRuleset.Dictionaries[DictionarySize];
+            string currentWord = getNextWord(dictionary);
+            int currentWordLength = currentWord.Length;
+            bool hasJoinedEvenWordYet = false;
+
             while (isStillWithinPlayingBounds)
             {
-                TypingHitObject? hit = createRandomHitObject();
+                using var enumerator = currentWord.GetEnumerator();
 
-                if (hit == null)
-                    break;
+                while (enumerator.MoveNext())
+                {
+                    TypingHitObject? hit = createRandomHitObject(enumerator.Current);
 
-                typingBeatmap.HitObjects.Add(hit);
+                    if (hit == null)
+                        break;
 
-                advanceTime(baseBeatLength);
+                    // Avoid placing hit objects on the wrong timing point
+                    if (hasTimingPointChanged)
+                    {
+                        typingBeatmap.HitObjects.Add(hit);
+
+                        advanceTime(beatHalf);
+                        break;
+                    }
+
+                    typingBeatmap.HitObjects.Add(hit);
+
+                    advanceTime(beatHalf);
+                }
+
+                // The last spacing is required
+                advanceTime(beatHalf);
+
+                // To retain the rhythm, we have to keep rolling another even number length word
+                if (currentWordLength % 2 == 0 && !hasJoinedEvenWordYet)
+                {
+                    currentWord = getNextWord(dictionary, forcedEvenLength: true);
+                    currentWordLength = currentWord.Length;
+                    hasJoinedEvenWordYet = true;
+                }
+                else
+                {
+                    // Otherwise, we already joined the two even number length words, roll whatever
+                    currentWord = getNextWord(dictionary);
+                    currentWordLength = currentWord.Length;
+                    hasJoinedEvenWordYet = false;
+                }
             }
+
+            if (faultyHitObjectsToRemove.Count > 0)
+                typingBeatmap.HitObjects.RemoveAll(h => faultyHitObjectsToRemove.Contains(h));
 
             cleanUp();
         }
 
         private void initialiseSettings()
         {
+            ModRNG = new Random(Seed.Value ??= RNG.Next());
             startGenerationAt = typingBeatmap.HitObjects.First().StartTime;
             endGenerationAt = typingBeatmap.HitObjects.Last().StartTime;
             currentTime = startGenerationAt;
 
             currentTimingControlPoint = timingPointAtCurrentTime;
-            baseBeatLength = currentTimingControlPoint.BeatLength;
         }
 
-        private TypingHitObject? createRandomHitObject()
+        private string getNextWord(string[] dictionary, bool forcedEvenLength = false)
         {
+            string generateWord(bool isEven)
+            {
+                string word;
+
+                do
+                    // I could cache the dictionaries, but eh, whatever
+                    word = dictionary[RNG.Next(dictionary.Length)];
+                while (word.Length % 2 == 0 != isEven);
+
+                return word;
+            }
+
+            // The bindable option takes precedence over everything, because we have to respect the player's mod customisation
+            if (SkipEvenLengthWords.Value)
+                return generateWord(isEven: false);
+
+            if (forcedEvenLength)
+                return generateWord(isEven: true);
+
+            // Without the mod customisation, the generator should prioritise odd number length words more, like 75:25
+            // 25% chance for 'whatever', so we will keep rolling until the conditions are met
+            return ModRNG.NextDouble() < 0.1 ? generateWord(isEven: true) : generateWord(isEven: false);
+        }
+
+        private TypingHitObject? createRandomHitObject(char newChar)
+        {
+            lastUsedTimingControlPoint = (TimingControlPoint)currentTimingControlPoint.DeepClone();
+
             if (!isStillWithinPlayingBounds)
                 return null;
 
@@ -109,16 +194,14 @@ namespace osu.Game.Rulesets.Typing.Mods
                 currentTimingControlPoint = timingPointAtCurrentTime;
                 currentTime = currentTimingControlPoint.Time;
 
-                if (lastHitObjectCreated != null && currentTime - lastHitObjectCreated.StartTime < beatOneFourth)
+                if (lastHitObjectCreated != null && currentTime - lastHitObjectCreated.StartTime < beatFourth)
                     faultyHitObjectsToRemove.Add(lastHitObjectCreated);
-
-                baseBeatLength = currentTimingControlPoint.BeatLength;
             }
 
             TypingHitObject hitObject = new TypingHitObject
             {
                 StartTime = currentTime,
-                Letter = TypingAction.A
+                Letter = LetterToTypingAction(newChar)
             };
 
             hitObject.ApplyDefaults(typingBeatmap.ControlPointInfo, typingBeatmap.Difficulty);
@@ -135,6 +218,13 @@ namespace osu.Game.Rulesets.Typing.Mods
             typingBeatmap = null!;
             faultyHitObjectsToRemove.Clear();
         }
+    }
+
+    public enum BeatLength
+    {
+        Half,
+        Full,
+        Double,
     }
 
     public enum DictionarySize

@@ -60,6 +60,7 @@ namespace osu.Game.Rulesets.Typing
                 case ModType.Conversion:
                     return new Mod[]
                     {
+                        new TypingModWords(),
                         new MultiMod(
                             new TypingModEnglish0K(),
                             new TypingModEnglish1K(),
