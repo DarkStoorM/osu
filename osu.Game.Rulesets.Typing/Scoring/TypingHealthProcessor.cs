@@ -10,6 +10,9 @@ using osu.Game.Rulesets.Typing.Objects;
 
 namespace osu.Game.Rulesets.Typing.Scoring
 {
+    /// <summary>
+    /// This is a copy of TaikoHealthProcessor.
+    /// </summary>
     public partial class TypingHealthProcessor : AccumulatingHealthProcessor
     {
         /// <summary>
