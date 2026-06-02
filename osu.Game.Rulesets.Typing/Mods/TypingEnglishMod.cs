@@ -164,7 +164,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
                 do
                     // I could cache the dictionaries, but eh, whatever
-                    word = dictionary[RNG.Next(dictionary.Length)];
+                    word = dictionary[ModRNG.Next(dictionary.Length)];
                 while (word.Length % 2 == 0 != isEven);
 
                 return word;
