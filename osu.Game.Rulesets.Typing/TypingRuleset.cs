@@ -49,6 +49,9 @@ namespace osu.Game.Rulesets.Typing
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
+            // Note: for this ruleset, the only extra mods I decided to migrate are: HT, DT, DA, CS (auto is self-explanatory).
+            // The reason for this was to have a fine control through rate change, and better control of the
+            // Accuracy and Scroll Speed. No other mods are necessary. CS replaces HR/EZ anyway
             switch (type)
             {
                 case ModType.Automation:
@@ -57,9 +60,24 @@ namespace osu.Game.Rulesets.Typing
                         new TypingModAutoplay(),
                     };
 
+                case ModType.DifficultyReduction:
+                    return new Mod[]
+                    {
+                        new TypingModHalfTime(),
+                    };
+
+                case ModType.DifficultyIncrease:
+                    return new Mod[]
+                    {
+                        new TypingModDoubleTime(),
+                    };
+
                 case ModType.Conversion:
                     return new Mod[]
                     {
+                        new TypingModDifficultyAdjust(),
+                        // The reason for CS to exist here is to remove all speed changes from control points
+                        new TypingModConstantSpeed(),
                         new TypingModWords(),
                         new MultiMod(
                             new TypingModEnglish0K(),
