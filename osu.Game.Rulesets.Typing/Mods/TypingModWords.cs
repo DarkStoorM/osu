@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using System.Text;
 using osu.Framework.Localisation;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
@@ -24,7 +25,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
             ModRNG = new Random(Seed.Value ??= RNG.Next());
 
-            string wordStream = PrepareStream(typingBeatmap);
+            string wordStream = prepareStream(typingBeatmap);
             using var charEnumerator = wordStream.GetEnumerator();
 
             foreach (var letter in typingBeatmap.HitObjects)
@@ -34,6 +35,21 @@ namespace osu.Game.Rulesets.Typing.Mods
 
                 letter.Letter = LetterToTypingAction(charEnumerator.Current);
             }
+        }
+
+        /// <summary>
+        /// Returns a stream of letters made of random words from the given dictionary
+        /// </summary>
+        private string prepareStream(TypingBeatmap beatmap, DictionarySize dictionarySize = DictionarySize.E0K)
+        {
+            string[] workingDictionary = TypingRuleset.Dictionaries[dictionarySize];
+            StringBuilder builder = new StringBuilder();
+            int count = beatmap.HitObjects.Count;
+
+            while (builder.Length < count)
+                builder.Append(workingDictionary[ModRNG.Next(workingDictionary.Length)]);
+
+            return builder.ToString();
         }
     }
 }

@@ -2,12 +2,10 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
-using System.Text;
 using osu.Framework.Bindables;
 using osu.Game.Configuration;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Typing.Beatmaps;
 
 namespace osu.Game.Rulesets.Typing.Mods
 {
@@ -17,21 +15,6 @@ namespace osu.Game.Rulesets.Typing.Mods
         public Bindable<int?> Seed { get; } = new Bindable<int?>();
 
         protected Random ModRNG = null!;
-
-        /// <summary>
-        /// Returns a stream of letters made of random words from the given dictionary
-        /// </summary>
-        protected string PrepareStream(TypingBeatmap beatmap, DictionarySize dictionarySize = DictionarySize.E0K)
-        {
-            string[] workingDictionary = TypingRuleset.Dictionaries[dictionarySize];
-            StringBuilder builder = new StringBuilder();
-            int count = beatmap.HitObjects.Count;
-
-            while (builder.Length < count)
-                builder.Append(workingDictionary[ModRNG.Next(workingDictionary.Length)]);
-
-            return builder.ToString();
-        }
 
         protected static TypingAction LetterToTypingAction(char c)
         {
