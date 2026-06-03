@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Typing.UI
                 ? Beatmap.BeatmapInfo.BPM * Beatmap.Difficulty.SliderMultiplier / 60
                 : 1;
 
-            TimeRange.Value = multiplier / time_length_in_ms;
+            TimeRange.Value = time_length_in_ms / multiplier;
         }
 
         protected override Playfield CreatePlayfield() => new TypingPlayfield();
