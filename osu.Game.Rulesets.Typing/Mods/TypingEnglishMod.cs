@@ -37,6 +37,9 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Adjust Beat Length", "Makes spacing shorter or longer between the objects. Half = twice as fast, Double = twice as slow")]
         public Bindable<BeatLength> AdjustBeatLength { get; } = new Bindable<BeatLength>(BeatLength.Full);
 
+        [SettingSource("Add spacing between words", "Inserts a full beat pause between the words")]
+        public BindableBool AddSpacingBetweenWords { get; } = new BindableBool();
+
         [SettingSource("Skip all even length words", "Makes everything land on-beat. Disable this to include even length words, for more off-beat patterns and variety.")]
         public BindableBool SkipEvenLengthWords { get; } = new BindableBool(true);
 
@@ -123,6 +126,10 @@ namespace osu.Game.Rulesets.Typing.Mods
 
                 // The last spacing is required
                 advanceTime(beatHalf);
+
+                // A full beat of breathing room allows to reduce the cognitive load, and make the key travel a bit easier
+                if (AddSpacingBetweenWords.Value)
+                    advanceTime(beatFull);
 
                 // To retain the rhythm, we have to keep rolling another even number length word
                 if (currentWordLength % 2 == 0 && !hasJoinedEvenWordYet)
