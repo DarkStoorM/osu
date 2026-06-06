@@ -18,6 +18,8 @@ namespace osu.Game.Rulesets.Typing.Mods
     // Note: This class contains code copy-pasted from TaikoModFullRandom, because I'm lazy
     public abstract class TypingEnglishMod : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter, ITypingDictionaryMod
     {
+        private const int max_banned_letters_length = 5;
+
         public abstract DictionarySize DictionarySize { get; }
         public override ModType Type => ModType.Conversion;
         public override string Acronym => Name;
@@ -40,8 +42,24 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Add spacing between words", "Inserts a full beat pause between the words")]
         public BindableBool AddSpacingBetweenWords { get; } = new BindableBool();
 
+        [SettingSource("Banned letters", "Skips words containing the set letters")]
+        public Bindable<string> BannedLetters { get; } = new Bindable<string>(string.Empty);
+
         [SettingSource("Skip all even length words", "Makes everything land on-beat. Disable this to include even length words, for more off-beat patterns and variety.")]
         public BindableBool SkipEvenLengthWords { get; } = new BindableBool(true);
+
+        protected TypingEnglishMod()
+        {
+            BannedLetters.BindValueChanged(OnBannedLettersChanged);
+        }
+
+        private void OnBannedLettersChanged(ValueChangedEvent<string> e)
+        {
+            string value = e.NewValue;
+
+            if (value.Length > max_banned_letters_length)
+                BannedLetters.Value = value[..max_banned_letters_length];
+        }
 
         private TypingBeatmap typingBeatmap = null!;
         private readonly List<TypingHitObject?> faultyHitObjectsToRemove = new List<TypingHitObject?>();
@@ -54,6 +72,8 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         private double startGenerationAt;
         private double endGenerationAt;
+
+        private HashSet<char> bannedLetters = new HashSet<char>();
 
         /// <summary>
         /// Base beat division for the current timing point (1/1). This length may be adjusted by <see cref="AdjustBeatLength"/>.
@@ -161,6 +181,8 @@ namespace osu.Game.Rulesets.Typing.Mods
             currentTime = startGenerationAt;
 
             currentTimingControlPoint = timingPointAtCurrentTime;
+
+            bannedLetters = new HashSet<char>(BannedLetters.Value.ToLowerInvariant().Where(char.IsLetter));
         }
 
         private string getNextWord(string[] dictionary, bool forcedEvenLength = false)
@@ -172,7 +194,7 @@ namespace osu.Game.Rulesets.Typing.Mods
                 do
                     // I could cache the dictionaries, but eh, whatever
                     word = dictionary[ModRNG.Next(dictionary.Length)];
-                while (word.Length % 2 == 0 != isEven);
+                while (word.Length % 2 == 0 != isEven || word.Any(bannedLetters.Contains));
 
                 return word;
             }
