@@ -1,45 +1,62 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
-using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Rulesets.UI;
+using osu.Game.Screens.Play;
+using osu.Game.Screens.Play.HUD;
 using osu.Game.Skinning;
 using osuTK;
 
-namespace osu.Game.Screens.Play.HUD.ClicksPerSecond
+namespace osu.Game.Rulesets.Typing.Skinning
 {
-    // Note: this component does not belong in here at all, this is only supposed to be used with
-    // TypingRuleset, and it's not a real Words Per Minute counter. It just leverages the
-    // ClicksPerSecond component's logic
-    public partial class WordsPerMinuteCounter : RollingCounter<int>, ISerialisableDrawable
+    public partial class TypingWpmCounter : RollingCounter<int>, ISerialisableDrawable
     {
         [Resolved]
-        private WordsPerMinuteController controller { get; set; } = null!;
+        private InputCountController inputCountController { get; set; } = null!;
+
+        [Resolved]
+        private IGameplayClock gameplayClock { get; set; } = null!;
+
+        [Resolved]
+        private IFrameStableClock? frameStableClock { get; set; }
+
+        private IGameplayClock clock => frameStableClock ?? gameplayClock;
 
         public bool UsesFixedAnchor { get; set; }
 
-        public WordsPerMinuteCounter()
+        public TypingWpmCounter()
         {
             Current.Value = 0;
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(OsuColour colours)
-        {
-            Colour = colours.BlueLighter;
+            AutoSizeAxes = Axes.Both;
         }
 
         protected override void Update()
         {
             base.Update();
 
-            Current.Value = controller.Value;
+            double elapsedSeconds = (clock.CurrentTime - gameplayClock.GameplayStartTime) / 1000.0;
+
+            if (elapsedSeconds <= 0)
+            {
+                Current.Value = 0;
+                return;
+            }
+
+            int totalInputs = inputCountController.Triggers.Sum(x => x.ActivationCount.Value);
+            int wpm = (int)Math.Round(totalInputs * 12.0 / elapsedSeconds);
+
+            if (Current.Value != wpm)
+                Current.Value = wpm;
         }
 
         protected override IHasText CreateText() => new TextComponent();

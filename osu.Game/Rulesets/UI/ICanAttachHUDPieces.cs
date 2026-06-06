@@ -17,6 +17,5 @@ namespace osu.Game.Rulesets.UI
     {
         void Attach(InputCountController inputCountController);
         void Attach(ClicksPerSecondController controller);
-        void Attach(WordsPerMinuteController controller);
     }
 }

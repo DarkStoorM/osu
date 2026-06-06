@@ -56,9 +56,6 @@ namespace osu.Game.Screens.Play
         private readonly ClicksPerSecondController clicksPerSecondController;
 
         [Cached]
-        private readonly WordsPerMinuteController wordsPerMinuteController;
-
-        [Cached]
         public readonly InputCountController InputCountController;
 
         [Cached]
@@ -129,7 +126,6 @@ namespace osu.Game.Screens.Play
                 //Needs to be initialized before skinnable drawables.
                 judgementCountController = new JudgementCountController(),
                 clicksPerSecondController = new ClicksPerSecondController(),
-                wordsPerMinuteController = new WordsPerMinuteController(),
                 InputCountController = new InputCountController(),
                 mainComponents = new HUDComponentsContainer { AlwaysPresent = true, },
                 drawableRuleset != null
@@ -368,7 +364,6 @@ namespace osu.Game.Screens.Play
             {
                 attachTarget.Attach(InputCountController);
                 attachTarget.Attach(clicksPerSecondController);
-                attachTarget.Attach(wordsPerMinuteController);
             }
 
             replayLoaded.BindTo(drawableRuleset.HasReplayLoaded);

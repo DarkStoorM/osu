@@ -190,33 +190,11 @@ namespace osu.Game.Rulesets.UI
 
         public void Attach(ClicksPerSecondController controller) => KeyBindingContainer.Add(new ActionListener(controller));
 
-        public void Attach(WordsPerMinuteController controller) => KeyBindingContainer.Add(new WordsPerMinuteListener(controller));
-
         private partial class ActionListener : Component, IKeyBindingHandler<T>
         {
             private readonly ClicksPerSecondController controller;
 
             public ActionListener(ClicksPerSecondController controller)
-            {
-                this.controller = controller;
-            }
-
-            public bool OnPressed(KeyBindingPressEvent<T> e)
-            {
-                controller.AddInputTimestamp();
-                return false;
-            }
-
-            public void OnReleased(KeyBindingReleaseEvent<T> e)
-            {
-            }
-        }
-
-        private partial class WordsPerMinuteListener : Component, IKeyBindingHandler<T>
-        {
-            private readonly WordsPerMinuteController controller;
-
-            public WordsPerMinuteListener(WordsPerMinuteController controller)
             {
                 this.controller = controller;
             }

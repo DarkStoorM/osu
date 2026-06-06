@@ -343,9 +343,6 @@ namespace osu.Game.Rulesets.UI
         public void Attach(ClicksPerSecondController controller) =>
             (KeyBindingInputManager as ICanAttachHUDPieces)?.Attach(controller);
 
-        public void Attach(WordsPerMinuteController controller) =>
-            (KeyBindingInputManager as ICanAttachHUDPieces)?.Attach(controller);
-
         /// <summary>
         /// Creates a key conversion input manager. An exception will be thrown if a valid <see cref="RulesetInputManager{T}"/> is not returned.
         /// </summary>
