@@ -53,7 +53,7 @@ namespace osu.Game.Rulesets.Typing.Skinning
             }
 
             int totalInputs = inputCountController.Triggers.Sum(x => x.ActivationCount.Value);
-            int wpm = (int)Math.Round(totalInputs * 12.0 / elapsedSeconds);
+            int wpm = (int)Math.Round(totalInputs * 12.0 / elapsedSeconds * gameplayClock.GetTrueGameplayRate());
 
             if (Current.Value != wpm)
                 Current.Value = wpm;
