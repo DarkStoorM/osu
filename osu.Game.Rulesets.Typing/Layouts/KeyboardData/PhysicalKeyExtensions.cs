@@ -11,5 +11,8 @@ namespace osu.Game.Rulesets.Typing.Layouts.KeyboardData
 
         public static bool IsOnSameHand(this PhysicalKey a, PhysicalKey b)
             => a.Hand == b.Hand;
+
+        public static bool IsKeyRepeated(this PhysicalKey a, PhysicalKey b)
+            => a.Character == b.Character;
     }
 }

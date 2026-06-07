@@ -6,7 +6,7 @@ using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
 
 namespace osu.Game.Rulesets.Typing.Layouts
 {
-    public sealed class QwertyOrtholinearLayout : KeyboardLayout
+    public sealed class QwertyOrtholinearLayout : KeyboardLayout, IKeyboardLayout
     {
         protected override IEnumerable<LayoutKeyDefinition> CreateLayout()
         {
