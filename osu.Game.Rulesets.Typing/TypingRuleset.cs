@@ -79,7 +79,6 @@ namespace osu.Game.Rulesets.Typing
                         new TypingModDifficultyAdjust(),
                         // The reason for CS to exist here is to remove all speed changes from control points
                         new TypingModConstantSpeed(),
-                        new TypingModWords(),
                         new MultiMod(
                             new TypingModEnglish0K(),
                             new TypingModEnglish1K(),
