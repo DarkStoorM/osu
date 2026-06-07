@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Typing.Beatmaps;
+using osu.Game.Rulesets.Typing.Difficulty;
 using osu.Game.Rulesets.Typing.Mods;
 using osu.Game.Rulesets.Typing.Scoring;
 using osu.Game.Rulesets.Typing.UI;
