@@ -88,8 +88,7 @@ namespace osu.Game.Rulesets.Typing
                             new TypingModEnglish1K(),
                             new TypingModEnglish5K(),
                             new TypingModEnglish10K(),
-                            new TypingModEnglish25K(),
-                            new TypingModEnglish450K()
+                            new TypingModEnglish25K()
                         )
                     };
 
