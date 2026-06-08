@@ -27,7 +27,6 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         public override Type[] IncompatibleMods => new[]
         {
-            typeof(TypingModWords),
             typeof(TypingModEnglish0K),
             typeof(TypingModEnglish1K),
             typeof(TypingModEnglish5K),
@@ -114,8 +113,10 @@ namespace osu.Game.Rulesets.Typing.Mods
 
             typingBeatmap.HitObjects.Clear();
 
-            string[] dictionary = TypingRuleset.Dictionaries[DictionarySize];
-            string currentWord = getNextWord(dictionary);
+            RankedWordGenerator wordGenerator = TypingRuleset.RankedDictionaries[DictionarySize];
+            WordSamplingContext samplingContext = new WordSamplingContext();
+
+            string currentWord = getNextWord(wordGenerator, samplingContext);
             int currentWordLength = currentWord.Length;
             bool hasJoinedEvenWordYet = false;
 
@@ -154,14 +155,14 @@ namespace osu.Game.Rulesets.Typing.Mods
                 // To retain the rhythm, we have to keep rolling another even number length word
                 if (currentWordLength % 2 == 0 && !hasJoinedEvenWordYet)
                 {
-                    currentWord = getNextWord(dictionary, forcedEvenLength: true);
+                    currentWord = getNextWord(wordGenerator, samplingContext, forcedEvenLength: true);
                     currentWordLength = currentWord.Length;
                     hasJoinedEvenWordYet = true;
                 }
                 else
                 {
                     // Otherwise, we already joined the two even number length words, roll whatever
-                    currentWord = getNextWord(dictionary);
+                    currentWord = getNextWord(wordGenerator, samplingContext);
                     currentWordLength = currentWord.Length;
                     hasJoinedEvenWordYet = false;
                 }
@@ -185,30 +186,59 @@ namespace osu.Game.Rulesets.Typing.Mods
             bannedLetters = new HashSet<char>(BannedLetters.Value.ToLowerInvariant().Where(char.IsLetter));
         }
 
-        private string getNextWord(string[] dictionary, bool forcedEvenLength = false)
+        private string getNextWord(RankedWordGenerator generator, WordSamplingContext samplingContext, bool forcedEvenLength = false)
         {
-            string generateWord(bool isEven)
+            // The bindable option takes precedence over everything, because we have to respect the player's mod customisation
+            if (SkipEvenLengthWords.Value)
+                return getWord(isEven: false);
+
+            if (forcedEvenLength)
+                return getWord(isEven: true);
+
+            // Without the mod customisation, the generator should prioritise odd number length words more, like 90:10
+            // 10% chance for 'whatever', so we will keep rolling until the conditions are met
+            return ModRNG.NextDouble() < 0.1 ? getWord(isEven: true) : getWord(isEven: false);
+
+            string getWord(bool isEven)
             {
                 string word;
+                bool wordInvalid;
 
                 do
-                    // I could cache the dictionaries, but eh, whatever
-                    word = dictionary[ModRNG.Next(dictionary.Length)];
-                while (word.Length % 2 == 0 != isEven || word.Any(bannedLetters.Contains));
+                {
+                    word = generateWord(generator, samplingContext);
+                    wordInvalid = isWordInvalid(word);
+
+                    if (wordInvalid && samplingContext.WasRecentlyUsed(word))
+                        samplingContext.RemoveQueuedWord(word);
+                } while (wordInvalid);
+
+                return word;
+
+                bool isWordInvalid(string testedWord) => testedWord.Length % 2 == 0 != isEven || testedWord.Any(bannedLetters.Contains);
+            }
+        }
+
+        private string generateWord(RankedWordGenerator generator, WordSamplingContext context)
+        {
+            for (int attempt = 0; attempt < 20; attempt++)
+            {
+                string word = generator.NextWord(ModRNG);
+
+                if (context.WasRecentlyUsed(word))
+                    continue;
+
+                context.Push(word);
 
                 return word;
             }
 
-            // The bindable option takes precedence over everything, because we have to respect the player's mod customisation
-            if (SkipEvenLengthWords.Value)
-                return generateWord(isEven: false);
+            // Always allow at least something
+            string fallback = generator.NextWord(ModRNG);
 
-            if (forcedEvenLength)
-                return generateWord(isEven: true);
+            context.Push(fallback);
 
-            // Without the mod customisation, the generator should prioritise odd number length words more, like 75:25
-            // 25% chance for 'whatever', so we will keep rolling until the conditions are met
-            return ModRNG.NextDouble() < 0.1 ? generateWord(isEven: true) : generateWord(isEven: false);
+            return fallback;
         }
 
         private TypingHitObject? createRandomHitObject(char newChar)
@@ -246,6 +276,36 @@ namespace osu.Game.Rulesets.Typing.Mods
         {
             typingBeatmap = null!;
             faultyHitObjectsToRemove.Clear();
+        }
+
+        private sealed class WordSamplingContext
+        {
+            private readonly Queue<string> recentWords = new Queue<string>();
+            private const int recent_window = 8;
+
+            public bool WasRecentlyUsed(string word)
+                => recentWords.Contains(word);
+
+            public void Push(string word)
+            {
+                recentWords.Enqueue(word);
+
+                while (recentWords.Count > recent_window)
+                    recentWords.Dequeue();
+            }
+
+            public void RemoveQueuedWord(string word)
+            {
+                int count = recentWords.Count;
+
+                for (int i = 0; i < count; i++)
+                {
+                    string item = recentWords.Dequeue();
+
+                    if (item != word)
+                        recentWords.Enqueue(item);
+                }
+            }
         }
     }
 

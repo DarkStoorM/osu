@@ -12,6 +12,9 @@ using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Typing.Beatmaps;
+using osu.Game.Rulesets.Typing.Difficulty;
+using osu.Game.Rulesets.Typing.Layouts;
+using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
 using osu.Game.Rulesets.Typing.Mods;
 using osu.Game.Rulesets.Typing.Scoring;
 using osu.Game.Rulesets.Typing.UI;
@@ -24,25 +27,27 @@ namespace osu.Game.Rulesets.Typing
         public override string Description => "osu!typing";
         public override string ShortName => "typing";
 
+        public IKeyboardLayout KeyboardLayout => new QwertyOrtholinearLayout();
+
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods = null) => new DrawableTypingRuleset(this, beatmap, mods);
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) => new TypingBeatmapConverter(beatmap, this);
 
-        public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new TypingDifficultyCalculator(RulesetInfo, beatmap);
+        public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new TypingDifficultyCalculator(RulesetInfo, beatmap, KeyboardLayout);
 
         public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new TypingHealthProcessor();
 
-        public static Dictionary<DictionarySize, string[]> Dictionaries { get; private set; } = new Dictionary<DictionarySize, string[]>();
+        public static Dictionary<DictionarySize, RankedWordGenerator> RankedDictionaries { get; private set; } = new Dictionary<DictionarySize, RankedWordGenerator>();
 
         public TypingRuleset()
         {
             // Note: ruleset seems to be instantiated every time a beatmapset is selected, so the dictionaries should only be created once
-            if (Dictionaries.Count != 0)
+            if (RankedDictionaries.Count != 0)
                 return;
 
             var resources = new ResourceStore<byte[]>(new DllResourceStore(typeof(TypingRuleset).Assembly));
 
-            Dictionaries = WordDictionary.CreateDictionaries(resources);
+            RankedDictionaries = WordDictionary.CreateDictionaries(resources);
         }
 
         public override IResourceStore<byte[]> CreateResourceStore() => new DllResourceStore(typeof(TypingRuleset).Assembly);
@@ -78,7 +83,6 @@ namespace osu.Game.Rulesets.Typing
                         new TypingModDifficultyAdjust(),
                         // The reason for CS to exist here is to remove all speed changes from control points
                         new TypingModConstantSpeed(),
-                        new TypingModWords(),
                         new MultiMod(
                             new TypingModEnglish0K(),
                             new TypingModEnglish1K(),

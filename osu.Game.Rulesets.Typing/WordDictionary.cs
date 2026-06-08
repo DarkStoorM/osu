@@ -14,9 +14,9 @@ namespace osu.Game.Rulesets.Typing
     {
         private const string resources_path = "Resources/GPL/";
 
-        public static Dictionary<DictionarySize, string[]> CreateDictionaries(ResourceStore<byte[]> resources)
+        public static Dictionary<DictionarySize, RankedWordGenerator> CreateDictionaries(ResourceStore<byte[]> resources)
         {
-            Dictionary<DictionarySize, string[]> wordDictionaries = new Dictionary<DictionarySize, string[]>();
+            var wordDictionaries = new Dictionary<DictionarySize, RankedWordGenerator>();
 
             foreach (var dictionarySize in Enum.GetValues<DictionarySize>())
             {
@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Typing
                 for (int i = 0; i < words.Length; i++)
                     words[i] = words[i].ToLowerInvariant();
 
-                wordDictionaries[dictionarySize] = words;
+                wordDictionaries[dictionarySize] = new RankedWordGenerator(words);
             }
 
             return wordDictionaries;
