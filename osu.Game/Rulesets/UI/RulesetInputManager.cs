@@ -186,7 +186,7 @@ namespace osu.Game.Rulesets.UI
 
         #endregion
 
-        #region Keys per second Counter Attachment
+        #region Keys per second / Words per minute Counter Attachment
 
         public void Attach(ClicksPerSecondController controller) => KeyBindingContainer.Add(new ActionListener(controller));
 
