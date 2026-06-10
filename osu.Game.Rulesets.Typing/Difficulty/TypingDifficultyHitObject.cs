@@ -14,12 +14,6 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 
         public HitObject? NextObject { get; }
 
-        public double TimeFromPrevious { get; set; }
-
-        public double TimeToNext { get; set; }
-
-        public int IndexInPattern { get; set; }
-
         public TypingDifficultyHitObject(HitObject current, HitObject previous, double clockRate, List<DifficultyHitObject> allObjects, int index, PhysicalKey physicalKey, HitObject? nextObject)
             : base(current, previous, clockRate, allObjects, index)
         {

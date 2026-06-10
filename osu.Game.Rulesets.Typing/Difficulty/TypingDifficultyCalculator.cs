@@ -60,7 +60,6 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             double rowSwitchValue = rowSwitch.DifficultyValue();
             double speedValue = speed.DifficultyValue();
             double wordLengthValue = wordLength.DifficultyValue();
-
             double combinedRating = combinedDifficultyValue(fingerControl, keyTravel, retrigger, rowSwitch, speed, wordLength);
             double starRating = rescale(combinedRating * 1.4);
 
@@ -149,26 +148,6 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                         beatmap.HitObjects.ElementAtOrDefault(i + 1)
                     )
                 );
-            }
-
-            // Assign hit object times and pattern index, which both are used by skills
-            for (int i = 0; i < objects.Count; i++)
-            {
-                TypingDifficultyHitObject current = (TypingDifficultyHitObject)objects[i];
-                TypingDifficultyHitObject previous = (TypingDifficultyHitObject)current.Previous(0);
-                TypingDifficultyHitObject next = (TypingDifficultyHitObject)current.Next(0);
-
-                if (previous == null || next == null)
-                    continue;
-
-                double timeFromPrevious = current.StartTime - previous.StartTime;
-                double timeToNext = next.StartTime - current.StartTime;
-
-                current.TimeToNext = timeToNext;
-                current.TimeFromPrevious = timeFromPrevious;
-
-                if (timeToNext <= timeFromPrevious)
-                    current.IndexInPattern = previous.IndexInPattern + 1;
             }
 
             return objects;
