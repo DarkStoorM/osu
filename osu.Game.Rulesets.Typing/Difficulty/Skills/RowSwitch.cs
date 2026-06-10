@@ -7,16 +7,15 @@ using osu.Game.Rulesets.Mods;
 
 namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
-    public class Speed : StrainDecaySkill
+    public class RowSwitch : StrainDecaySkill
     {
-        public Speed(Mod[] mods)
+        public RowSwitch(Mod[] mods)
             : base(mods) { }
 
         protected override double SkillMultiplier => 1;
-
         protected override double StrainDecayBase => 1;
 
-        protected override double StrainValueOf(DifficultyHitObject hitObject)
+        protected override double StrainValueOf(DifficultyHitObject current)
         {
             return 1;
         }
