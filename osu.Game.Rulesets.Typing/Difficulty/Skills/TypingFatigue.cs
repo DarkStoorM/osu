@@ -8,25 +8,31 @@ using osu.Game.Rulesets.Mods;
 
 namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
+    /// <summary>
+    /// Skill only applying a penalty based on how deep into the beatmap the player is.
+    /// <para/> Note: This is not tweaked yet.
+    /// </summary>
     public class TypingFatigue : StrainDecaySkill
     {
-        private const double delta_strain_decay = 0.5;
+        private const double delta_strain_decay = 0.4;
 
         public TypingFatigue(Mod[] mods)
             : base(mods) { }
 
-        protected override double SkillMultiplier => 1;
+        protected override double SkillMultiplier => 1.125;
 
-        protected override double StrainDecayBase => 0.9;
+        // Note: due to tiny values, this has to be pretty large
+        protected override double StrainDecayBase => 0.98;
 
         protected override double StrainValueOf(DifficultyHitObject current)
         {
             double strain = strainDecay(current.DeltaTime);
 
-            // 800 Was an arbitrary value picked to make the typing fatigue factor climb to 0.5 at around 700~ objects
-            // and approach 1.0 at ~2000+
-            double t = current.Index / 800.0;
-            double fatigue = 1.0 - Math.Exp(-(t * t)); // Short from Pow
+            // 600 was an arbitrary value picked to make the typing fatigue factor climb steadily after 250~ objects
+            // and approach 1.0 at ~1200+.
+            // The factor is very small for the first ~150 objects to not favor short beatmaps
+            double t = current.Index / 600.0;
+            double fatigue = 1.0 - Math.Exp(-(t * t));
 
             return strain * fatigue;
         }
