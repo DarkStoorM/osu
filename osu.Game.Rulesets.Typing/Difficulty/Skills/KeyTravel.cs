@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 
         protected override double StrainValueOf(DifficultyHitObject current)
         {
-            return 1;
+            return 0;
         }
     }
 }
