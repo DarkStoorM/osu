@@ -24,6 +24,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
         private const double key_travel_skill_multiplier = 0 * difficulty_multiplier;
         private const double finger_control_skill_multiplier = 0 * difficulty_multiplier;
         private const double speed_skill_multiplier = 0 * difficulty_multiplier;
+        private const double typing_fatigue_skill_multiplier = 1 * difficulty_multiplier;
         private const double word_length_skill_multiplier = 1 * difficulty_multiplier;
 
         private readonly IKeyboardLayout keyboardLayout;
@@ -55,6 +56,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             var retrigger = skills.OfType<Retrigger>().Single();
             var rowSwitch = skills.OfType<RowSwitch>().Single();
             var speed = skills.OfType<Speed>().Single();
+            var typingFatigue = skills.OfType<TypingFatigue>().Single();
             var wordLength = skills.OfType<WordLength>().Single();
 
             double fingerControlValue = fingerControl.DifficultyValue();
@@ -62,8 +64,9 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             double retriggerValue = retrigger.DifficultyValue();
             double rowSwitchValue = rowSwitch.DifficultyValue();
             double speedValue = speed.DifficultyValue();
+            double typingFatigueValue = typingFatigue.DifficultyValue();
             double wordLengthValue = wordLength.DifficultyValue();
-            double combinedRating = combinedDifficultyValue(fingerControl, keyTravel, retrigger, rowSwitch, speed, wordLength);
+            double combinedRating = combinedDifficultyValue(fingerControl, keyTravel, retrigger, rowSwitch, speed, typingFatigue, wordLength);
             double starRating = rescale(combinedRating * 1.4);
 
             return new TypingDifficultyAttributes
@@ -76,11 +79,18 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                 Retrigger = retriggerValue,
                 RowSwitch = rowSwitchValue,
                 Speed = speedValue,
+                TypingFatigue = typingFatigueValue,
                 WordLength = wordLengthValue,
             };
         }
 
-        private double combinedDifficultyValue(FingerControl fingerControl, KeyTravel keyTravel, Retrigger retrigger, RowSwitch rowSwitch, Speed speed, WordLength wordLength)
+        private double combinedDifficultyValue(FingerControl fingerControl,
+                                               KeyTravel keyTravel,
+                                               Retrigger retrigger,
+                                               RowSwitch rowSwitch,
+                                               Speed speed,
+                                               TypingFatigue typingFatigue,
+                                               WordLength wordLength)
         {
             List<double> peaks = combinePeaks(
                 fingerControl.GetCurrentStrainPeaks().ToList(),
@@ -88,6 +98,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                 retrigger.GetCurrentStrainPeaks().ToList(),
                 rowSwitch.GetCurrentStrainPeaks().ToList(),
                 speed.GetCurrentStrainPeaks().ToList(),
+                typingFatigue.GetCurrentStrainPeaks().ToList(),
                 wordLength.GetCurrentStrainPeaks().ToList()
             );
 
@@ -106,8 +117,13 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             return difficulty;
         }
 
-        private List<double> combinePeaks(List<double> fingerControlPeaks, List<double> keyTravelPeaks, List<double> retriggerPeaks, List<double> rowSwitchPeaks, List<double> speedPeaks, List<double>
-                                              wordLengthPeaks)
+        private List<double> combinePeaks(List<double> fingerControlPeaks,
+                                          List<double> keyTravelPeaks,
+                                          List<double> retriggerPeaks,
+                                          List<double> rowSwitchPeaks,
+                                          List<double> speedPeaks,
+                                          List<double> typingFatiguePeaks,
+                                          List<double> wordLengthPeaks)
         {
             int max = wordLengthPeaks.Count;
             var combined = new List<double>(max);
@@ -119,6 +135,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                 double retriggerPeak = i < retriggerPeaks.Count ? retriggerPeaks[i] : 0;
                 double rowSwitchPeak = i < rowSwitchPeaks.Count ? rowSwitchPeaks[i] : 0;
                 double speedPeak = i < speedPeaks.Count ? speedPeaks[i] : 0;
+                double typingFatiguePeak = i < typingFatiguePeaks.Count ? typingFatiguePeaks[i] : 0;
                 double wordLengthPeak = i < wordLengthPeaks.Count ? wordLengthPeaks[i] : 0;
 
                 combined.Add(fingerControlPeak * finger_control_skill_multiplier
@@ -126,6 +143,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                              + retriggerPeak * retrigger_skill_multiplier
                              + rowSwitchPeak * row_switch_skill_multiplier
                              + speedPeak * speed_skill_multiplier
+                             + typingFatiguePeak * typing_fatigue_skill_multiplier
                              + wordLengthPeak * word_length_skill_multiplier);
             }
 
@@ -165,6 +183,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                 new Retrigger(mods),
                 new RowSwitch(mods),
                 new Speed(mods),
+                new TypingFatigue(mods),
                 new WordLength(mods),
             };
         }

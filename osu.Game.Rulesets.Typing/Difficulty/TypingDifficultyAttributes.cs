@@ -12,6 +12,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
         public double Retrigger { get; set; }
         public double RowSwitch { get; set; }
         public double Speed { get; set; }
+        public double TypingFatigue { get; set; }
         public double WordLength { get; set; }
     }
 }
