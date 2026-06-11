@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
         private const double key_travel_skill_multiplier = 0 * difficulty_multiplier;
         private const double finger_control_skill_multiplier = 0 * difficulty_multiplier;
         private const double speed_skill_multiplier = 0 * difficulty_multiplier;
-        private const double word_length_skill_multiplier = 0.25 * difficulty_multiplier;
+        private const double word_length_skill_multiplier = 1 * difficulty_multiplier;
 
         private readonly IKeyboardLayout keyboardLayout;
 
