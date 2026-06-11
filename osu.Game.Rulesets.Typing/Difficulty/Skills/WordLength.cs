@@ -9,6 +9,11 @@ using osu.Game.Rulesets.Typing.Objects;
 
 namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
+    /// <summary>
+    /// Skill only applying a penalty based on the word length of the current object, without any awareness of other factors,
+    /// e.g. current time, word complexity, etc.
+    /// <para />Note: This is not tweaked yet.
+    /// </summary>
     public class WordLength : StrainDecaySkill
     {
         protected override double SkillMultiplier => 1;
