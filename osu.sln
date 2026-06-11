@@ -104,6 +104,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "osu.Game.Rulesets.Typing", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "osu.Game.Rulesets.Typing.Tests", "osu.Game.Rulesets.Typing.Tests\osu.Game.Rulesets.Typing.Tests.csproj", "{0FA225E2-2838-485E-9998-606FC7F48612}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "osu.Game.Tools.Typing.DifficultyCalculator", "osu.Game.Tools.Typing.DifficultyCalculator\osu.Game.Tools.Typing.DifficultyCalculator.csproj", "{F8769ACD-C245-466F-BCFB-D33134674B68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -266,6 +268,10 @@ Global
 		{0FA225E2-2838-485E-9998-606FC7F48612}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FA225E2-2838-485E-9998-606FC7F48612}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FA225E2-2838-485E-9998-606FC7F48612}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8769ACD-C245-466F-BCFB-D33134674B68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8769ACD-C245-466F-BCFB-D33134674B68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8769ACD-C245-466F-BCFB-D33134674B68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8769ACD-C245-466F-BCFB-D33134674B68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
