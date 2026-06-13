@@ -156,7 +156,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 
             for (int i = 2; i < beatmap.HitObjects.Count; i++)
             {
-                keyboardLayout.TryGetKey(((TypingHitObject)beatmap.HitObjects[i]).Letter, out PhysicalKey physicalKey);
+                keyboardLayout.TryGetKey(((TypingHitObject)beatmap.HitObjects[i]).Letter, out PhysicalKey currentKey);
+                keyboardLayout.TryGetKey(((TypingHitObject)beatmap.HitObjects[i - 1]).Letter, out PhysicalKey previousKey);
 
                 objects.Add(
                     new TypingDifficultyHitObject(
@@ -165,7 +166,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                         clockRate,
                         objects,
                         objects.Count,
-                        physicalKey,
+                        currentKey,
+                        previousKey,
                         beatmap.HitObjects.ElementAtOrDefault(i + 1)
                     )
                 );
