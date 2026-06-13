@@ -81,6 +81,14 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                 Speed = speedValue,
                 TypingFatigue = typingFatigueValue,
                 WordLength = wordLengthValue,
+
+                FingerControlSkill = fingerControl,
+                KeyTravelSkill = keyTravel,
+                RetriggerSkill = retrigger,
+                RowSwitchSkill = rowSwitch,
+                SpeedSkill = speed,
+                TypingFatigueSkill = typingFatigue,
+                WordLengthSkill = wordLength,
             };
         }
 
