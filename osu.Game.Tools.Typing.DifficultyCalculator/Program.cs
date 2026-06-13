@@ -13,6 +13,7 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
 {
     internal class Program
     {
+        private const bool include_double_time = false;
         private const double bpm = 140;
         private const double beatmap_drain_time_in_ms = 180000;
         private const BeatLength mod_beat_length = BeatLength.Half;
@@ -78,7 +79,12 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             FlatWorkingBeatmap working = new FlatWorkingBeatmap(beatmap);
             TypingRuleset ruleset = new TypingRuleset();
             var calculator = ruleset.CreateDifficultyCalculator(working);
-            TypingDifficultyAttributes? attributes = (TypingDifficultyAttributes)calculator.Calculate(new[] { mod });
+            List<Mod> beatmapMods = new List<Mod> { mod };
+
+            if (include_double_time)
+                beatmapMods.Add(new TypingModDoubleTime());
+
+            TypingDifficultyAttributes? attributes = (TypingDifficultyAttributes)calculator.Calculate(beatmapMods);
 
             return new DifficultyResult(name, attributes);
         }
@@ -90,7 +96,7 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
 
             Console.Write($"{"Attribute",-row_width}");
 
-            foreach (var result in results)
+            foreach (DifficultyResult result in results)
                 Console.Write($"{result.Name,column_width}");
 
             Console.WriteLine();
@@ -109,11 +115,11 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
                 ("Word Length", a => a.WordLength),
             };
 
-            foreach (var (name, selector) in rows)
+            foreach ((string name, Func<TypingDifficultyAttributes, double> selector) in rows)
             {
                 Console.Write($"{name,-row_width}");
 
-                foreach (var result in results)
+                foreach (DifficultyResult result in results)
                     Console.Write($"{selector(result.Attributes),column_width:F4}");
 
                 Console.WriteLine();
