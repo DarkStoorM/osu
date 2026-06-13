@@ -9,17 +9,22 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty.Components
 {
     public partial class StatisticsBar : GridContainer
     {
-        public StatisticsBar(int fontSize, params string[] cells)
+        public StatisticsBar(int fontSize, Colour4[] colours, params string[] cells)
         {
             RelativeSizeAxes = Axes.Both;
 
             ColumnDimensions = cells
                                .Select(_ => new Dimension())
                                .ToArray();
-
+            int index = 0;
             Content = new[]
             {
-                cells.Select(Drawable (text) => new InfoCell(fontSize, text))
+                cells.Select(text =>
+                     {
+                         var colour = colours.Length > 0 ? colours[index++] : Colour4.White;
+
+                         return new InfoCell(fontSize, text, colour);
+                     })
                      .ToArray()
             };
         }

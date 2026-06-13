@@ -3,8 +3,10 @@
 
 using System;
 using NUnit.Framework;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Rulesets.Typing.Difficulty;
 using osu.Game.Rulesets.Typing.Tests.Difficulty.Components;
 using osu.Game.Tests.Visual;
@@ -43,6 +45,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
                     new Drawable[]
                     {
                         new StatisticsBar(fontSize: 26,
+                            Array.Empty<Colour4>(),
                             $"Mod: English0K",
                             $"BPM: {bpm:F0}",
                             $"Length: {TimeSpan.FromMilliseconds(drain_time):mm\\:ss}",
@@ -52,6 +55,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
                     new Drawable[]
                     {
                         new StatisticsBar(fontSize: 16,
+                            new[] { Colour4.IndianRed, Colour4.LightSteelBlue, Colour4.Green, Colour4.Yellow, Colour4.Violet, Colour4.Aqua, Colour4.DodgerBlue },
                             $"Finger Control:\n{attributes.FingerControl:F2}",
                             $"Key Travel:\n{attributes.KeyTravel:F2}",
                             $"Retrigger:\n{attributes.Retrigger:F2}",
@@ -62,10 +66,50 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
                     },
                     new Drawable[]
                     {
-                        new GraphContainer(attributes.WordLengthSkill),
+                        new FillFlowContainer
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Direction = FillDirection.Vertical,
+                            Children = new[]
+                            {
+                                new GraphRowContainer(20,
+                                    new[] { Colour4.IndianRed, Colour4.LightSteelBlue, Colour4.Green },
+                                    attributes.FingerControlSkill,
+                                    attributes.KeyTravelSkill,
+                                    attributes.RetriggerSkill),
+                                new GraphRowContainer(20,
+                                    new[] { Colour4.Yellow, Colour4.Violet, Colour4.Aqua },
+                                    attributes.RowSwitchSkill,
+                                    attributes.SpeedSkill,
+                                    attributes.TypingFatigueSkill),
+                                new GraphRowContainer(0,
+                                    new[] { Colour4.DodgerBlue },
+                                    attributes.WordLengthSkill),
+                            }
+                        }
                     }
                 }
             };
+        }
+
+        private partial class GraphRowContainer : FillFlowContainer
+        {
+            public GraphRowContainer(float bottomMargin, Colour4[] colours, params StrainSkill[] attributes)
+            {
+                RelativeSizeAxes = Axes.Both;
+                Direction = FillDirection.Horizontal;
+                Width = 0.333f;
+                Height = 0.3f;
+                Margin = new MarginPadding { Bottom = bottomMargin };
+
+                for (int i = 0; i < attributes.Length; i++)
+                {
+                    var attribute = attributes[i];
+                    var colour = colours[i];
+
+                    Add(new GraphContainer(attribute, colour));
+                }
+            }
         }
     }
 }

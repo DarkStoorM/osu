@@ -16,12 +16,17 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty.Components
 {
     public partial class GraphContainer : Container
     {
+        private const float path_x_offset = 35;
+
         private Vector2 lastSize;
         private readonly double[] strains;
+        private readonly Colour4 pathColour;
 
-        public GraphContainer(StrainSkill skill)
+        public GraphContainer(StrainSkill skill, Colour4 pathColour)
         {
             strains = skill.GetCurrentStrainPeaks().ToArray();
+
+            this.pathColour = pathColour;
 
             RelativeSizeAxes = Axes.Both;
         }
@@ -29,6 +34,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty.Components
         protected override void LoadComplete()
         {
             base.LoadComplete();
+
             buildGraph();
         }
 
@@ -49,10 +55,9 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty.Components
 
             float width = DrawWidth;
             float height = DrawHeight;
+            float max = Math.Max((float)strains.Max(), 1f);
 
             lastSize = new Vector2(DrawWidth, DrawHeight);
-
-            float max = Math.Max((float)strains.Max(), 1f);
 
             var grid = new Container
             {
@@ -96,19 +101,18 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty.Components
                 Anchor = Anchor.TopLeft,
                 Origin = Anchor.TopLeft,
                 PathRadius = 1,
-                Colour = Colour4.White,
+                Colour = pathColour,
             };
 
-            float stepX = width / (strains.Length - 1);
+            float stepX = (width - path_x_offset) / (strains.Length - 1);
 
             for (int i = 0; i < strains.Length; i++)
             {
                 float x = i * stepX;
-
                 float normalized = (float)(strains[i] / max);
                 float y = height - normalized * height;
 
-                path.AddVertex(new Vector2(x, y));
+                path.AddVertex(new Vector2(x + path_x_offset, y));
             }
 
             InternalChildren = new Drawable[]

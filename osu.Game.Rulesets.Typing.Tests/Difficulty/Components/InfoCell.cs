@@ -10,7 +10,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty.Components
 {
     public partial class InfoCell : Container
     {
-        public InfoCell(int fontSize, string text)
+        public InfoCell(int fontSize, string text, Colour4 colour)
         {
             RelativeSizeAxes = Axes.Both;
 
@@ -20,6 +20,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty.Components
                 Origin = Anchor.Centre,
                 Font = OsuFont.Torus.With(size: fontSize),
                 Text = text,
+                Colour = colour
             };
         }
     }
