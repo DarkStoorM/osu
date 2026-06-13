@@ -17,8 +17,8 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
     [TestFixture]
     public partial class TestSceneDifficultyCalculator : OsuTestScene
     {
-        private const double bpm = 140;
-        private const double drain_time = 180000;
+        private const double bpm = 100;
+        private const double drain_time = 30000;
 
         public TestSceneDifficultyCalculator()
         {
@@ -33,9 +33,9 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
 
                 RowDimensions = new[]
                 {
-                    new Dimension(GridSizeMode.Absolute, 50),
-                    new Dimension(GridSizeMode.Absolute, 50),
-                    new Dimension(),
+                    new Dimension(GridSizeMode.Relative, 0.1f),
+                    new Dimension(GridSizeMode.Relative, 0.1f),
+                    new Dimension(GridSizeMode.Relative, 0.8f),
                 },
 
                 Content = new[]
@@ -62,7 +62,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
                     },
                     new Drawable[]
                     {
-                        new GraphContainer()
+                        new GraphContainer(attributes.WordLengthSkill),
                     }
                 }
             };
