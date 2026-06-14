@@ -36,16 +36,10 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             currentStrain *= strainDecay(current.DeltaTime);
             currentStrain += Math.Pow(1 + Math.Abs(currentObject.RowDelta), baseRowDifficulty) * skillMultiplier;
 
-            double rowDifficulty = rowSwitchDifficulty(currentObject);
+            // Due to alternating hands also introducing a recovery time, the penalty should be smaller
+            currentStrain *= currentObject.IsOnSameHand ? 1.1 : 0.9;
 
-            // Since same finger during row switch already implies same hand, so we have to take that into account
-            // Switching rows with the opposite hand should be considered easier inside a word,
-            // because the spacing is effectively doubled
-            double sameRowPenalty = currentObject.IsOnSameHand ? 1.25 : 0.9;
-
-            rowDifficulty = Math.Pow(rowDifficulty, sameRowPenalty);
-
-            return currentStrain * rowDifficulty;
+            return currentStrain * rowSwitchDifficulty(currentObject);
         }
 
         private double rowSwitchDifficulty(TypingDifficultyHitObject currentObject)
