@@ -4,6 +4,7 @@
 using System;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Skills;
+using osu.Game.Rulesets.Difficulty.Utils;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Typing.Objects;
 
@@ -52,7 +53,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
                 : 1.5;
 
             // Switching rows is even harder the more outward finger is used
-            double fingerDifficulty = 1 + 1 / (1 + Math.Pow(Math.E, -(fingerIndex - 5)));
+            double fingerDifficulty = 1 + DifficultyCalculationUtils.Logistic(fingerIndex, 5, 1);
 
             return Math.Pow(fingerDifficulty, sameFingerPenalty);
         }
