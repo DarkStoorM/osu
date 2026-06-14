@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
     public class TypingFatigue : StrainSkill
     {
-        private double skillMultiplier => 1.2;
+        private double skillMultiplier => 1.45;
         private double strainDecayBase => 0.6;
         private double currentStrain;
 
