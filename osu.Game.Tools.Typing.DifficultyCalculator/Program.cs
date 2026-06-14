@@ -18,7 +18,9 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
         private const double beatmap_drain_time_in_ms = 180000;
         private const BeatLength mod_beat_length = BeatLength.Half;
 
-        private static readonly (string Name, Func<BeatLength, Mod> Factory)[] mods =
+        private const int seed_count = 100;
+
+        private static readonly (string Name, Func<BeatLength, int, Mod> Factory)[] mods =
         {
             ("0K", createMod<TypingModEnglish0K>),
             ("1K", createMod<TypingModEnglish1K>),
@@ -32,10 +34,10 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             Beatmap beatmap = createBeatmap(bpm, beatmap_drain_time_in_ms);
 
             DifficultyResult[] results = mods
-                                         .Select(x => calculate(
+                                         .Select(x => calculateAveraged(
                                              beatmap,
                                              x.Name,
-                                             x.Factory(mod_beat_length)))
+                                             seed => x.Factory(mod_beat_length, seed)))
                                          .ToArray();
 
             Console.Clear();
@@ -48,12 +50,11 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             return 0;
         }
 
-        // Note: all mod application is the same, so they will get the same data
-        private static T createMod<T>(BeatLength beatLength) where T : TypingEnglishMod, new()
+        private static T createMod<T>(BeatLength beatLength, int seed) where T : TypingEnglishMod, new()
         {
             return new T
             {
-                Seed = { Value = 1 },
+                Seed = { Value = seed },
                 AdjustBeatLength = { Value = beatLength },
             };
         }
@@ -72,6 +73,60 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             beatmap.ControlPointInfo.Add(0, new TimingControlPoint { BeatLength = 60000 / bpm });
 
             return beatmap;
+        }
+
+        private static DifficultyResult calculateAveraged(
+            Beatmap beatmap,
+            string name,
+            Func<int, Mod> modFactory)
+        {
+            double star = 0;
+            double fingerControl = 0;
+            double keyTravel = 0;
+            double retrigger = 0;
+            double rowSwitch = 0;
+            double speed = 0;
+            double typingFatigue = 0;
+            double wordLength = 0;
+
+            TypingDifficultyAttributes? last = null;
+
+            for (int seed = 1; seed <= seed_count; seed++)
+            {
+                var attributes = calculate(
+                        beatmap,
+                        name,
+                        modFactory(seed))
+                    .Attributes;
+
+                last = attributes;
+
+                star += attributes.StarRating;
+                fingerControl += attributes.FingerControl;
+                keyTravel += attributes.KeyTravel;
+                retrigger += attributes.Retrigger;
+                rowSwitch += attributes.RowSwitch;
+                speed += attributes.Speed;
+                typingFatigue += attributes.TypingFatigue;
+                wordLength += attributes.WordLength;
+            }
+
+            return new DifficultyResult(
+                name,
+                new TypingDifficultyAttributes
+                {
+                    StarRating = star / seed_count,
+                    FingerControl = fingerControl / seed_count,
+                    KeyTravel = keyTravel / seed_count,
+                    Retrigger = retrigger / seed_count,
+                    RowSwitch = rowSwitch / seed_count,
+                    Speed = speed / seed_count,
+                    TypingFatigue = typingFatigue / seed_count,
+                    WordLength = wordLength / seed_count,
+
+                    // preserve structural fields from last run (or recompute if needed)
+                    MaxCombo = last!.MaxCombo,
+                });
         }
 
         private static DifficultyResult calculate(Beatmap beatmap, string name, Mod mod)
