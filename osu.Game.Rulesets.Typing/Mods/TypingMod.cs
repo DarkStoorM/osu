@@ -14,7 +14,9 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Word Seed", SettingControlType = typeof(SettingsNumberBox))]
         public Bindable<int?> Seed { get; } = new Bindable<int?>();
 
-        protected Random ModRNG = null!;
+        protected Random OddLengthWordsRNG = null!;
+        protected Random EvenLengthWordsRNG = null!;
+        protected Random HelperRNG = null!;
 
         protected static TypingAction LetterToTypingAction(char c)
         {

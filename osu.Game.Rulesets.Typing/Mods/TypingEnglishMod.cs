@@ -50,7 +50,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         public BindableFloat EvenWordLengthChance { get; } = new BindableFloat
         {
             Default = 0.1f,
-            MinValue = 0.0f,
+            MinValue = 0.05f,
             MaxValue = 0.5f,
             Precision = 0.01f
         };
@@ -174,7 +174,7 @@ namespace osu.Game.Rulesets.Typing.Mods
                 // To retain the rhythm, we have to keep rolling another even number length word
                 if (currentWordLength % 2 == 0 && !hasJoinedEvenWordYet)
                 {
-                    currentWord = getNextWord(wordGenerator, samplingContext, forcedEvenLength: true);
+                    currentWord = getNextWord(wordGenerator, samplingContext, forceEvenLengthWord: true);
                     currentWordLength = currentWord.Length;
                     hasJoinedEvenWordYet = true;
                 }
@@ -195,7 +195,21 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         private void initialiseSettings()
         {
-            ModRNG = new Random(Seed.Value ??= RNG.Next());
+            // Important note about the separation:
+            // Words are random anyway, so this effectively changes all the beatmap contents in front of the next generated word.
+            // This means that normally, with odd-length words we might see a five stars map, but enabling the even-length
+            // words will change which words are generated next even on the same seed. So, because calling the RNG alters the
+            // state, this means that previously what made the calculations go up, e.g. long words, they might get removed
+            // because of this.
+            // The separation was necessary, because we don't want to disrupt the RNG cycle for the default odd-length words,
+            // so this only results in stitching words together from two sources, eventually pushing the odd-length words outwards.
+            // This is the desired effect to not result in confusing information from WordLength skill, which increases the strain.
+            OddLengthWordsRNG = new Random(Seed.Value ??= RNG.Next());
+            EvenLengthWordsRNG = new Random(Seed.Value ??= RNG.Next());
+
+            // This only exists to ensure the same RNGs are being picked for the given seed
+            HelperRNG = new Random(Seed.Value ??= RNG.Next());
+
             startGenerationAt = typingBeatmap.HitObjects.First().StartTime;
             endGenerationAt = typingBeatmap.HitObjects.Last().StartTime;
             currentTime = startGenerationAt;
@@ -205,25 +219,32 @@ namespace osu.Game.Rulesets.Typing.Mods
             bannedLetters = new HashSet<char>(BannedLetters.Value.ToLowerInvariant().Where(char.IsLetter));
         }
 
-        private string getNextWord(RankedWordGenerator generator, WordSamplingContext samplingContext, bool forcedEvenLength = false)
+        private string getNextWord(RankedWordGenerator generator, WordSamplingContext samplingContext, bool forceEvenLengthWord = false)
         {
             // The bindable option takes precedence over everything, because we have to respect the player's mod customisation
             if (SkipEvenLengthWords.Value)
-                return getWord(isEven: false);
+                return getWord(isEven: false, OddLengthWordsRNG);
 
-            if (forcedEvenLength)
-                return getWord(isEven: true);
+            if (forceEvenLengthWord)
+                return getWord(isEven: true, EvenLengthWordsRNG);
 
-            return ModRNG.NextDouble() < EvenWordLengthChance.Value ? getWord(isEven: true) : getWord(isEven: false);
+            // Pick one at random, but from the seeded RNG so we don't end up with a different word sequence
+            Random rng = HelperRNG.NextDouble() < 0.5
+                ? OddLengthWordsRNG
+                : EvenLengthWordsRNG;
 
-            string getWord(bool isEven)
+            return rng.NextDouble() < EvenWordLengthChance.Value
+                ? getWord(isEven: true, EvenLengthWordsRNG)
+                : getWord(isEven: false, OddLengthWordsRNG);
+
+            string getWord(bool isEven, Random wordRng)
             {
                 string word;
                 bool wordInvalid;
 
                 do
                 {
-                    word = generateWord(generator, samplingContext);
+                    word = generateWord(generator, samplingContext, wordRng);
                     wordInvalid = isWordInvalid(word);
 
                     if (wordInvalid && samplingContext.WasRecentlyUsed(word))
@@ -236,11 +257,11 @@ namespace osu.Game.Rulesets.Typing.Mods
             }
         }
 
-        private string generateWord(RankedWordGenerator generator, WordSamplingContext context)
+        private string generateWord(RankedWordGenerator generator, WordSamplingContext context, Random wordRng)
         {
             for (int attempt = 0; attempt < 20; attempt++)
             {
-                string word = generator.NextWord(ModRNG);
+                string word = generator.NextWord(wordRng);
 
                 if (context.WasRecentlyUsed(word))
                     continue;
@@ -251,7 +272,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             }
 
             // Always allow at least something
-            string fallback = generator.NextWord(ModRNG);
+            string fallback = generator.NextWord(wordRng);
 
             context.Push(fallback);
 
