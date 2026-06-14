@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
+using osuTK;
 
 namespace osu.Game.Rulesets.Typing.Difficulty
 {
@@ -19,6 +20,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty
         /// How many rows were switched between this object and previous.
         /// </summary>
         public double RowDelta { get; }
+
+        public double DistanceFromPreviousKey { get; }
 
         public bool IsOnSameFinger { get; }
 
@@ -40,6 +43,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty
         {
             PhysicalKey = currentKey;
             NextObject = nextObject;
+
+            DistanceFromPreviousKey = Vector2.Distance(previousKey.Position, currentKey.Position);
 
             RowDelta = Math.Abs(previousKey.Row - currentKey.Row);
             IsOnSameFinger = previousKey.Hand == currentKey.Hand && previousKey.Finger == currentKey.Finger;
