@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
     [TestFixture]
     public partial class TestSceneDifficultyCalculator : OsuTestScene
     {
-        private const double bpm = 100;
+        private const double bpm = 150;
         private const double drain_time = 30000;
 
         public TestSceneDifficultyCalculator()
