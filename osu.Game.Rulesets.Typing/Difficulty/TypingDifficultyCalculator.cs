@@ -18,14 +18,13 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 {
     public class TypingDifficultyCalculator : DifficultyCalculator
     {
-        private const double difficulty_multiplier = 1;
-        private const double row_switch_skill_multiplier = 0 * difficulty_multiplier;
-        private const double retrigger_skill_multiplier = 0 * difficulty_multiplier;
-        private const double key_travel_skill_multiplier = 0 * difficulty_multiplier;
-        private const double finger_control_skill_multiplier = 0 * difficulty_multiplier;
-        private const double speed_skill_multiplier = 0 * difficulty_multiplier;
-        private const double typing_fatigue_skill_multiplier = 1 * difficulty_multiplier;
-        private const double word_length_skill_multiplier = 1 * difficulty_multiplier;
+        private const double difficulty_multiplier = 0.015;
+        private const double row_switch_skill_multiplier = 0.375 * difficulty_multiplier;
+        private const double retrigger_skill_multiplier = 0.4 * difficulty_multiplier;
+        private const double key_travel_skill_multiplier = 0.325 * difficulty_multiplier;
+        private const double speed_skill_multiplier = 0.15 * difficulty_multiplier;
+        private const double typing_fatigue_skill_multiplier = 0.125 * difficulty_multiplier;
+        private const double word_length_skill_multiplier = 0.35 * difficulty_multiplier;
 
         private readonly IKeyboardLayout keyboardLayout;
 
