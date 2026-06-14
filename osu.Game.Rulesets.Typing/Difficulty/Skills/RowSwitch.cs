@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
         {
             TypingDifficultyHitObject currentObject = (TypingDifficultyHitObject)current;
             TypingDifficultyHitObject previousObject = (TypingDifficultyHitObject)current.Previous(0);
-            TypingHitObject hitObject = (TypingHitObject)current.BaseObject;
+            TypingHitObject currentHitObject = (TypingHitObject)current.BaseObject;
 
             if (previousObject == null)
                 return 0;
@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             double baseRowDifficulty = 1;
 
             // Single letter and the first letter in the word introduce a small recovery time, reducing the strain
-            if (hitObject.WordLength == 1 || hitObject.IndexInWord == 1)
+            if (currentHitObject.WordLength == 1 || currentHitObject.IndexInWord == 1)
                 baseRowDifficulty = 0.50;
 
             currentStrain *= strainDecay(current.DeltaTime);

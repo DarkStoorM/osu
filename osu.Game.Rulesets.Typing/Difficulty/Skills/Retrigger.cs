@@ -24,11 +24,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 
         protected override double StrainValueAt(DifficultyHitObject current)
         {
-            TypingDifficultyHitObject currentObject = (TypingDifficultyHitObject)current.Previous(0);
+            TypingDifficultyHitObject currentObject = (TypingDifficultyHitObject)current;
             TypingHitObject currentHitObject = (TypingHitObject)current.BaseObject;
-
-            if (currentObject == null)
-                return 0;
 
             currentStrain *= strainDecay(current.DeltaTime);
 

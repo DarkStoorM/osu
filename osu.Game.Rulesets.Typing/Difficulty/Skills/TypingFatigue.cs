@@ -20,11 +20,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 
         protected override double StrainValueAt(DifficultyHitObject current)
         {
-            TypingDifficultyHitObject previousObject = (TypingDifficultyHitObject)current.Previous(0);
             TypingHitObject currentHitObject = (TypingHitObject)current.BaseObject;
-
-            if (previousObject == null)
-                return 0;
 
             // 600 was an arbitrary value picked to make the typing fatigue factor climb steadily after 250~ objects
             // and approach 1.0 at ~1200+.
