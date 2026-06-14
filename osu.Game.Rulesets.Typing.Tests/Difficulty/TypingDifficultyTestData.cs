@@ -34,11 +34,12 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
 
         public static TypingDifficultyAttributes CalculateEnglish0K(
             Beatmap beatmap,
+            int seed = 1,
             BeatLength beatLength = BeatLength.Half)
         {
             var mod = new TypingModEnglish0K
             {
-                Seed = { Value = 1 },
+                Seed = { Value = seed },
                 AdjustBeatLength = { Value = beatLength }
             };
 
