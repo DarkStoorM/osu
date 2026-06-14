@@ -47,9 +47,8 @@ namespace osu.Game.Rulesets.Typing.Mods
         public BindableBool SkipEvenLengthWords { get; } = new BindableBool(true);
 
         [SettingSource("Chance to generate even length words", "Requires disabling the even length word skip")]
-        public BindableFloat EvenWordLengthChance { get; } = new BindableFloat
+        public BindableFloat EvenWordLengthChance { get; } = new BindableFloat(0.1f)
         {
-            Default = 0.1f,
             MinValue = 0.05f,
             MaxValue = 0.5f,
             Precision = 0.01f
