@@ -17,14 +17,6 @@ namespace osu.Game.Rulesets.Typing.Objects
 
         public int WordLength { get; set; }
 
-        /// <summary>
-        /// <c>null</c> if this is the very first object as there will be no time difference available.
-        /// </summary>
-        public double? TimeFromPrevious { get; set; }
-
-        // TODO: Assign this in the TypingEnglishMod
-        public double TimeToNext { get; set; }
-
         public override Judgement CreateJudgement() => new TypingJudgement();
 
         protected override HitWindows CreateHitWindows() => new TypingHitWindows();
