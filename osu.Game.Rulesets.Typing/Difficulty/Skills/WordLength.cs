@@ -41,8 +41,15 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             // results to typing fatigue
             double lengthFactor = Math.Pow(length, 1.125);
 
+            // Because the mod will generate odd-length words by default, all words land on-beat.
+            // Allowing it to generate even-length words results in the words being generated in pairs to ensure the correct rhythm.
+            // That being said, even if the pair combined with the spacing technically results in an odd-length pattern,
+            // mechanically that is still two off-beat patterns, potentially disrupting the flow, which requires more
+            // focus and timing correction.
+            double offbeatStrainMultiplier = length % 2 == 0 ? 2 : 1;
+
             currentStrain *= strainDecay(current.DeltaTime);
-            currentStrain += lengthFactor * wordProgress * skillMultiplier;
+            currentStrain += lengthFactor * wordProgress * offbeatStrainMultiplier * skillMultiplier;
 
             return currentStrain;
         }
