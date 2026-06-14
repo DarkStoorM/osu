@@ -55,8 +55,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
                     new Drawable[]
                     {
                         new StatisticsBar(fontSize: 16,
-                            new[] { Colour4.IndianRed, Colour4.LightSteelBlue, Colour4.Green, Colour4.Yellow, Colour4.Violet, Colour4.Aqua, Colour4.DodgerBlue },
-                            $"Finger Control:\n{attributes.FingerControl:F2}",
+                            new[] { Colour4.IndianRed, Colour4.LightSteelBlue, Colour4.Green, Colour4.Yellow, Colour4.Violet, Colour4.Aqua },
                             $"Key Travel:\n{attributes.KeyTravel:F2}",
                             $"Retrigger:\n{attributes.Retrigger:F2}",
                             $"Row Switch:\n{attributes.RowSwitch:F2}",
@@ -74,16 +73,13 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
                             {
                                 new GraphRowContainer(20,
                                     new[] { Colour4.IndianRed, Colour4.LightSteelBlue, Colour4.Green },
-                                    attributes.FingerControlSkill,
                                     attributes.KeyTravelSkill,
-                                    attributes.RetriggerSkill),
-                                new GraphRowContainer(20,
-                                    new[] { Colour4.Yellow, Colour4.Violet, Colour4.Aqua },
-                                    attributes.RowSwitchSkill,
-                                    attributes.SpeedSkill,
-                                    attributes.TypingFatigueSkill),
+                                    attributes.RetriggerSkill,
+                                    attributes.RowSwitchSkill),
                                 new GraphRowContainer(0,
-                                    new[] { Colour4.DodgerBlue },
+                                    new[] { Colour4.Yellow, Colour4.Violet, Colour4.Aqua },
+                                    attributes.SpeedSkill,
+                                    attributes.TypingFatigueSkill,
                                     attributes.WordLengthSkill),
                             }
                         }
@@ -99,7 +95,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
                 RelativeSizeAxes = Axes.Both;
                 Direction = FillDirection.Horizontal;
                 Width = 0.333f;
-                Height = 0.3f;
+                Height = 0.475f;
                 Margin = new MarginPadding { Bottom = bottomMargin };
 
                 for (int i = 0; i < attributes.Length; i++)

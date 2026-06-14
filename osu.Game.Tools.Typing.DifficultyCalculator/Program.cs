@@ -81,7 +81,6 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             Func<int, Mod> modFactory)
         {
             double star = 0;
-            double fingerControl = 0;
             double keyTravel = 0;
             double retrigger = 0;
             double rowSwitch = 0;
@@ -102,7 +101,6 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
                 last = attributes;
 
                 star += attributes.StarRating;
-                fingerControl += attributes.FingerControl;
                 keyTravel += attributes.KeyTravel;
                 retrigger += attributes.Retrigger;
                 rowSwitch += attributes.RowSwitch;
@@ -116,7 +114,6 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
                 new TypingDifficultyAttributes
                 {
                     StarRating = star / seed_count,
-                    FingerControl = fingerControl / seed_count,
                     KeyTravel = keyTravel / seed_count,
                     Retrigger = retrigger / seed_count,
                     RowSwitch = rowSwitch / seed_count,
@@ -161,7 +158,6 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             {
                 ("Star Rating", a => a.StarRating),
                 ("Hit Objects", a => a.MaxCombo),
-                ("Finger Control", a => a.FingerControl),
                 ("Key Travel", a => a.KeyTravel),
                 ("Retrigger", a => a.Retrigger),
                 ("Row Switch", a => a.RowSwitch),

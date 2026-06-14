@@ -8,7 +8,6 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 {
     public class TypingDifficultyAttributes : DifficultyAttributes
     {
-        public double FingerControl { get; set; }
         public double KeyTravel { get; set; }
         public double Retrigger { get; set; }
         public double RowSwitch { get; set; }
@@ -17,7 +16,6 @@ namespace osu.Game.Rulesets.Typing.Difficulty
         public double WordLength { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.
-        public FingerControl FingerControlSkill { get; set; }
         public KeyTravel KeyTravelSkill { get; set; }
         public Retrigger RetriggerSkill { get; set; }
         public RowSwitch RowSwitchSkill { get; set; }
