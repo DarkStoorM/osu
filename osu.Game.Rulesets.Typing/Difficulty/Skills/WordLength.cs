@@ -36,7 +36,9 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 
             // Longer words should be disproportionately harder (I think?)
             // Also, technically, this could be capped above some length, but since the longest words exist in 5k/25k dictionaries
-            // and are rare uncommon anyway, there is no need to do anything more here
+            // and are rare uncommon anyway, there is no need to do anything more here.
+            // Still, the speed should affect this strain at least in some way, but it might yield similar
+            // results to typing fatigue
             double lengthFactor = Math.Pow(length, 1.125);
 
             currentStrain *= strainDecay(current.DeltaTime);
