@@ -5,28 +5,26 @@ using System;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Typing.Objects;
 
 namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
-    /// <summary>
-    /// Skill only applying a penalty based on how deep into the beatmap the player is.
-    /// <para/> Note: This is not tweaked yet.
-    /// </summary>
-    public class TypingFatigue : StrainDecaySkill
+    public class TypingFatigue : StrainSkill
     {
-        private const double delta_strain_decay = 0.4;
+        private double skillMultiplier => 1.2;
+        private double strainDecayBase => 0.6;
+        private double currentStrain;
 
         public TypingFatigue(Mod[] mods)
             : base(mods) { }
 
-        protected override double SkillMultiplier => 1.125;
-
-        // Note: due to tiny values, this has to be pretty large
-        protected override double StrainDecayBase => 0.98;
-
-        protected override double StrainValueOf(DifficultyHitObject current)
+        protected override double StrainValueAt(DifficultyHitObject current)
         {
-            double strain = strainDecay(current.DeltaTime);
+            TypingDifficultyHitObject previousObject = (TypingDifficultyHitObject)current.Previous(0);
+            TypingHitObject currentHitObject = (TypingHitObject)current.BaseObject;
+
+            if (previousObject == null)
+                return 0;
 
             // 600 was an arbitrary value picked to make the typing fatigue factor climb steadily after 250~ objects
             // and approach 1.0 at ~1200+.
@@ -34,9 +32,17 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             double t = current.Index / 600.0;
             double fatigue = 1.0 - Math.Exp(-(t * t));
 
-            return strain * fatigue;
+            // The typing fatigue increases with word length, but shouldn't explode the difficulty
+            fatigue += 1 - Math.Pow(currentHitObject.IndexInWord, -0.1);
+
+            currentStrain *= strainDecay(current.DeltaTime);
+            currentStrain += fatigue * skillMultiplier;
+
+            return currentStrain;
         }
 
-        private double strainDecay(double ms) => Math.Pow(delta_strain_decay, ms / 1000);
+        protected override double CalculateInitialStrain(double time, DifficultyHitObject current) => currentStrain * strainDecay(time - current.Previous(0).StartTime);
+
+        private double strainDecay(double ms) => Math.Pow(strainDecayBase, ms / 1000);
     }
 }
