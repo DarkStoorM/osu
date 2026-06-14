@@ -14,9 +14,13 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Motivation](#motivation)
     - [Work-in-progress](#work-in-progress)
     - [Custom Mod Requirement](#custom-mod-requirement)
+    - [About the Custom Mod](#about-the-custom-mod)
+      - [What About Other Settings?](#what-about-other-settings)
+        - [Increased Spacing](#increased-spacing)
     - [Nothing New](#nothing-new)
     - [Questionable Change](#questionable-change)
     - [Why Not Extract Ruleset?](#why-not-extract-ruleset)
+    - [Difficulty Calculator for Typing Ruleset](#difficulty-calculator-for-typing-ruleset)
   
 ---
 
@@ -90,6 +94,36 @@ The reason for such low amount of mods is that it's pretty much what's sufficien
 - `Constant Speed` to remove annoying scroll speed changes
 - `Difficulty Adjustment` to replace `Hardrock`/`Easy`
 
+### About the Custom Mod
+
+This mod recommended to be customised, because beatmaps are so different, it's literally impossible to make all of them playable with a click of a button.
+
+The above mentioned mods help with the setup a bit, but I'm not experienced enough to add settings to let you change stuff on the fly, e.g. scrolling speed like in Mania, so I just went with the easiest solution: hardcode values and customise through mods.
+
+I wanted to be able to play this ruleset on a wide range of beatmaps, so I added the following setting: `Adjust Beat Length`. This will effectively double or halve the BPM to let me play for example a 100 BPM beatmap. The reason why is that the mod is generating hit objects at 1/4 for words, 1/2 for spaces between the words. This can be quite slow, so without having to use the DoubleTime to fine-tune and play on rate changed song, I can play it on 200 BPM, which is roughly 65 WPM.
+
+> [!Note]
+> 100 BPM with halved beat length equals to 200 BPM with default full beat length.
+
+With this, and with DoubleTime/HalfTime, I can play everything adjusted to my comfortable speed. For example, I play at around 100 WPM only (around 150 BPM in this ruleset), so to adjust to this speed, I can play something that was mapped to:
+
+- 300 BPM + `full beat length`
+- 240 BPM + `full beat length`
+- 100 BPM + `half beat length` + DoubleTime rate changed up to 120 BPM
+- 180 BPM + `half beat length` + HalfTime rate changed down to 140-150 BPM
+
+#### What About Other Settings?
+
+There is another setting, which I'm not sure is even worth talking about, because I don't know if what I assumed is correct. Initially, I went with the same strategy as my Random mod for Taiko: odd length pattern lands on beat, even doesn't. I assumed that even length patterns are harder to play, so I extracted them into a separate setting, which makes them disabled by default, plus you can customise the chance for generating even length words.
+
+For the same exact reason, I increased the strain slightly on word length, which bumps the star rating with this setting, because I believe that off-beats are just harder, even if a pair of off-beats is actually an odd length pattern, which effectively makes no difference between a five object pattern and a pair of two 2-length words, since technically the whole length is equal.
+
+##### Increased Spacing
+
+There is also a setting to increase the spacing between words, because why not?
+
+This, instead of inserting a 1/2 break, inserts a full 1/1 break, which gives enough recovery time between the words, allowing to play on higher BPMs, since there is more time to fully parse the incoming word. That comes with a cost of lowered difficulty, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat).
+
 ### Nothing New
 
 Most of the code was copied from Taiko ruleset + I don't know what I'm doing.
@@ -107,3 +141,15 @@ if (beatmap.Ruleset.ShortName == "taiko" && ruleset.ShortName == "typing")
 ### Why Not Extract Ruleset?
 
 There is a Ruleset Collection in osu! repository, but that requires the ruleset to be its own, separate release with other rulesets cut out. Since I sometimes switch to Taiko, I don't want to launch a different game + I can modify things directly here.
+
+### Difficulty Calculator for Typing Ruleset
+
+While this was completely unnecessary, because in the end, all words are random, and I believe you can't measure the difficulty of randomness, I did it anyway, because I was just curious how it will look like.
+
+I myself did no research on measuring the typing difficulty whatsoever, I did end up asking slop gpt, though. There, I said it. I even asked it to come up with some formulas, but it was so dumb, I had to delete absolutely everything and throw random functions around instead. I only left the concepts from it, which I turned into the `Skills` from the difficulty calculator. Still, had to come up with the code myself.
+
+While I had four other rulesets at my disposal, it would make zero sense to copy what they do if I have no clue what the hell I am doing. I understand that the code for difficulty calculation will look weird to anyone who knows actual Maths, this is still just a personal project, so I don't think I care enough. That also applies to code quality.
+
+I included a bunch of tests which I used to tweak the values, which are in the end based on aiming to get a four stars beatmap from 140 BPM over three minutes of gameplay (that's around 90 BPM I think). I don't know how Strain Skills work anyway, so I just rolled with it and only glanced at other skills without checking what they do, then tweaked the values, looking at graphs.
+
+Both test scene and console project were written by AI, because I couldn't care less about something I would use once (slop gpt, to be specific, I don't give a shit about the agentic slop people use).
