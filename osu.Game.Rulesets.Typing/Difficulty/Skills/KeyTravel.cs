@@ -37,11 +37,14 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 
             double previousFinger = (double)previousObject.PhysicalKey.Finger;
             double currentFinger = (double)currentObject.PhysicalKey.Finger;
-            double fingerDelta = 0.5 + Math.Abs(previousFinger - currentFinger) / 3;
 
             // The difficulty increases if we go in the opposite rolling direction
             if (currentFinger > previousFinger)
-                travelDifficulty *= fingerDelta;
+            {
+                double fingerDelta = Math.Abs(previousFinger - currentFinger);
+                double fingerDifficulty = 1 + DifficultyCalculationUtils.Logistic(1.25 * currentFinger, 3, 1);
+                travelDifficulty *= fingerDifficulty * 1 + DifficultyCalculationUtils.Logistic(fingerDelta, 3, 1);
+            }
 
             currentStrain *= strainDecay(current.DeltaTime);
             currentStrain += travelDifficulty * spacingMultiplier;
