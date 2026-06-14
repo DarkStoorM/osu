@@ -46,6 +46,15 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Skip all even length words", "Makes everything land on-beat. Disable this to include even length words, for more off-beat patterns and variety.")]
         public BindableBool SkipEvenLengthWords { get; } = new BindableBool(true);
 
+        [SettingSource("Chance to generate even length words", "Requires disabling the even length word skip")]
+        public BindableFloat EvenWordLengthChance { get; } = new BindableFloat
+        {
+            Default = 0.1f,
+            MinValue = 0.0f,
+            MaxValue = 0.5f,
+            Precision = 0.01f
+        };
+
         protected TypingEnglishMod()
         {
             BannedLetters.BindValueChanged(OnBannedLettersChanged);
@@ -205,9 +214,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             if (forcedEvenLength)
                 return getWord(isEven: true);
 
-            // Without the mod customisation, the generator should prioritise odd number length words more, like 90:10
-            // 10% chance for 'whatever', so we will keep rolling until the conditions are met
-            return ModRNG.NextDouble() < 0.1 ? getWord(isEven: true) : getWord(isEven: false);
+            return ModRNG.NextDouble() < EvenWordLengthChance.Value ? getWord(isEven: true) : getWord(isEven: false);
 
             string getWord(bool isEven)
             {
