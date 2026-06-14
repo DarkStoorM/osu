@@ -18,9 +18,13 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 {
     public class TypingDifficultyCalculator : DifficultyCalculator
     {
-        private const double difficulty_multiplier = 0.01;
-        private const double strain_skill_multiplier = 0.25 * difficulty_multiplier;
-        private const double speed_skill_multiplier = 0.05 * difficulty_multiplier;
+        private const double difficulty_multiplier = 0.015;
+        private const double row_switch_skill_multiplier = 0.375 * difficulty_multiplier;
+        private const double retrigger_skill_multiplier = 0.4 * difficulty_multiplier;
+        private const double key_travel_skill_multiplier = 0.325 * difficulty_multiplier;
+        private const double speed_skill_multiplier = 0.15 * difficulty_multiplier;
+        private const double typing_fatigue_skill_multiplier = 0.125 * difficulty_multiplier;
+        private const double word_length_skill_multiplier = 0.35 * difficulty_multiplier;
 
         private readonly IKeyboardLayout keyboardLayout;
 
@@ -40,16 +44,26 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 
         protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
         {
-            if (beatmap.HitObjects.Count == 0)
+            // Difficulty calculation will not be available if the word generation mods are not enabled,
+            // because this ruleset is meant to be played only with those mods due to some skills
+            // relying on letters being a part of a word, which in this context form a pattern
+            if (!mods.Any(x => x is TypingEnglishMod) || beatmap.HitObjects.Count == 0)
                 return new TypingDifficultyAttributes { Mods = mods };
 
-            var strain = skills.OfType<Strain>().Single();
+            var keyTravel = skills.OfType<KeyTravel>().Single();
+            var retrigger = skills.OfType<Retrigger>().Single();
+            var rowSwitch = skills.OfType<RowSwitch>().Single();
             var speed = skills.OfType<Speed>().Single();
+            var typingFatigue = skills.OfType<TypingFatigue>().Single();
+            var wordLength = skills.OfType<WordLength>().Single();
 
-            double strainValue = strain.DifficultyValue();
+            double keyTravelValue = keyTravel.DifficultyValue();
+            double retriggerValue = retrigger.DifficultyValue();
+            double rowSwitchValue = rowSwitch.DifficultyValue();
             double speedValue = speed.DifficultyValue();
-
-            double combinedRating = combinedDifficultyValue(strain, speed);
+            double typingFatigueValue = typingFatigue.DifficultyValue();
+            double wordLengthValue = wordLength.DifficultyValue();
+            double combinedRating = combinedDifficultyValue(keyTravel, retrigger, rowSwitch, speed, typingFatigue, wordLength);
             double starRating = rescale(combinedRating * 1.4);
 
             return new TypingDifficultyAttributes
@@ -57,16 +71,36 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                 StarRating = starRating,
                 Mods = mods,
                 MaxCombo = beatmap.GetMaxCombo(),
-                Strain = strainValue,
+                KeyTravel = keyTravelValue,
+                Retrigger = retriggerValue,
+                RowSwitch = rowSwitchValue,
                 Speed = speedValue,
+                TypingFatigue = typingFatigueValue,
+                WordLength = wordLengthValue,
+
+                KeyTravelSkill = keyTravel,
+                RetriggerSkill = retrigger,
+                RowSwitchSkill = rowSwitch,
+                SpeedSkill = speed,
+                TypingFatigueSkill = typingFatigue,
+                WordLengthSkill = wordLength,
             };
         }
 
-        private double combinedDifficultyValue(Strain strain, Speed speed)
+        private double combinedDifficultyValue(KeyTravel keyTravel,
+                                               Retrigger retrigger,
+                                               RowSwitch rowSwitch,
+                                               Speed speed,
+                                               TypingFatigue typingFatigue,
+                                               WordLength wordLength)
         {
             List<double> peaks = combinePeaks(
-                strain.GetCurrentStrainPeaks().ToList(),
-                speed.GetCurrentStrainPeaks().ToList()
+                keyTravel.GetCurrentStrainPeaks().ToList(),
+                retrigger.GetCurrentStrainPeaks().ToList(),
+                rowSwitch.GetCurrentStrainPeaks().ToList(),
+                speed.GetCurrentStrainPeaks().ToList(),
+                typingFatigue.GetCurrentStrainPeaks().ToList(),
+                wordLength.GetCurrentStrainPeaks().ToList()
             );
 
             if (peaks.Count == 0)
@@ -84,17 +118,31 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             return difficulty;
         }
 
-        private List<double> combinePeaks(List<double> strainPeaks, List<double> speedPeaks)
+        private List<double> combinePeaks(List<double> keyTravelPeaks,
+                                          List<double> retriggerPeaks,
+                                          List<double> rowSwitchPeaks,
+                                          List<double> speedPeaks,
+                                          List<double> typingFatiguePeaks,
+                                          List<double> wordLengthPeaks)
         {
-            int max = strainPeaks.Count;
+            int max = wordLengthPeaks.Count;
             var combined = new List<double>(max);
 
             for (int i = 0; i < max; i++)
             {
-                double strain = i < strainPeaks.Count ? strainPeaks[i] : 0;
-                double speed = i < speedPeaks.Count ? speedPeaks[i] : 0;
+                double keyTravelPeak = i < keyTravelPeaks.Count ? keyTravelPeaks[i] : 0;
+                double retriggerPeak = i < retriggerPeaks.Count ? retriggerPeaks[i] : 0;
+                double rowSwitchPeak = i < rowSwitchPeaks.Count ? rowSwitchPeaks[i] : 0;
+                double speedPeak = i < speedPeaks.Count ? speedPeaks[i] : 0;
+                double typingFatiguePeak = i < typingFatiguePeaks.Count ? typingFatiguePeaks[i] : 0;
+                double wordLengthPeak = i < wordLengthPeaks.Count ? wordLengthPeaks[i] : 0;
 
-                combined.Add(strain * strain_skill_multiplier + speed * speed_skill_multiplier);
+                combined.Add(keyTravelPeak * key_travel_skill_multiplier
+                             + retriggerPeak * retrigger_skill_multiplier
+                             + rowSwitchPeak * row_switch_skill_multiplier
+                             + speedPeak * speed_skill_multiplier
+                             + typingFatiguePeak * typing_fatigue_skill_multiplier
+                             + wordLengthPeak * word_length_skill_multiplier);
             }
 
             return combined;
@@ -106,7 +154,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 
             for (int i = 2; i < beatmap.HitObjects.Count; i++)
             {
-                keyboardLayout.TryGetKey(((TypingHitObject)beatmap.HitObjects[i]).Letter, out PhysicalKey physicalKey);
+                keyboardLayout.TryGetKey(((TypingHitObject)beatmap.HitObjects[i]).Letter, out PhysicalKey currentKey);
+                keyboardLayout.TryGetKey(((TypingHitObject)beatmap.HitObjects[i - 1]).Letter, out PhysicalKey previousKey);
 
                 objects.Add(
                     new TypingDifficultyHitObject(
@@ -115,30 +164,11 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                         clockRate,
                         objects,
                         objects.Count,
-                        physicalKey,
+                        currentKey,
+                        previousKey,
                         beatmap.HitObjects.ElementAtOrDefault(i + 1)
                     )
                 );
-            }
-
-            // Assign hit object times and pattern index, which both are used by skills
-            for (int i = 0; i < objects.Count; i++)
-            {
-                TypingDifficultyHitObject current = (TypingDifficultyHitObject)objects[i];
-                TypingDifficultyHitObject previous = (TypingDifficultyHitObject)current.Previous(0);
-                TypingDifficultyHitObject next = (TypingDifficultyHitObject)current.Next(0);
-
-                if (previous == null || next == null)
-                    continue;
-
-                double timeFromPrevious = current.StartTime - previous.StartTime;
-                double timeToNext = next.StartTime - current.StartTime;
-
-                current.TimeToNext = timeToNext;
-                current.TimeFromPrevious = timeFromPrevious;
-
-                if (timeToNext <= timeFromPrevious)
-                    current.IndexInPattern = previous.IndexInPattern + 1;
             }
 
             return objects;
@@ -148,8 +178,12 @@ namespace osu.Game.Rulesets.Typing.Difficulty
         {
             return new Skill[]
             {
-                new Strain(mods),
-                new Speed(mods)
+                new KeyTravel(mods),
+                new Retrigger(mods),
+                new RowSwitch(mods),
+                new Speed(mods),
+                new TypingFatigue(mods),
+                new WordLength(mods),
             };
         }
 

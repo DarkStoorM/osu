@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Typing.Layouts.KeyboardData
 
     public enum Finger
     {
-        Index,
+        Index = 1,
         Middle,
         Ring,
         Pinky

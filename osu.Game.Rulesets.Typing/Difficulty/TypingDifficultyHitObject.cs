@@ -1,10 +1,12 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
 using System.Collections.Generic;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
+using osuTK;
 
 namespace osu.Game.Rulesets.Typing.Difficulty
 {
@@ -14,17 +16,41 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 
         public HitObject? NextObject { get; }
 
-        public double TimeFromPrevious { get; set; }
+        /// <summary>
+        /// How many rows were switched between this object and previous.
+        /// </summary>
+        public double RowDelta { get; }
 
-        public double TimeToNext { get; set; }
+        public double DistanceFromPreviousKey { get; }
 
-        public int IndexInPattern { get; set; }
+        public bool IsOnSameFinger { get; }
 
-        public TypingDifficultyHitObject(HitObject current, HitObject previous, double clockRate, List<DifficultyHitObject> allObjects, int index, PhysicalKey physicalKey, HitObject? nextObject)
+        public bool IsOnSameHand { get; }
+
+        public bool IsOnSameRow { get; }
+
+        public bool IsKeyRepeated { get; }
+
+        public TypingDifficultyHitObject(HitObject current,
+                                         HitObject previous,
+                                         double clockRate,
+                                         List<DifficultyHitObject> allObjects,
+                                         int index,
+                                         PhysicalKey currentKey,
+                                         PhysicalKey previousKey,
+                                         HitObject? nextObject)
             : base(current, previous, clockRate, allObjects, index)
         {
-            PhysicalKey = physicalKey;
+            PhysicalKey = currentKey;
             NextObject = nextObject;
+
+            DistanceFromPreviousKey = Vector2.Distance(previousKey.Position, currentKey.Position);
+
+            RowDelta = Math.Abs(previousKey.Row - currentKey.Row);
+            IsOnSameFinger = previousKey.Hand == currentKey.Hand && previousKey.Finger == currentKey.Finger;
+            IsOnSameHand = previousKey.Hand == currentKey.Hand;
+            IsOnSameRow = previousKey.Row == currentKey.Row;
+            IsKeyRepeated = previousKey.Character == currentKey.Character;
         }
     }
 }

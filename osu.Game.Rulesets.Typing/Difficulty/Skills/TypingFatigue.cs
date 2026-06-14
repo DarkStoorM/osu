@@ -4,28 +4,35 @@
 using System;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Skills;
-using osu.Game.Rulesets.Difficulty.Utils;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Typing.Objects;
 
 namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
-    public class Speed : StrainSkill
+    public class TypingFatigue : StrainSkill
     {
-        private double skillMultiplier => 0.5;
-        private double strainDecayBase => 0.35;
+        private double skillMultiplier => 1.45;
+        private double strainDecayBase => 0.6;
         private double currentStrain;
 
-        public Speed(Mod[] mods)
+        public TypingFatigue(Mod[] mods)
             : base(mods) { }
 
         protected override double StrainValueAt(DifficultyHitObject current)
         {
             TypingHitObject currentHitObject = (TypingHitObject)current.BaseObject;
 
-            // Probably not much to do here anyway
+            // 600 was an arbitrary value picked to make the typing fatigue factor climb steadily after 250~ objects
+            // and approach 1.0 at ~1200+.
+            // The factor is very small for the first ~150 objects to not favor short beatmaps
+            double t = current.Index / 600.0;
+            double fatigue = 1.0 - Math.Exp(-(t * t));
+
+            // The typing fatigue increases with word length, but shouldn't explode the difficulty
+            fatigue += 1 - Math.Pow(currentHitObject.IndexInWord, -0.1);
+
             currentStrain *= strainDecay(current.DeltaTime);
-            currentStrain += 1.5 + DifficultyCalculationUtils.Logistic(currentHitObject.IndexInWord, 3, 1) * skillMultiplier;
+            currentStrain += fatigue * skillMultiplier;
 
             return currentStrain;
         }

@@ -1,4 +1,4 @@
-{
+﻿{
   "solution": {
     "path": "osu.sln",
     "projects": [
@@ -15,6 +15,7 @@
       "osu.Game.Rulesets.Typing.Tests\\osu.Game.Rulesets.Typing.Tests.csproj",
       "osu.Game.Rulesets.Typing\\osu.Game.Rulesets.Typing.csproj",
       "osu.Game.Tests\\osu.Game.Tests.csproj",
+      "osu.Game.Tools.Typing.DifficultyCalculator\\osu.Game.Tools.Typing.DifficultyCalculator.csproj",
       "osu.Game.Tournament.Tests\\osu.Game.Tournament.Tests.csproj",
       "osu.Game.Tournament\\osu.Game.Tournament.csproj",
       "osu.Game\\osu.Game.csproj",

@@ -118,17 +118,28 @@ namespace osu.Game.Rulesets.Typing.Mods
             string currentWord = getNextWord(wordGenerator, samplingContext);
             int currentWordLength = currentWord.Length;
             bool hasJoinedEvenWordYet = false;
+            bool isGeneratingFirstWord = true;
 
             while (isStillWithinPlayingBounds)
             {
                 using var enumerator = currentWord.GetEnumerator();
 
+                // Because the first two objects are ignored by difficulty calculators, we have to artificially reduce the starting index
+                // so we don't start with index of 2 immediately, bumping the strain
+                int index = isGeneratingFirstWord ? -2 : 0;
+                isGeneratingFirstWord = false;
+
                 while (enumerator.MoveNext())
                 {
+                    index++;
+
                     TypingHitObject? hit = createRandomHitObject(enumerator.Current);
 
                     if (hit == null)
                         break;
+
+                    hit.IndexInWord = index;
+                    hit.WordLength = currentWord.Length;
 
                     // Avoid placing hit objects on the wrong timing point
                     if (hasTimingPointChanged)
