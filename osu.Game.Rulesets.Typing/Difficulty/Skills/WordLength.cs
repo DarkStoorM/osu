@@ -11,19 +11,18 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
     /// <summary>
     /// Skill only applying a penalty based on the word length of the current object, without any awareness of other factors,
-    /// e.g. current time, word complexity, etc.
-    /// <para />Note: This is not tweaked yet.
+    /// e.g. word complexity, etc.
     /// </summary>
-    public class WordLength : StrainDecaySkill
+    public class WordLength : StrainSkill
     {
-        protected override double SkillMultiplier => 1;
-
-        protected override double StrainDecayBase => 0.84;
+        private double skillMultiplier => 0.2;
+        private double strainDecayBase => 0.7;
+        private double currentStrain;
 
         public WordLength(Mod[] mods)
             : base(mods) { }
 
-        protected override double StrainValueOf(DifficultyHitObject current)
+        protected override double StrainValueAt(DifficultyHitObject current)
         {
             var currentObject = (TypingHitObject)current.BaseObject;
 
@@ -38,9 +37,16 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             // Longer words should be disproportionately harder (I think?)
             // Also, technically, this could be capped above some length, but since the longest words exist in 5k/25k dictionaries
             // and are rare uncommon anyway, there is no need to do anything more here
-            double lengthFactor = Math.Pow(length, 1.275);
+            double lengthFactor = Math.Pow(length, 1.125);
 
-            return lengthFactor * wordProgress;
+            currentStrain *= strainDecay(current.DeltaTime);
+            currentStrain += lengthFactor * wordProgress * skillMultiplier;
+
+            return currentStrain;
         }
+
+        protected override double CalculateInitialStrain(double time, DifficultyHitObject current) => currentStrain * strainDecay(time - current.Previous(0).StartTime);
+
+        private double strainDecay(double ms) => Math.Pow(strainDecayBase, ms / 1000);
     }
 }
