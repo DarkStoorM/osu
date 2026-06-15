@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
+using osu.Game.Rulesets.Typing.Objects;
 using osuTK;
 
 namespace osu.Game.Rulesets.Typing.Difficulty
@@ -13,7 +14,6 @@ namespace osu.Game.Rulesets.Typing.Difficulty
     public class TypingDifficultyHitObject : DifficultyHitObject
     {
         public PhysicalKey PhysicalKey { get; }
-
         public HitObject? NextObject { get; }
 
         /// <summary>
@@ -36,11 +36,12 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                                          double clockRate,
                                          List<DifficultyHitObject> allObjects,
                                          int index,
-                                         PhysicalKey currentKey,
-                                         PhysicalKey previousKey,
                                          HitObject? nextObject)
             : base(current, previous, clockRate, allObjects, index)
         {
+            var previousKey = ((TypingHitObject)previous).CurrentKey;
+            var currentKey = ((TypingHitObject)current).CurrentKey;
+
             PhysicalKey = currentKey;
             NextObject = nextObject;
 

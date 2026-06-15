@@ -10,9 +10,7 @@ using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Typing.Difficulty.Skills;
-using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
 using osu.Game.Rulesets.Typing.Mods;
-using osu.Game.Rulesets.Typing.Objects;
 
 namespace osu.Game.Rulesets.Typing.Difficulty
 {
@@ -26,15 +24,10 @@ namespace osu.Game.Rulesets.Typing.Difficulty
         private const double typing_fatigue_skill_multiplier = 0.125 * difficulty_multiplier;
         private const double word_length_skill_multiplier = 0.35 * difficulty_multiplier;
 
-        private readonly IKeyboardLayout keyboardLayout;
-
         public override int Version => 20260607;
 
-        public TypingDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap, IKeyboardLayout layout)
-            : base(ruleset, beatmap)
-        {
-            keyboardLayout = layout;
-        }
+        public TypingDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap)
+            : base(ruleset, beatmap) { }
 
         protected override Mod[] DifficultyAdjustmentMods => new Mod[]
         {
@@ -154,9 +147,6 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 
             for (int i = 2; i < beatmap.HitObjects.Count; i++)
             {
-                keyboardLayout.TryGetKey(((TypingHitObject)beatmap.HitObjects[i]).Letter, out PhysicalKey currentKey);
-                keyboardLayout.TryGetKey(((TypingHitObject)beatmap.HitObjects[i - 1]).Letter, out PhysicalKey previousKey);
-
                 objects.Add(
                     new TypingDifficultyHitObject(
                         beatmap.HitObjects[i],
@@ -164,8 +154,6 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                         clockRate,
                         objects,
                         objects.Count,
-                        currentKey,
-                        previousKey,
                         beatmap.HitObjects.ElementAtOrDefault(i + 1)
                     )
                 );

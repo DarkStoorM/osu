@@ -5,6 +5,7 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Typing.Judgements;
+using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
 using osu.Game.Rulesets.Typing.Scoring;
 
 namespace osu.Game.Rulesets.Typing.Objects
@@ -16,6 +17,8 @@ namespace osu.Game.Rulesets.Typing.Objects
         public int IndexInWord { get; set; }
 
         public int WordLength { get; set; }
+
+        public PhysicalKey CurrentKey { get; init; }
 
         public override Judgement CreateJudgement() => new TypingJudgement();
 

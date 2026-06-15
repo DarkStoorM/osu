@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Typing
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) => new TypingBeatmapConverter(beatmap, this);
 
-        public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new TypingDifficultyCalculator(RulesetInfo, beatmap, KeyboardLayout);
+        public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new TypingDifficultyCalculator(RulesetInfo, beatmap);
 
         public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new TypingHealthProcessor();
 

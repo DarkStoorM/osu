@@ -11,6 +11,8 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Typing.Beatmaps;
+using osu.Game.Rulesets.Typing.Layouts;
+using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
 using osu.Game.Rulesets.Typing.Objects;
 
 namespace osu.Game.Rulesets.Typing.Mods
@@ -19,6 +21,18 @@ namespace osu.Game.Rulesets.Typing.Mods
     public abstract class TypingEnglishMod : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter, ITypingDictionaryMod
     {
         private const int max_banned_letters_length = 5;
+
+        private static readonly Dictionary<KeyboardLayoutType, KeyboardLayout> keyboard_layouts = new Dictionary<KeyboardLayoutType, KeyboardLayout>
+        {
+            { KeyboardLayoutType.QwertyStaggered, new QwertyStaggeredLayout() },
+            { KeyboardLayoutType.QwertyOrtholinear, new QwertyOrtholinearLayout() },
+            { KeyboardLayoutType.DvorakStaggered, new DvorakStaggeredLayout() },
+            { KeyboardLayoutType.DvorakOrtholinear, new DvorakOrtholinearLayout() },
+            { KeyboardLayoutType.ColemakStaggered, new ColemakStaggeredLayout() },
+            { KeyboardLayoutType.ColemakOrtholinear, new ColemakOrtholinearLayout() },
+            { KeyboardLayoutType.ColemakDhStaggered, new ColemakDhStaggeredLayout() },
+            { KeyboardLayoutType.ColemakDhOrtholinear, new ColemakDhOrtholinearLayout() },
+        };
 
         public abstract DictionarySize DictionarySize { get; }
         public override ModType Type => ModType.Conversion;
@@ -54,10 +68,20 @@ namespace osu.Game.Rulesets.Typing.Mods
             Precision = 0.01f
         };
 
+        [SettingSource("KeyboardLayout", "Requires disabling the even length word skip")]
+        public Bindable<KeyboardLayoutType> KeyboardLayout { get; } = new Bindable<KeyboardLayoutType>(KeyboardLayoutType.QwertyStaggered);
+
+        private KeyboardLayout selectedKeyboardLayout { get; set; }
+
         protected TypingEnglishMod()
         {
             BannedLetters.BindValueChanged(OnBannedLettersChanged);
+            KeyboardLayout.BindValueChanged(OnKeyboardLayoutChange);
+
+            selectedKeyboardLayout = keyboard_layouts[KeyboardLayoutType.QwertyStaggered];
         }
+
+        private void OnKeyboardLayoutChange(ValueChangedEvent<KeyboardLayoutType> e) => selectedKeyboardLayout = keyboard_layouts[e.NewValue];
 
         private void OnBannedLettersChanged(ValueChangedEvent<string> e)
         {
@@ -294,10 +318,14 @@ namespace osu.Game.Rulesets.Typing.Mods
                     faultyHitObjectsToRemove.Add(lastHitObjectCreated);
             }
 
+            TypingAction action = LetterToTypingAction(newChar);
+            selectedKeyboardLayout.TryGetKey(action, out PhysicalKey currentPhysicalKey);
+
             TypingHitObject hitObject = new TypingHitObject
             {
                 StartTime = currentTime,
-                Letter = LetterToTypingAction(newChar)
+                Letter = action,
+                CurrentKey = currentPhysicalKey,
             };
 
             hitObject.ApplyDefaults(typingBeatmap.ControlPointInfo, typingBeatmap.Difficulty);
