@@ -21,6 +21,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Questionable Change](#questionable-change)
     - [Why Not Extract Ruleset?](#why-not-extract-ruleset)
     - [Difficulty Calculator for Typing Ruleset](#difficulty-calculator-for-typing-ruleset)
+    - [Keyboard layouts](#keyboard-layouts)
   
 ---
 
@@ -153,3 +154,31 @@ While I had four other rulesets at my disposal, it would make zero sense to copy
 I included a bunch of tests which I used to tweak the values, which are in the end based on aiming to get a four stars beatmap from 140 BPM over three minutes of gameplay (that's around 90 BPM I think). I don't know how Strain Skills work anyway, so I just rolled with it and only glanced at other skills without checking what they do, then tweaked the values, looking at graphs.
 
 Both test scene and console project were written by AI, because I couldn't care less about something I would use once (slop gpt, to be specific, I don't give a shit about the agentic slop people use).
+
+### Keyboard layouts
+
+A very important note: while this ruleset is obviously unranked and the star rating is not accurate at all, the main mod required for Star Difficulty calculation allows you to select a keyboard layout (qwerty/dvorak/colemak) to adjust the calculation. This is purely for gauging the difficulty if you are playing with the selected layout. This was added mostly out of curiosity rather than supporting layouts the potential player might use.
+
+I did this, because the Star Difficulty calculation contains the following measurements and I needed to see the differences in:
+
+- Key Travel (favouring counter-natural rolling direction - index>outwards)
+- Retrigger (key repetition, a.k.a double-tap, depends on used finger)
+- Row Switch
+
+Out of all six skills included in the difficulty calculator, these three depend on the keyboard layout, because of the physical properties of each of them: key position, distance difference and row location. Each layout will differ across these three skills, altering the star rating, but this does not mean that someone playing on Dvorak (less strain across said skills) will play on Qwerty layout to bump the star rating.
+
+This is **only** informational and makes no sense to to use a different one than your every day typing layout.
+
+Still, this was a very interesting experiment to see the following order in the difficulty across layouts (given that I can NOT confirm that any of the difficulty calculations are correct, since tons of factors are still missing):
+
+- Qwerty - Hardest
+- Colemak - `^ -10% to -15%`
+- Colemak-DH - `^ -1% to -3%`
+- Dvorak - Easiest, `^ -5% to -10%`
+
+In that order, Dvorak resulting in around 15% difficulty drop overall from Qwerty.
+
+Does it matter? Nope, it's not something that should be measure anyway. It's like you asked the PP Committee team to rework Taiko PP to calculate performance based on playstyles other than assumed `full alt KDDK`: `DDKK`/`KKDD`/`DKKD`/`DDDK`. One would have to be insane enough to create difficulty calculators for all of them and make sure people don't lie.
+
+> [!Note]
+> All the difficulty calculation assumes Touch-Typing. It's basically like Taiko assuming `full alt KDDK`, but `DDKK` playstyles getting free PP from 1/6.
