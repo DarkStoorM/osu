@@ -26,6 +26,25 @@ namespace osu.Game.Rulesets.Typing.Layouts.KeyboardData
 
         protected abstract IEnumerable<LayoutKeyDefinition> CreateLayout();
 
+        protected static LayoutKeyDefinition Key(
+            TypingAction character,
+            float x,
+            float y,
+            Hand hand,
+            Finger finger,
+            KeyboardRow row)
+        {
+            return new LayoutKeyDefinition
+            {
+                Character = character,
+                X = x,
+                Y = y,
+                Hand = hand,
+                Finger = finger,
+                Row = row
+            };
+        }
+
         private static PhysicalKey createPhysicalKey(LayoutKeyDefinition definition)
         {
             return new PhysicalKey
