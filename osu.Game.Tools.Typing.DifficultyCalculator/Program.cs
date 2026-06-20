@@ -25,8 +25,6 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             ("0K", createMod<TypingModEnglish0K>),
             ("1K", createMod<TypingModEnglish1K>),
             ("5K", createMod<TypingModEnglish5K>),
-            ("10K", createMod<TypingModEnglish10K>),
-            ("25K", createMod<TypingModEnglish25K>),
         };
 
         private static int Main()

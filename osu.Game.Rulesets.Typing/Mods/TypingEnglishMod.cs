@@ -43,9 +43,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         {
             typeof(TypingModEnglish0K),
             typeof(TypingModEnglish1K),
-            typeof(TypingModEnglish5K),
-            typeof(TypingModEnglish10K),
-            typeof(TypingModEnglish25K)
+            typeof(TypingModEnglish5K)
         }.Except(new[] { GetType() }).ToArray();
 
         [SettingSource("Adjust Beat Length", "Makes spacing shorter or longer between the objects. Half = twice as fast, Double = twice as slow")]
@@ -386,8 +384,6 @@ namespace osu.Game.Rulesets.Typing.Mods
         // For consistency, 0k was preferred over `EnglishSimple
         E0K,
         E1K,
-        E5K,
-        E10K,
-        E25K
+        E5K
     }
 }

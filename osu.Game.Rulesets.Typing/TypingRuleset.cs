@@ -86,9 +86,7 @@ namespace osu.Game.Rulesets.Typing
                         new MultiMod(
                             new TypingModEnglish0K(),
                             new TypingModEnglish1K(),
-                            new TypingModEnglish5K(),
-                            new TypingModEnglish10K(),
-                            new TypingModEnglish25K()
+                            new TypingModEnglish5K()
                         )
                     };
 
