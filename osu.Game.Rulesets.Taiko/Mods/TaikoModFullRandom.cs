@@ -23,13 +23,12 @@ namespace osu.Game.Rulesets.Taiko.Mods
     /// <summary>
     /// The reason why this exists: https://gist.github.com/DarkStoorM/060db882956e249bb029a71e471f73c4
     /// </summary>
-    public class TaikoModFullRandom : Mod, IApplicableToBeatmap
+    public class TaikoModFullRandom : Mod, IApplicableToBeatmap, IApplicableToBeatmapConverter
     {
         public override string Name => "Full Random";
         public override string Acronym => "FR";
         public override LocalisableString Description => "Goodbye beatmap, hello chaos!";
         public override ModType Type => ModType.Fun;
-        public override double ScoreMultiplier => 0.8;
 
         public override string ExtendedIconInformation
         {
@@ -58,6 +57,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
 
         public override Type[] IncompatibleMods =>
             [.. base.IncompatibleMods, typeof(TaikoModRandom), typeof(TaikoModSwap)];
+
         public override IconUsage? Icon => OsuIcon.ModRandom;
 
         [SettingSource("Longest Pattern Length")]
@@ -227,6 +227,12 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 WeightedRandom.AdjustHitObjectRatio(change.NewValue);
         }
 
+        public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
+        {
+            // Breaks have to be deleted, because this mod generates new hit objects, and it WILL place them if the original beatmap had breaks
+            beatmapConverter.Beatmap.Breaks.Clear();
+        }
+
         public void ApplyToBeatmap(IBeatmap beatmap)
         {
             taikoBeatmap = (TaikoBeatmap)beatmap;
@@ -360,7 +366,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
                             if (
                                 LongerOneSixth.Value
                                 && insertionChanceRNG.NextDouble()
-                                    < OneSixthInsertionChance.Value / 2
+                                < OneSixthInsertionChance.Value / 2
                             )
                             {
                                 lastHitObjectInOneSixthPattern = addOneSixthTriplet(currentPattern);
@@ -447,11 +453,11 @@ namespace osu.Game.Rulesets.Taiko.Mods
         private void initialiseKiaiTimes()
         {
             IReadOnlyList<EffectControlPoint> effectControlPoints = taikoBeatmap
-                .ControlPointInfo
-                .EffectPoints;
+                                                                    .ControlPointInfo
+                                                                    .EffectPoints;
             List<EffectControlPoint> kiaiSections = effectControlPoints
-                .Where(e => e.KiaiMode)
-                .ToList();
+                                                    .Where(e => e.KiaiMode)
+                                                    .ToList();
 
             // Kiai needs to be at least 5 full beats (-margin of error) or 3 seconds. It wouldn't make sense to
             // consider something a stream if it was shorter than that. This is also used to check if the Kiai sections
@@ -467,10 +473,9 @@ namespace osu.Game.Rulesets.Taiko.Mods
                     kiaiStartingPoint.Time,
                     1
                 );
-                EffectControlPoint? kiaiEndPoint = effectControlPoints.FirstOrDefault(
-                    effectControlPoint =>
-                        effectControlPoint.Time > kiaiStartingPoint.Time
-                        && !effectControlPoint.KiaiMode
+                EffectControlPoint? kiaiEndPoint = effectControlPoints.FirstOrDefault(effectControlPoint =>
+                    effectControlPoint.Time > kiaiStartingPoint.Time
+                    && !effectControlPoint.KiaiMode
                 );
 
                 // There might be a situation where the Kiai just never stops (?), so we will use the earlier defined
@@ -568,7 +573,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// </summary>
         private bool isTooCloseToKiaiPoint(double referenceKiaiTime)
         {
-            return currentTime <= referenceKiaiTime && (referenceKiaiTime - currentTime <= beatOne);
+            return currentTime <= referenceKiaiTime && referenceKiaiTime - currentTime <= beatOne;
         }
 
         /// <summary>
@@ -576,8 +581,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// </summary>
         private KiaiTime? getCurrentKiaiTimeOrNull()
         {
-            return kiaiTimes.FirstOrDefault(
-                kiaiTime => currentTime >= kiaiTime.StartTime && currentTime <= kiaiTime.EndTime
+            return kiaiTimes.FirstOrDefault(kiaiTime => currentTime >= kiaiTime.StartTime && currentTime <= kiaiTime.EndTime
             );
         }
 
@@ -586,8 +590,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// </summary>
         private KiaiTime? getNextClosestKiaiOrNull()
         {
-            return kiaiTimes.FirstOrDefault(
-                kiaiTime => currentTime < kiaiTime.StartTime && currentTime < kiaiTime.EndTime
+            return kiaiTimes.FirstOrDefault(kiaiTime => currentTime < kiaiTime.StartTime && currentTime < kiaiTime.EndTime
             );
         }
 
