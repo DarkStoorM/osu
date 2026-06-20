@@ -17,11 +17,14 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [About the Custom Mod](#about-the-custom-mod)
       - [What About Other Settings?](#what-about-other-settings)
         - [Increased Spacing](#increased-spacing)
+    - [Skinnable WPM](#skinnable-wpm)
     - [Nothing New](#nothing-new)
     - [Questionable Change](#questionable-change)
     - [Why Not Extract Ruleset?](#why-not-extract-ruleset)
     - [Difficulty Calculator for Typing Ruleset](#difficulty-calculator-for-typing-ruleset)
     - [Keyboard layouts](#keyboard-layouts)
+    - [Sharing Disclaimer](#sharing-disclaimer)
+    - [Missing Features](#missing-features)
   
 ---
 
@@ -77,13 +80,18 @@ I got pretty much bored of MonkeyType, and since I had it configured to the `scr
 
 These are just random, ranked words generated from curated dictionaries. I parsed all books from Project Gutenberg, ordered words by frequency and manually went through the list and left 5000 words. I didn't feel like there was a need for some fancy text generation algorithms, but at least it could use some n-gram bias, though.
 
-- `English 0K` - 500 words left after a second pass of curation. I only left words that were somewhat mechanically nice to type for muscle memory grinding (for me at least, although I play on `split ortholinear qwerty`)
+- `English 0K` - 500 words left after a second pass of curation. I only left words that were somewhat mechanically nice to type for muscle memory grinding (for me at least, although I play on `split ortholinear qwerty`). I extended the word set from 200 to 500, because the mod would typically be played without even-length words, so there wouldn't be much variety on default 200.
 - `English 1K` - 1000 words without second pass
 - `English 5k` - as above, but 5000
 
 ### Work-in-progress
 
 This ruleset will be in *work-in-progress* state for a long time, because I don't feel like adding or fixing stuff, as the foundation is already sufficient for me to play.
+
+> [!Note]
+> The mod is applied to all visible difficulties, so the structure of the current beatmap difficulty does not matter, because the mod replaces the entire beatmap. This will result in all difficulties having the same Star Rating if custom Seed is applied.
+>
+> If all beatmaps have the same Drain Time, they will have a very similar Star Rating. This is intentional given how the mod works and it does not matter which difficulty is played with this mod.
 
 ### Custom Mod Requirement
 
@@ -128,6 +136,10 @@ For the same exact reason, I increased the strain slightly on word length, which
 There is also a setting to increase the spacing between words, because why not?
 
 This, instead of inserting a 1/2 break, inserts a full 1/1 break, which gives enough recovery time between the words, allowing to play on higher BPMs, since there is more time to fully parse the incoming word. That comes with a cost of lowered difficulty, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat).
+
+### Skinnable WPM
+
+I will just briefly mention that there is a new component for WPM, but it's basically the same counter that is used for `Clicks Per Second`, but it's measuring overall inputs for the current beatmap playtime that will average out as you play to give an approximate realtime WPM.
 
 ### Nothing New
 
@@ -186,3 +198,17 @@ Does it matter? Nope, it's not something that should be measure anyway. It's lik
 
 > [!Note]
 > All the difficulty calculation assumes Touch-Typing. It's basically like Taiko assuming `full alt KDDK`, but `DDKK` playstyles getting free PP from 1/6.
+
+### Sharing Disclaimer
+
+I'm intentionally not sharing this, because I made this for myself, but, if you happened to find this, I don't think you will have fun playing. I'm too lazy to write a better documentation for the rulesets/mods, or make it easier to use in general.
+
+Also, I won't be sharing this in the [Custom Ruleset Directory](https://github.com/ppy/osu/discussions/13096), I dont think it's worth posting something this unpolished and badly coded.
+
+### Missing Features
+
+Some stuff I *might* add if I won't get lazy:
+
+- `Gameplay overlay` - a live keyboard with highlighted keys
+- `Result Screen Statistics` - it is currently empty, but the main idea is to display a whole keyboard with timing distribution across all keys to have an overview on Unstable Rate and Hit Error, separate for each key.
+- `Pooling` - RIP old PC users
