@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Typing
 {
     public static class WordDictionary
     {
-        private const string resources_path = "Resources/";
+        private const string resources_path = "Resources/Dictionaries/";
 
         public static Dictionary<DictionarySize, RankedWordGenerator> CreateDictionaries(ResourceStore<byte[]> resources)
         {
