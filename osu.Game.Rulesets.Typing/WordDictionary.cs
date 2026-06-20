@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Typing
 {
     public static class WordDictionary
     {
-        private const string resources_path = "Resources/GPL/";
+        private const string resources_path = "Resources/";
 
         public static Dictionary<DictionarySize, RankedWordGenerator> CreateDictionaries(ResourceStore<byte[]> resources)
         {
@@ -29,10 +29,6 @@ namespace osu.Game.Rulesets.Typing
 
                 string json = reader.ReadToEnd();
                 string[] words = JsonSerializer.Deserialize<string[]>(json) ?? throw new InvalidOperationException($"Failed to deserialize {dictionarySize} dictionary.");
-
-                // Some letters are uppercase, e.g. `I`, so we have to convert them for consistency (that's only because the word resource was made like that)
-                for (int i = 0; i < words.Length; i++)
-                    words[i] = words[i].ToLowerInvariant();
 
                 wordDictionaries[dictionarySize] = new RankedWordGenerator(words);
             }
