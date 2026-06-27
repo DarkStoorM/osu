@@ -17,8 +17,11 @@ using osu.Game.Rulesets.Typing.Layouts;
 using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
 using osu.Game.Rulesets.Typing.Mods;
 using osu.Game.Rulesets.Typing.Scoring;
+using osu.Game.Rulesets.Typing.Screens.Ranking.Statistics;
 using osu.Game.Rulesets.Typing.UI;
 using osu.Game.Rulesets.UI;
+using osu.Game.Scoring;
+using osu.Game.Screens.Ranking.Statistics;
 
 namespace osu.Game.Rulesets.Typing
 {
@@ -93,6 +96,14 @@ namespace osu.Game.Rulesets.Typing
                 default:
                     return Array.Empty<Mod>();
             }
+        }
+
+        public override StatisticItem[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap)
+        {
+            return new[]
+            {
+                new StatisticItem("Key timing distribution", () => new KeyboardContainer(score), requiresHitEvents: false)
+            };
         }
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) =>
