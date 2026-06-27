@@ -5,74 +5,72 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
-using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 {
     public partial class KeyboardKeyCard : Container
     {
-        public KeyboardKeyCard(string key, int pressCount, double? unstableRate)
+        public KeyboardKeyCard(string key, int pressCount, double? unstableRate, Colour4 colour)
         {
-            Anchor = Anchor.TopLeft;
-            Origin = Anchor.TopLeft;
-            Size = new Vector2(70, 80);
+            var cardColour = unstableRate == null ? Colour4.Cyan : colour;
 
+            Width = 75;
+            Height = 90;
             Masking = true;
-
-            CornerRadius = 6;
-            BorderThickness = 1;
-            BorderColour = Color4.Cyan;
+            CornerRadius = 8;
+            BorderThickness = 1.5f;
+            BorderColour = cardColour.Opacity(0.5f);
             Margin = new MarginPadding(5);
+
             EdgeEffect = new EdgeEffectParameters
             {
                 Type = EdgeEffectType.Glow,
-                Colour = new Colour4(0, 255, 255, 100),
+                Colour = cardColour.Opacity(0.12f),
                 Radius = 4,
             };
 
-            Children = new Drawable[]
+            InternalChildren = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4(10, 10, 14, 255)
+                    Colour = cardColour.Opacity(0.2f),
                 },
 
                 new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Direction = FillDirection.Vertical,
-                    Padding = new MarginPadding(6),
-                    Spacing = new Vector2(2),
+                    Padding = new MarginPadding(10),
+
                     Children = new Drawable[]
                     {
                         new OsuSpriteText
                         {
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.Centre,
+                            Padding = new MarginPadding { Top = 5 },
                             Text = unstableRate == null ? "N/A" : $"UR: {unstableRate:F0}",
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
+                            Font = OsuFont.Torus.With(size: 20),
                         },
 
                         new OsuSpriteText
                         {
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.Centre,
                             Text = key,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Font = new FontUsage(OsuFont.Torus.ToString(), size: 50, weight: "Bold"),
-                            Padding = new MarginPadding { Bottom = -10 }
+                            Font = OsuFont.Inter.With(size: 50, weight: FontWeight.Bold),
                         },
 
                         new OsuSpriteText
                         {
-                            Text = $"{pressCount.ToString()}",
-                            Anchor = Anchor.Centre,
+                            Anchor = Anchor.TopCentre,
                             Origin = Anchor.Centre,
-                            Font = new FontUsage(OsuFont.Numeric.ToString(), size: 20),
-                        }
+                            Text = pressCount.ToString(),
+                            Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
+                        },
                     }
                 }
             };
