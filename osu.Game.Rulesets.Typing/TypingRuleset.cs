@@ -13,8 +13,6 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Typing.Beatmaps;
 using osu.Game.Rulesets.Typing.Difficulty;
-using osu.Game.Rulesets.Typing.Layouts;
-using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
 using osu.Game.Rulesets.Typing.Mods;
 using osu.Game.Rulesets.Typing.Scoring;
 using osu.Game.Rulesets.Typing.Screens.Ranking.Statistics;
@@ -29,8 +27,6 @@ namespace osu.Game.Rulesets.Typing
     {
         public override string Description => "osu!typing";
         public override string ShortName => "typing";
-
-        public IKeyboardLayout KeyboardLayout => new QwertyOrtholinearLayout();
 
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods = null) => new DrawableTypingRuleset(this, beatmap, mods);
 
