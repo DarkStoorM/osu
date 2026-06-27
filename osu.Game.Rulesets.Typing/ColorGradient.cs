@@ -18,8 +18,11 @@ namespace osu.Game.Rulesets.Typing
             this.stops = stops.OrderBy(s => s.Value).ToList();
         }
 
-        public Colour4 Evaluate(double score)
+        public Colour4? Evaluate(double? score)
         {
+            if (score is null or 0)
+                return null;
+
             float value = (float)score;
 
             if (value <= stops[0].Value)
