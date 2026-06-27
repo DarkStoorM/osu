@@ -12,9 +12,10 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 {
     public partial class KeyboardKeyCard : Container
     {
-        public KeyboardKeyCard(string key, int pressCount, double? unstableRate, Colour4 colour)
+        public KeyboardKeyCard(string key, int pressCount, double? unstableRate, Colour4? colour)
         {
-            var cardColour = unstableRate == null ? Colour4.Cyan : colour;
+            var fontColour = colour == null ? Colour4.DarkGray.Opacity(0.2f) : Colour4.White;
+            var cardColour = colour ?? Colour4.DarkGray.Opacity(0.2f);
 
             Width = 75;
             Height = 90;
@@ -54,6 +55,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                             Padding = new MarginPadding { Top = 5 },
                             Text = unstableRate == null ? "N/A" : $"UR: {unstableRate:F0}",
                             Font = OsuFont.Torus.With(size: 20),
+                            Colour = fontColour,
                         },
 
                         new OsuSpriteText
@@ -62,6 +64,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                             Origin = Anchor.Centre,
                             Text = key,
                             Font = OsuFont.Inter.With(size: 50, weight: FontWeight.Bold),
+                            Colour = fontColour,
                         },
 
                         new OsuSpriteText
@@ -70,6 +73,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                             Origin = Anchor.Centre,
                             Text = pressCount.ToString(),
                             Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
+                            Colour = fontColour,
                         },
                     }
                 }

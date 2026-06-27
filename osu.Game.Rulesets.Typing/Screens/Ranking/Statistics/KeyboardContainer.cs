@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Utils;
 using osu.Game.Rulesets.Typing.Layouts;
 using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
 using osu.Game.Rulesets.Typing.Objects;
@@ -20,11 +19,16 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 
         public KeyboardContainer(ScoreInfo score)
         {
+            // A hacky way to create a gradient of color for an arbitrary unstable rate range.
+            // The result for <= 1 hits or just zero should show a grayed out color, since
             ColorGradient ??= new ColorGradient(
-                new ColorStop(0, new Colour4(0f, 0.85f, 0.2f, 1f)),
-                new ColorStop(150, new Colour4(0.6f, 1f, 0.2f, 1f)),
-                new ColorStop(225, new Colour4(1f, 0.8f, 0f, 1f)),
-                new ColorStop(300, new Colour4(1f, 0.2f, 0.2f, 1f))
+                new ColorStop(0, new Colour4(0.55f, 0.55f, 0.55f, 1f)),
+                new ColorStop(10, new Colour4(0.00f, 0.95f, 0.25f, 1f)),
+                new ColorStop(100, new Colour4(0.45f, 1.00f, 0.15f, 1f)),
+                new ColorStop(150, new Colour4(1.00f, 0.95f, 0.10f, 1f)),
+                new ColorStop(200, new Colour4(1.00f, 0.60f, 0.00f, 1f)),
+                new ColorStop(250, new Colour4(1.00f, 0.18f, 0.18f, 1f)),
+                new ColorStop(300, new Colour4(0.60f, 0.00f, 0.00f, 1f))
             );
 
             RelativeSizeAxes = Axes.X;
@@ -84,12 +88,20 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                 var keyHitEvents = score.HitEvents
                                         .Where(e => e.HitObject is TypingHitObject hitObject && hitObject.Letter == key.Character)
                                         .ToList();
-                double? unstableRate = keyHitEvents.CalculateKeyUnstableRate(key.Character)?.Result * RNG.NextDouble(0.1, 0.7);
+                double? unstableRate = keyHitEvents.CalculateKeyUnstableRate(key.Character)?.Result ?? 0;
+
+                // Hit events per key should be at least ten to deem the unstable rate valid for this key, so we have to force zero
+                // it out if there were not enough keypresses. The reason for this is that the unstable rate will converge at higher
+                // amount of hits across the whole gameplay, so a very short beatmap should not yield valuable results
+                if (keyHitEvents.Count < 10)
+                    unstableRate = null;
+
+                Colour4? colour = ColorGradient?.Evaluate(unstableRate);
 
                 keyCards.Add(new KeyboardKeyCard(key.Character.ToString(),
                         keyHitEvents.Count,
                         unstableRate,
-                        ColorGradient.Evaluate(unstableRate ?? 0)
+                        colour
                     )
                 );
             }
