@@ -82,11 +82,7 @@ namespace osu.Game.Rulesets.Typing
                         new TypingModDifficultyAdjust(),
                         // The reason for CS to exist here is to remove all speed changes from control points
                         new TypingModConstantSpeed(),
-                        new MultiMod(
-                            new TypingModEnglish0K(),
-                            new TypingModEnglish1K(),
-                            new TypingModEnglish5K()
-                        )
+                        new TypingWordsMod(),
                     };
 
                 default:
@@ -98,7 +94,7 @@ namespace osu.Game.Rulesets.Typing
         {
             return new[]
             {
-                new StatisticItem("Key timing distribution", () => new KeyboardContainer(score), requiresHitEvents: false)
+                new StatisticItem("Key timing distribution", () => new KeyTimingDistribution(score), requiresHitEvents: false)
             };
         }
 

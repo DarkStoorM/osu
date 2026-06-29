@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
+using osu.Framework.Localisation;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -18,7 +19,7 @@ using osu.Game.Rulesets.Typing.Objects;
 namespace osu.Game.Rulesets.Typing.Mods
 {
     // Note: This class contains code copy-pasted from TaikoModFullRandom, because I'm lazy
-    public abstract class TypingEnglishMod : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter, ITypingDictionaryMod
+    public class TypingWordsMod : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter
     {
         private const int max_banned_letters_length = 5;
 
@@ -34,17 +35,14 @@ namespace osu.Game.Rulesets.Typing.Mods
             { KeyboardLayoutType.ColemakDhOrtholinear, new ColemakDhOrtholinearLayout() },
         };
 
-        public abstract DictionarySize DictionarySize { get; }
         public override ModType Type => ModType.Conversion;
-        public override string Acronym => Name;
+        public override LocalisableString Description => "Generates random words from dictionary";
+        public override string Acronym => "ENG";
+        public override string Name => "Words";
         public override bool Ranked => false;
 
-        public override Type[] IncompatibleMods => new[]
-        {
-            typeof(TypingModEnglish0K),
-            typeof(TypingModEnglish1K),
-            typeof(TypingModEnglish5K)
-        }.Except(new[] { GetType() }).ToArray();
+        [SettingSource("Dictionary Size", description: "0K contains first 500 curated words from the whole dictionary")]
+        public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
 
         [SettingSource("Adjust Beat Length", "Makes spacing shorter or longer between the objects. Half = twice as fast, Double = twice as slow")]
         public Bindable<BeatLength> AdjustBeatLength { get; } = new Bindable<BeatLength>(BeatLength.Full);
@@ -67,19 +65,19 @@ namespace osu.Game.Rulesets.Typing.Mods
         };
 
         [SettingSource("KeyboardLayout", "Requires disabling the even length word skip")]
-        public Bindable<KeyboardLayoutType> KeyboardLayout { get; } = new Bindable<KeyboardLayoutType>(KeyboardLayoutType.QwertyStaggered);
+        public Bindable<KeyboardLayoutType> KeyboardLayout { get; } = new Bindable<KeyboardLayoutType>();
 
-        private KeyboardLayout selectedKeyboardLayout { get; set; }
+        public KeyboardLayout SelectedKeyboardLayout { get; private set; }
 
-        protected TypingEnglishMod()
+        public TypingWordsMod()
         {
             BannedLetters.BindValueChanged(OnBannedLettersChanged);
             KeyboardLayout.BindValueChanged(OnKeyboardLayoutChange);
 
-            selectedKeyboardLayout = keyboard_layouts[KeyboardLayoutType.QwertyStaggered];
+            SelectedKeyboardLayout = keyboard_layouts[KeyboardLayoutType.QwertyStaggered];
         }
 
-        private void OnKeyboardLayoutChange(ValueChangedEvent<KeyboardLayoutType> e) => selectedKeyboardLayout = keyboard_layouts[e.NewValue];
+        private void OnKeyboardLayoutChange(ValueChangedEvent<KeyboardLayoutType> e) => SelectedKeyboardLayout = keyboard_layouts[e.NewValue];
 
         private void OnBannedLettersChanged(ValueChangedEvent<string> e)
         {
@@ -142,7 +140,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
             typingBeatmap.HitObjects.Clear();
 
-            RankedWordGenerator wordGenerator = TypingRuleset.RankedDictionaries[DictionarySize];
+            RankedWordGenerator wordGenerator = TypingRuleset.RankedDictionaries[DictionarySize.Value];
             WordSamplingContext samplingContext = new WordSamplingContext();
 
             string currentWord = getNextWord(wordGenerator, samplingContext);
@@ -317,7 +315,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             }
 
             TypingAction action = LetterToTypingAction(newChar);
-            selectedKeyboardLayout.TryGetKey(action, out PhysicalKey currentPhysicalKey);
+            SelectedKeyboardLayout.TryGetKey(action, out PhysicalKey currentPhysicalKey);
 
             TypingHitObject hitObject = new TypingHitObject
             {

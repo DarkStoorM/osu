@@ -10,7 +10,7 @@ using osu.Game.Rulesets.Typing.Objects;
 
 namespace osu.Game.Rulesets.Typing.Tests.Mods
 {
-    public partial class TestSceneTypingEnglish0K : TypingModTestScene
+    public partial class TestSceneTypingEnglish : TypingModTestScene
     {
         private const double base_beat_length = 60000 / 180;
         private const double beat_fourth = base_beat_length / 4;
@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Mods
         [Test]
         public void TestDefaultBeatmapTest() => CreateModTest(new ModTestData
         {
-            Mod = new TypingModEnglish0K(),
+            Mod = new TypingWordsMod(),
             Autoplay = true,
             PassCondition = () => true,
             CreateBeatmap = () =>

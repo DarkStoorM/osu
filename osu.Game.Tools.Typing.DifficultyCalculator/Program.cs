@@ -20,11 +20,11 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
 
         private const int seed_count = 100;
 
-        private static readonly (string Name, Func<BeatLength, int, Mod> Factory)[] mods =
+        private static readonly (DictionarySize size, Func<BeatLength, int, DictionarySize, Mod> Factory)[] mods =
         {
-            ("0K", createMod<TypingModEnglish0K>),
-            ("1K", createMod<TypingModEnglish1K>),
-            ("5K", createMod<TypingModEnglish5K>),
+            (DictionarySize.E0K, createMod),
+            (DictionarySize.E1K, createMod),
+            (DictionarySize.E5K, createMod),
         };
 
         private static int Main()
@@ -34,8 +34,8 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             DifficultyResult[] results = mods
                                          .Select(x => calculateAveraged(
                                              beatmap,
-                                             x.Name,
-                                             seed => x.Factory(mod_beat_length, seed)))
+                                             x.size,
+                                             seed => x.Factory(mod_beat_length, seed, x.size)))
                                          .ToArray();
 
             Console.Clear();
@@ -48,12 +48,13 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             return 0;
         }
 
-        private static T createMod<T>(BeatLength beatLength, int seed) where T : TypingEnglishMod, new()
+        private static TypingWordsMod createMod(BeatLength beatLength, int seed, DictionarySize size)
         {
-            return new T
+            return new TypingWordsMod
             {
                 Seed = { Value = seed },
                 AdjustBeatLength = { Value = beatLength },
+                DictionarySize = { Value = size }
             };
         }
 
@@ -75,7 +76,7 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
 
         private static DifficultyResult calculateAveraged(
             Beatmap beatmap,
-            string name,
+            DictionarySize size,
             Func<int, Mod> modFactory)
         {
             double star = 0;
@@ -92,7 +93,7 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             {
                 var attributes = calculate(
                         beatmap,
-                        name,
+                        size,
                         modFactory(seed))
                     .Attributes;
 
@@ -108,7 +109,7 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             }
 
             return new DifficultyResult(
-                name,
+                size,
                 new TypingDifficultyAttributes
                 {
                     StarRating = star / seed_count,
@@ -124,7 +125,7 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
                 });
         }
 
-        private static DifficultyResult calculate(Beatmap beatmap, string name, Mod mod)
+        private static DifficultyResult calculate(Beatmap beatmap, DictionarySize size, Mod mod)
         {
             FlatWorkingBeatmap working = new FlatWorkingBeatmap(beatmap);
             TypingRuleset ruleset = new TypingRuleset();
@@ -136,7 +137,7 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
 
             TypingDifficultyAttributes? attributes = (TypingDifficultyAttributes)calculator.Calculate(beatmapMods);
 
-            return new DifficultyResult(name, attributes);
+            return new DifficultyResult(size, attributes);
         }
 
         private static void printTable(IReadOnlyList<DifficultyResult> results)
@@ -175,6 +176,6 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             }
         }
 
-        private sealed record DifficultyResult(string Name, TypingDifficultyAttributes Attributes);
+        private sealed record DifficultyResult(DictionarySize Name, TypingDifficultyAttributes Attributes);
     }
 }

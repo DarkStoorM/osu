@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using osu.Framework.Utils;
+using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Typing.Mods;
 using osu.Game.Rulesets.Typing.Objects;
 using osu.Game.Rulesets.Typing.Screens.Ranking.Statistics;
 using osu.Game.Scoring;
@@ -23,17 +25,18 @@ namespace osu.Game.Rulesets.Typing.Tests
 
             var hitEvents = new List<HitEvent>();
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 500; i++)
             {
                 TypingAction[] keys = Enum.GetValues<TypingAction>();
                 TypingHitObject hitObject = new TypingHitObject { Letter = keys[RNG.Next(0, keys.Length)] };
 
-                hitEvents.Add(new HitEvent(RNG.Next(-100, 100), 1D, HitResult.Great, hitObject, hitObject, new Vector2(0, 0)));
+                hitEvents.Add(new HitEvent(RNG.Next(0, 70), 1D, HitResult.Great, hitObject, hitObject, new Vector2(0, 0)));
             }
 
             score.HitEvents = hitEvents;
+            score.Mods = new Mod[] { new TypingWordsMod() };
 
-            Child = new KeyboardContainer(score);
+            Child = new KeyTimingDistribution(score);
         }
     }
 }
