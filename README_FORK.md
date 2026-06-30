@@ -17,6 +17,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [About the Custom Mod](#about-the-custom-mod)
       - [What About Other Settings?](#what-about-other-settings)
         - [Increased Spacing](#increased-spacing)
+      - [Customisation](#customisation)
     - [Skinnable WPM](#skinnable-wpm)
     - [Nothing New](#nothing-new)
     - [Questionable Change](#questionable-change)
@@ -24,6 +25,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Difficulty Calculator for Typing Ruleset](#difficulty-calculator-for-typing-ruleset)
     - [Keyboard layouts](#keyboard-layouts)
     - [Sharing Disclaimer](#sharing-disclaimer)
+  - [Key Timing Distribution](#key-timing-distribution)
     - [Missing Features](#missing-features)
   
 ---
@@ -95,11 +97,11 @@ This ruleset will be in *work-in-progress* state for a long time, because I don'
 
 ### Custom Mod Requirement
 
-Since the whole idea was to play with generated words, it's mandatory to have the `English` mods enabled:
+Since the whole idea was to play with generated words, it's mandatory to have the `Words` mods enabled:
 
-![img](https://i.imgur.com/F1ClATl.png)
+![img](https://i.imgur.com/KztcqtG.png)
 
-It's still possible to play the actual beatmap with random letters, but I disabled the difficulty calculation for this and explicitly require `English` mod to be present in order to calculate the star rating. It's not correct anyway, but I'm just experimenting. There is a better ruleset for this in the ruleset collection in the repository, ppy added a `Typer` ruleset, which I just now discovered, go play that for random letters and preserved beatmap objects.
+It's still possible to play the actual beatmap with random letters, but I disabled the difficulty calculation for this and explicitly require `Words` mod to be present in order to calculate the star rating. It's not correct anyway, but I'm just experimenting. There is a better ruleset for this in the ruleset collection in the repository, ppy added a `Typer` ruleset, which I just now discovered, go play that for random letters and preserved beatmap objects.
 
 The reason for such low amount of mods is that it's pretty much what's sufficient:
 
@@ -136,6 +138,10 @@ For the same exact reason, I increased the strain slightly on word length, which
 There is also a setting to increase the spacing between words, because why not?
 
 This, instead of inserting a 1/2 break, inserts a full 1/1 break, which gives enough recovery time between the words, allowing to play on higher BPMs, since there is more time to fully parse the incoming word. That comes with a cost of lowered difficulty, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat).
+
+#### Customisation
+
+![alt](https://i.imgur.com/1d7r4nf.png)
 
 ### Skinnable WPM
 
@@ -205,10 +211,17 @@ I'm intentionally not sharing this, because I made this for myself, but, if you 
 
 Also, I won't be sharing this in the [Custom Ruleset Directory](https://github.com/ppy/osu/discussions/13096), I dont think it's worth posting something this unpolished and badly coded.
 
+## Key Timing Distribution
+
+A hacky keyboard preview with unstable rate per key. The layout is the default staggered, can't be bothered figuring out the split layouts. The keys will be taken from the mod directly since you can now select the layout from the customisation.
+
+![alt](https://i.imgur.com/TWqHIYB.png)
+
 ### Missing Features
 
 Some stuff I *might* add if I won't get lazy:
 
 - `Gameplay overlay` - a live keyboard with highlighted keys
-- `Result Screen Statistics` - it is currently empty, but the main idea is to display a whole keyboard with timing distribution across all keys to have an overview on Unstable Rate and Hit Error, separate for each key.
+- `Hit Error` distribution - at some point it will be an extra overlay on top of the UR dislay
 - `Pooling` - RIP old PC users
+- Replays - the game is not recording the current session, so I will probably just copy it from osu!taiko
