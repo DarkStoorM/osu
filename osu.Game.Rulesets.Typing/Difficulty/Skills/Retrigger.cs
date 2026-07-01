@@ -18,8 +18,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
         public Retrigger(Mod[] mods)
             : base(mods) { }
 
-        private double skillMultiplier => 3;
-        private double strainDecayBase => 0.8;
+        private double skillMultiplier => 8;
+        private double strainDecayBase => 0.5;
         private double currentStrain;
 
         protected override double StrainValueAt(DifficultyHitObject current)

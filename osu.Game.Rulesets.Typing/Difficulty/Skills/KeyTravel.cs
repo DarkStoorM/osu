@@ -12,7 +12,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
     public class KeyTravel : StrainSkill
     {
-        private double strainDecayBase => 0.3;
+        private double skillMultiplier => 1.15;
+        private double strainDecayBase => 0.45;
         private double currentStrain;
 
         public KeyTravel(Mod[] mods)
@@ -47,7 +48,10 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             }
 
             currentStrain *= strainDecay(current.DeltaTime);
-            currentStrain += currentObject.DistanceFromPreviousKey * travelDifficulty * spacingMultiplier;
+            currentStrain += skillMultiplier
+                             * currentObject.DistanceFromPreviousKey
+                             * travelDifficulty
+                             * spacingMultiplier;
 
             return currentStrain;
         }

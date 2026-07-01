@@ -4,6 +4,7 @@
 using System;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Skills;
+using osu.Game.Rulesets.Difficulty.Utils;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Typing.Objects;
 
@@ -11,7 +12,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
     public class TypingFatigue : StrainSkill
     {
-        private double skillMultiplier => 1.45;
+        private double skillMultiplier => 1.10;
         private double strainDecayBase => 0.6;
         private double currentStrain;
 
@@ -21,6 +22,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
         protected override double StrainValueAt(DifficultyHitObject current)
         {
             TypingHitObject currentHitObject = (TypingHitObject)current.BaseObject;
+            TypingDifficultyHitObject currentObject = (TypingDifficultyHitObject)current;
 
             // 600 was an arbitrary value picked to make the typing fatigue factor climb steadily after 250~ objects
             // and approach 1.0 at ~1200+.
@@ -29,10 +31,15 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             double fatigue = 1.0 - Math.Exp(-(t * t));
 
             // The typing fatigue increases with word length, but shouldn't explode the difficulty
-            fatigue += 1 - Math.Pow(currentHitObject.IndexInWord, -0.1);
+            fatigue += 1 - Math.Pow(currentHitObject.IndexInWord, -0.3);
+
+            double currentFinger = (double)currentObject.PhysicalKey.Finger;
+
+            // The overall strain is bigger based on the finger used
+            double fingerPenalty = 1 + DifficultyCalculationUtils.Logistic(currentFinger, 3, 1);
 
             currentStrain *= strainDecay(current.DeltaTime);
-            currentStrain += fatigue * skillMultiplier;
+            currentStrain += fatigue * skillMultiplier + fingerPenalty;
 
             return currentStrain;
         }
