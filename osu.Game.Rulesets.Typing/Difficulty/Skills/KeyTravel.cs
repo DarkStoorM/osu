@@ -29,11 +29,11 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
                 return 0;
 
             double spacingMultiplier = currentHitObject.IndexInWord == 1 ? 0.75 : 1;
-            double travelDifficulty = currentObject.DistanceFromPreviousKey;
+            double travelDifficulty = 1;
 
-            // Horizontal movement is considered easier than vertical, so we apply bigger strain above one row delta
-            if (currentObject.IsOnSameRow)
-                travelDifficulty *= 2 * DifficultyCalculationUtils.Logistic(currentObject.RowDelta, 0.75);
+            // Horizontal movement is considered easier than vertical, so we only apply bigger strain above one row delta
+            if (!currentObject.IsOnSameRow)
+                travelDifficulty = 1 + DifficultyCalculationUtils.Logistic(currentObject.RowDelta, 2, 1);
 
             double previousFinger = (double)previousObject.PhysicalKey.Finger;
             double currentFinger = (double)currentObject.PhysicalKey.Finger;
@@ -43,11 +43,11 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             {
                 double fingerDelta = Math.Abs(previousFinger - currentFinger);
                 double fingerDifficulty = 1 + DifficultyCalculationUtils.Logistic(1.25 * currentFinger, 3, 1);
-                travelDifficulty *= fingerDifficulty * 1 + DifficultyCalculationUtils.Logistic(fingerDelta, 3, 1);
+                travelDifficulty *= fingerDifficulty * (1 + DifficultyCalculationUtils.Logistic(fingerDelta, 3, 1));
             }
 
             currentStrain *= strainDecay(current.DeltaTime);
-            currentStrain += travelDifficulty * spacingMultiplier;
+            currentStrain += currentObject.DistanceFromPreviousKey * travelDifficulty * spacingMultiplier;
 
             return currentStrain;
         }

@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
     public class RowSwitch : StrainSkill
     {
-        private double skillMultiplier => 0.3;
-        private double strainDecayBase => 0.6;
+        private double skillMultiplier => 0.5;
+        private double strainDecayBase => 0.7;
         private double currentStrain;
 
         public RowSwitch(Mod[] mods)
@@ -35,12 +35,17 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
                 baseRowDifficulty = 0.50;
 
             currentStrain *= strainDecay(current.DeltaTime);
-            currentStrain += Math.Pow(1 + Math.Abs(currentObject.RowDelta), baseRowDifficulty) * skillMultiplier;
+
+            // Same row contributes nothing as we explicitly have to measure row changes
+            if (currentObject.IsOnSameRow)
+                return currentStrain;
+
+            currentStrain += Math.Pow(1 + Math.Abs(currentObject.RowDelta), baseRowDifficulty) * skillMultiplier * rowSwitchDifficulty(currentObject);
 
             // Due to alternating hands also introducing a recovery time, the penalty should be smaller
             currentStrain *= currentObject.IsOnSameHand ? 1.1 : 0.9;
 
-            return currentStrain * rowSwitchDifficulty(currentObject);
+            return currentStrain;
         }
 
         private double rowSwitchDifficulty(TypingDifficultyHitObject currentObject)
