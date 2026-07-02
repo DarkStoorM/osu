@@ -11,6 +11,7 @@ using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Typing.Difficulty.Skills;
 using osu.Game.Rulesets.Typing.Mods;
+using osu.Game.Utils;
 
 namespace osu.Game.Rulesets.Typing.Difficulty
 {
@@ -35,7 +36,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             new TypingModHalfTime(),
         };
 
-        protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
+        protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills)
         {
             // Difficulty calculation will not be available if the word generation mods are not enabled,
             // because this ruleset is meant to be played only with those mods due to some skills
@@ -88,12 +89,12 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                                                WordLength wordLength)
         {
             List<double> peaks = combinePeaks(
-                keyTravel.GetCurrentStrainPeaks().ToList(),
-                retrigger.GetCurrentStrainPeaks().ToList(),
-                rowSwitch.GetCurrentStrainPeaks().ToList(),
-                speed.GetCurrentStrainPeaks().ToList(),
-                typingFatigue.GetCurrentStrainPeaks().ToList(),
-                wordLength.GetCurrentStrainPeaks().ToList()
+                keyTravel.GetObjectDifficulties(),
+                retrigger.GetObjectDifficulties(),
+                rowSwitch.GetObjectDifficulties(),
+                speed.GetObjectDifficulties(),
+                typingFatigue.GetObjectDifficulties(),
+                wordLength.GetObjectDifficulties()
             );
 
             if (peaks.Count == 0)
@@ -111,12 +112,12 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             return difficulty;
         }
 
-        private List<double> combinePeaks(List<double> keyTravelPeaks,
-                                          List<double> retriggerPeaks,
-                                          List<double> rowSwitchPeaks,
-                                          List<double> speedPeaks,
-                                          List<double> typingFatiguePeaks,
-                                          List<double> wordLengthPeaks)
+        private List<double> combinePeaks(IReadOnlyList<double> keyTravelPeaks,
+                                          IReadOnlyList<double> retriggerPeaks,
+                                          IReadOnlyList<double> rowSwitchPeaks,
+                                          IReadOnlyList<double> speedPeaks,
+                                          IReadOnlyList<double> typingFatiguePeaks,
+                                          IReadOnlyList<double> wordLengthPeaks)
         {
             int max = wordLengthPeaks.Count;
             var combined = new List<double>(max);
@@ -141,9 +142,10 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             return combined;
         }
 
-        protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, double clockRate)
+        protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, Mod[] mods)
         {
             var objects = new List<DifficultyHitObject>();
+            double clockRate = ModUtils.CalculateRateWithMods(mods);
 
             for (int i = 2; i < beatmap.HitObjects.Count; i++)
             {
@@ -162,7 +164,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             return objects;
         }
 
-        protected override Skill[] CreateSkills(IBeatmap beatmap, Mod[] mods, double clockRate)
+        protected override Skill[] CreateSkills(IBeatmap beatmap, Mod[] mods)
         {
             return new Skill[]
             {

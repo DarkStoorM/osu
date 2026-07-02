@@ -37,7 +37,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             // a word, but since `I` and `A` exist in dictionaries as words, we can still use them, taking the increased
             // spacing between them into account
             double spacingMultiplier = currentHitObject.IndexInWord == 1 ? 0.75 : 1;
-            double fingerDifficultyLogistic = 1 + DifficultyCalculationUtils.Logistic((double)currentObject.PhysicalKey.Finger, 5, 1);
+            double fingerDifficultyLogistic = 1 + DiffUtils.Logistic((double)currentObject.PhysicalKey.Finger, 5, 1);
 
             currentStrain += fingerDifficultyLogistic * spacingMultiplier * skillMultiplier;
 

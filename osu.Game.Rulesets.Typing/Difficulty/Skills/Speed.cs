@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 
             double noteDensityBonus = Math.Pow(1000.0 / current.DeltaTime, 0.5);
 
-            currentStrain += 1.5 + DifficultyCalculationUtils.Logistic(currentHitObject.IndexInWord, 3, 1)
+            currentStrain += 1.5 + DiffUtils.Logistic(currentHitObject.IndexInWord, 3, 1)
                 * skillMultiplier
                 * noteDensityBonus;
 

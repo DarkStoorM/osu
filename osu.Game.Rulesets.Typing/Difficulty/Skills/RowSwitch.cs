@@ -58,7 +58,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
                 : 1.5;
 
             // Switching rows is even harder the more outward finger is used
-            double fingerDifficulty = 1 + DifficultyCalculationUtils.Logistic(fingerIndex, 5, 1);
+            double fingerDifficulty = 1 + DiffUtils.Logistic(fingerIndex, 5, 1);
 
             return Math.Pow(fingerDifficulty, sameFingerPenalty);
         }

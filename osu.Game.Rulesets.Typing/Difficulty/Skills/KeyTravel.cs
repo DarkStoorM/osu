@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 
             // Horizontal movement is considered easier than vertical, so we only apply bigger strain above one row delta
             if (!currentObject.IsOnSameRow)
-                travelDifficulty = 1 + DifficultyCalculationUtils.Logistic(currentObject.RowDelta, 2, 1);
+                travelDifficulty = 1 + DiffUtils.Logistic(currentObject.RowDelta, 2, 1);
 
             double previousFinger = (double)previousObject.PhysicalKey.Finger;
             double currentFinger = (double)currentObject.PhysicalKey.Finger;
@@ -43,8 +43,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             if (currentFinger > previousFinger)
             {
                 double fingerDelta = Math.Abs(previousFinger - currentFinger);
-                double fingerDifficulty = 1 + DifficultyCalculationUtils.Logistic(1.25 * currentFinger, 3, 1);
-                travelDifficulty *= fingerDifficulty * (1 + DifficultyCalculationUtils.Logistic(fingerDelta, 3, 1));
+                double fingerDifficulty = 1 + DiffUtils.Logistic(1.25 * currentFinger, 3, 1);
+                travelDifficulty *= fingerDifficulty * (1 + DiffUtils.Logistic(fingerDelta, 3, 1));
             }
 
             currentStrain *= strainDecay(current.DeltaTime);
