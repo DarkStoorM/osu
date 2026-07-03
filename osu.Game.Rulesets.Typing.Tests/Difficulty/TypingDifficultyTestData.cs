@@ -32,19 +32,20 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
             return beatmap;
         }
 
-        public static TypingDifficultyAttributes CalculateEnglish0K(
+        public static TypingDifficultyAttributes CalculateWithDictionarySize(
             Beatmap beatmap,
+            DictionarySize dictionarySize,
             int seed = 1,
             BeatLength beatLength = BeatLength.Half)
         {
             var mod = new TypingWordsMod
             {
                 Seed = { Value = seed },
-                AdjustBeatLength = { Value = beatLength }
+                AdjustBeatLength = { Value = beatLength },
+                DictionarySize = { Value = dictionarySize }
             };
 
             FlatWorkingBeatmap working = new FlatWorkingBeatmap(beatmap);
-
             TypingRuleset ruleset = new TypingRuleset();
 
             var calculator = ruleset.CreateDifficultyCalculator(working);
