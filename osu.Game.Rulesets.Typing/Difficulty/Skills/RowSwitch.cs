@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
     public class RowSwitch : StrainSkill
     {
-        private double skillMultiplier => 0.8;
-        private double strainDecayBase => 0.6;
+        private double skillMultiplier => 0.6;
+        private double strainDecayBase => 0.25;
         private double currentStrain;
 
         public RowSwitch(Mod[] mods)

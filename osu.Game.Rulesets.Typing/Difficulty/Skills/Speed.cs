@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
     public class Speed : StrainSkill
     {
-        private double skillMultiplier => 0.8;
-        private double strainDecayBase => 0.3;
+        private double skillMultiplier => 0.4;
+        private double strainDecayBase => 0.1;
         private double currentStrain;
 
         public Speed(Mod[] mods)

@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
     public class KeyTravel : StrainSkill
     {
-        private double skillMultiplier => 1.15;
-        private double strainDecayBase => 0.45;
+        private double skillMultiplier => 0.5;
+        private double strainDecayBase => 0.1;
         private double currentStrain;
 
         public KeyTravel(Mod[] mods)

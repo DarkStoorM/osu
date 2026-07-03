@@ -15,8 +15,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
     /// </summary>
     public class WordLength : StrainSkill
     {
-        private double skillMultiplier => 1.5;
-        private double strainDecayBase => 0.3;
+        private double skillMultiplier => 0.35;
+        private double strainDecayBase => 0.15;
         private double currentStrain;
 
         public WordLength(Mod[] mods)
