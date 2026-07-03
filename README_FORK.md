@@ -1,6 +1,6 @@
 # Custom osu! fork
 
-This fork is my small personal playground, where I make adjustments to the client for my own needs.
+This fork is my small personal playground, where I make adjustments to the client for my own needs. I would not recommend trying this fork, even if you found out about the `Typing` ruleset from anywhere, because it's not fun for the first time users, and I'm not going to bother making things look pretty, because I simply don't care.
 
 I've been playing on osu!lazer for a long time, not only because I don't care about ranked plays, but because I can do whatever I want to this client, no matter how bad the code is.
 
