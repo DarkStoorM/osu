@@ -82,7 +82,7 @@ I got pretty much bored of MonkeyType, and since I had it configured to the `scr
 
 These are just random, ranked words generated from curated dictionaries. I parsed all books from Project Gutenberg, ordered words by frequency and manually went through the list and left 5000 words. I didn't feel like there was a need for some fancy text generation algorithms, but at least it could use some n-gram bias, though.
 
-- `English 0K` - 500 words left after a second pass of curation. I only left words that were somewhat mechanically nice to type for muscle memory grinding (for me at least, although I play on `split ortholinear qwerty`). I extended the word set from 200 to 500, because the mod would typically be played without even-length words, so there wouldn't be much variety on default 200.
+- `English 0K` - 300 words left after a second pass of curation. I only left words that were somewhat mechanically nice to type for muscle memory grinding (for me at least, although I play on `split ortholinear qwerty`). I initially extended the word set from 200 to 500, because the mod would typically be played without even-length words, so there wouldn't be much variety on default 200. I walked back on that one and reduced it to 300, because it was making the diffcalc kinda bad
 - `English 1K` - 1000 words without second pass
 - `English 5k` - as above, but 5000
 
@@ -225,3 +225,4 @@ Some stuff I *might* add if I won't get lazy:
 - `Hit Error` distribution - at some point it will be an extra overlay on top of the UR dislay
 - `Pooling` - RIP old PC users
 - Replays - the game is not recording the current session, so I will probably just copy it from osu!taiko
+- Steal scroll speed adjustment from Mania - right now, the scroll speed can only be changed through the Difficulty Adjustment mod, but it's a bit tedious to change it every time for most beatmaps
