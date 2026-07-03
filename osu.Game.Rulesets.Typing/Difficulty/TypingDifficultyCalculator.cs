@@ -17,13 +17,13 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 {
     public class TypingDifficultyCalculator : DifficultyCalculator
     {
-        private const double difficulty_multiplier = 0.0015;
-        private const double speed_skill_multiplier = 0.9 * difficulty_multiplier;
-        private const double key_travel_skill_multiplier = 0.875 * difficulty_multiplier;
-        private const double row_switch_skill_multiplier = 1.25 * difficulty_multiplier;
-        private const double word_length_skill_multiplier = 2 * difficulty_multiplier;
-        private const double typing_fatigue_skill_multiplier = 1.25 * difficulty_multiplier;
-        private const double retrigger_skill_multiplier = 0.35 * difficulty_multiplier;
+        private const double difficulty_multiplier = 0.008;
+        private const double speed_skill_multiplier = 0.7 * difficulty_multiplier;
+        private const double key_travel_skill_multiplier = 0.5 * difficulty_multiplier;
+        private const double row_switch_skill_multiplier = 0.725 * difficulty_multiplier;
+        private const double word_length_skill_multiplier = 1.5 * difficulty_multiplier;
+        private const double typing_fatigue_skill_multiplier = 0.875 * difficulty_multiplier;
+        private const double retrigger_skill_multiplier = 0.375 * difficulty_multiplier;
 
         public override int Version => 20260607;
 
@@ -59,6 +59,16 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             double wordLengthValue = wordLength.DifficultyValue();
             double combinedRating = combinedDifficultyValue(keyTravel, retrigger, rowSwitch, speed, typingFatigue, wordLength);
             double starRating = rescale(combinedRating * 1.4);
+
+            // A hacky way perhaps, but I don't have anything else to not make the difficulty explode on short beatmaps
+            int objectCount = beatmap.HitObjects.Count;
+            const double min_objects = 300;
+            const double max_objects = 1000;
+            const double max_bonus = 0.4;
+            double lengthFactor = DiffUtils.ReverseLerp(objectCount, min_objects, max_objects);
+
+            lengthFactor = Math.Clamp(lengthFactor, 0.0, 1.0);
+            starRating *= 1.0 + max_bonus * lengthFactor;
 
             return new TypingDifficultyAttributes
             {
