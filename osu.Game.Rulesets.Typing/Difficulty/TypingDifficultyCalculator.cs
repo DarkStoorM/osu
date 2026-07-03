@@ -18,8 +18,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 {
     public class TypingDifficultyCalculator : DifficultyCalculator
     {
-        private const double difficulty_multiplier = 0.008;
-        private const double speed_skill_multiplier = 0.7 * difficulty_multiplier;
+        private const double difficulty_multiplier = 0.005;
+        private const double speed_skill_multiplier = 1.5 * difficulty_multiplier;
         private const double key_travel_skill_multiplier = 0.5 * difficulty_multiplier;
         private const double row_switch_skill_multiplier = 0.725 * difficulty_multiplier;
         private const double word_length_skill_multiplier = 1.5 * difficulty_multiplier;

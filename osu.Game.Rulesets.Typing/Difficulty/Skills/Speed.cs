@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
     public class Speed : StrainSkill
     {
-        private double skillMultiplier => 0.4;
-        private double strainDecayBase => 0.1;
+        private double skillMultiplier => 0.5;
+        private double strainDecayBase => 0.2;
         private double currentStrain;
 
         public Speed(Mod[] mods)
@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 
             double noteDensityBonus = Math.Pow(1000.0 / current.DeltaTime, 0.5);
 
-            currentStrain += 1.5 + DiffUtils.Logistic(currentHitObject.IndexInWord, 3, 1)
+            currentStrain += 1.5 + DiffUtils.Logistic(currentHitObject.IndexInWord, 0, 1)
                 * skillMultiplier
                 * noteDensityBonus;
 
