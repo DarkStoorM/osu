@@ -63,9 +63,9 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 
             // A hacky way perhaps, but I don't have anything else to not make the difficulty explode on short beatmaps
             int objectCount = beatmap.HitObjects.Count;
-            const double min_objects = 300;
-            const double max_objects = 1000;
-            const double max_bonus = 0.4;
+            const double min_objects = 750;
+            const double max_objects = 1500;
+            const double max_bonus = 0.2;
             double lengthFactor = DiffUtils.ReverseLerp(objectCount, min_objects, max_objects);
 
             lengthFactor = Math.Clamp(lengthFactor, 0.0, 1.0);
