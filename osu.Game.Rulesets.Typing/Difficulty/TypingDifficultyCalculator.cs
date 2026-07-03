@@ -8,6 +8,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Skills;
+using osu.Game.Rulesets.Difficulty.Utils;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Typing.Difficulty.Skills;
 using osu.Game.Rulesets.Typing.Mods;
@@ -99,12 +100,12 @@ namespace osu.Game.Rulesets.Typing.Difficulty
                                                WordLength wordLength)
         {
             List<double> peaks = combinePeaks(
-                keyTravel.GetObjectDifficulties(),
-                retrigger.GetObjectDifficulties(),
-                rowSwitch.GetObjectDifficulties(),
-                speed.GetObjectDifficulties(),
-                typingFatigue.GetObjectDifficulties(),
-                wordLength.GetObjectDifficulties()
+                keyTravel.GetCurrentStrainPeaks().ToList(),
+                retrigger.GetCurrentStrainPeaks().ToList(),
+                rowSwitch.GetCurrentStrainPeaks().ToList(),
+                speed.GetCurrentStrainPeaks().ToList(),
+                typingFatigue.GetCurrentStrainPeaks().ToList(),
+                wordLength.GetCurrentStrainPeaks().ToList()
             );
 
             if (peaks.Count == 0)
