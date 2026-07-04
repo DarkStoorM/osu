@@ -17,6 +17,8 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [About the Custom Mod](#about-the-custom-mod)
       - [What About Other Settings?](#what-about-other-settings)
         - [Increased Spacing](#increased-spacing)
+        - [Banned Letters](#banned-letters)
+        - [Word Seed](#word-seed)
       - [Customisation](#customisation)
     - [Skinnable WPM](#skinnable-wpm)
     - [Nothing New](#nothing-new)
@@ -131,6 +133,8 @@ With this, and with DoubleTime/HalfTime, I can play everything adjusted to my co
 
 There is another setting, which I'm not sure is even worth talking about, because I don't know if what I assumed is correct. Initially, I went with the same strategy as my Random mod for Taiko: odd length pattern lands on beat, even doesn't. I assumed that even length patterns are harder to play, so I extracted them into a separate setting, which makes them disabled by default, plus you can customise the chance for generating even length words.
 
+The `Toggle` for generating even length words might seem redundant with the `Chance` slider, but my reasoning here is that it's better to turn something off, preserving the slider value, so whenever I'd like to use it again with the same value, I can just quickly use the toggle.
+
 For the same exact reason, I increased the strain slightly on word length, which bumps the star rating with this setting, because I believe that off-beats are just harder, even if a pair of off-beats is actually an odd length pattern, which effectively makes no difference between a five object pattern and a pair of two 2-length words, since technically the whole length is equal.
 
 ##### Increased Spacing
@@ -138,6 +142,18 @@ For the same exact reason, I increased the strain slightly on word length, which
 There is also a setting to increase the spacing between words, because why not?
 
 This, instead of inserting a 1/2 break, inserts a full 1/1 break, which gives enough recovery time between the words, allowing to play on higher BPMs, since there is more time to fully parse the incoming word. That comes with a cost of lowered difficulty, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat).
+
+##### Banned Letters
+
+This will skip the next word containing any of the letters from this component. You can ban a maximum of 5 letters, but might be pushing it too far. You can simply type something like `xcvbj`.
+
+##### Word Seed
+
+This makes *everything* deterministic. Custom seed should only be used if you intend on repeating the play on the same beatmap, because this effectively makes *all* visible beatmaps to be regenerated with the same seed.
+
+It results in the same exact Star Rating across all beatmaps with the same properties, especially in a beatmapset, e.g. if all difficulties in a beatmap have the same drain time and no BPM changes, the Star Rating will be the same.
+
+It would seem like there is no point in using the seed, because ultimately the only difference would be how individual songs feel.
 
 #### Customisation
 
