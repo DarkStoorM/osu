@@ -107,9 +107,10 @@ It's still possible to play the actual beatmap with random letters, but I disabl
 
 The reason for such low amount of mods is that it's pretty much what's sufficient:
 
+- `NoFail` - this was not supposed to be here since `Difficulty Adjustment` was added to adjust HP drain, but it's just faster to keybind this instead
 - `DoubleTime` / `HalfTime` for rate adjustment
 - `Constant Speed` to remove annoying scroll speed changes
-- `Difficulty Adjustment` to replace `Hardrock`/`Easy`
+- `Difficulty Adjustment` mostly for `OD` adjustment and scroll speed fine-tuning, sometimes for `HP`
 
 ### About the Custom Mod
 

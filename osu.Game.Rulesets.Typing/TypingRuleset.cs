@@ -8,10 +8,13 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.IO.Stores;
 using osu.Game.Beatmaps;
+using osu.Game.Configuration;
+using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Typing.Beatmaps;
+using osu.Game.Rulesets.Typing.Configuration;
 using osu.Game.Rulesets.Typing.Difficulty;
 using osu.Game.Rulesets.Typing.Mods;
 using osu.Game.Rulesets.Typing.Scoring;
@@ -27,6 +30,8 @@ namespace osu.Game.Rulesets.Typing
     {
         public override string Description => "osu!typing";
         public override string ShortName => "typing";
+
+        public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new TypingRulesetConfigManager(settings, RulesetInfo);
 
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods = null) => new DrawableTypingRuleset(this, beatmap, mods);
 
@@ -67,6 +72,7 @@ namespace osu.Game.Rulesets.Typing
                 case ModType.DifficultyReduction:
                     return new Mod[]
                     {
+                        new TypingModNoFail(),
                         new TypingModHalfTime(),
                     };
 
