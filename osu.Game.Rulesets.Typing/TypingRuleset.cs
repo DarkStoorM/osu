@@ -58,9 +58,9 @@ namespace osu.Game.Rulesets.Typing
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
-            // Note: for this ruleset, the only extra mods I decided to migrate are: HT, DT, DA, CS (auto is self-explanatory).
+            // Note: for this ruleset, the only extra mods I decided to migrate are: NF, HT, DT, DA, CS (auto is self-explanatory).
             // The reason for this was to have a fine control through rate change, and better control of the
-            // Accuracy and Scroll Speed. No other mods are necessary. CS replaces HR/EZ anyway
+            // Accuracy and Scroll Speed. No other mods are necessary. DA replaces HR/EZ anyway
             switch (type)
             {
                 case ModType.Automation:
