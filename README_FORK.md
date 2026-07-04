@@ -112,11 +112,12 @@ The reason for such low amount of mods is that it's pretty much what's sufficien
 - `Constant Speed` to remove annoying scroll speed changes
 - `Difficulty Adjustment` mostly for `OD` adjustment and scroll speed fine-tuning, sometimes for `HP`
 
+> [!Note]
+> While `Scroll Speed` can be adjusted through the `Difficulty Adjustment` mod, the keybinds for `Increase/Decrease` scroll speed will also work here.
+
 ### About the Custom Mod
 
 This mod recommended to be customised, because beatmaps are so different, it's literally impossible to make all of them playable with a click of a button.
-
-The above mentioned mods help with the setup a bit, but I'm not experienced enough to add settings to let you change stuff on the fly, e.g. scrolling speed like in Mania, so I just went with the easiest solution: hardcode values and customise through mods.
 
 I wanted to be able to play this ruleset on a wide range of beatmaps, so I added the following setting: `Adjust Beat Length`. This will effectively double or halve the BPM to let me play for example a 100 BPM beatmap. The reason why is that the mod is generating hit objects at 1/4 for words, 1/2 for spaces between the words. This can be quite slow, so without having to use the DoubleTime to fine-tune and play on rate changed song, I can play it on 200 BPM, which is roughly 65 WPM.
 
@@ -239,7 +240,6 @@ A hacky keyboard preview with unstable rate per key. The layout is the default s
 Some stuff I *might* add if I won't get lazy:
 
 - `Gameplay overlay` - a live keyboard with highlighted keys
-- `Hit Error` distribution - at some point it will be an extra overlay on top of the UR dislay
+- `Hit Error` distribution - at some point it will be an extra overlay on top of the UR display
 - `Pooling` - RIP old PC users
 - Replays - the game is not recording the current session, so I will probably just copy it from osu!taiko
-- Steal scroll speed adjustment from Mania - right now, the scroll speed can only be changed through the Difficulty Adjustment mod, but it's a bit tedious to change it every time for most beatmaps
