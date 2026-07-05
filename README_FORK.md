@@ -248,4 +248,4 @@ I had to change the `Alpha` on it though, so it's not as distracting
 
 Some stuff I *might* add if I won't get lazy:
 
-- Replays - the game is not recording the current session, so I will probably just copy it from osu!taiko
+- Replays - ~~the game is not recording the current session, so I will probably just copy it from osu!taiko.~~ The game can record replays, but it seems that it's not possible to watch them in custom rulesets(?). Maybe I'm missing something, but it looks like the replays are hard locked to the main rulesets.
