@@ -41,8 +41,6 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
                     Text = HitObject.Letter.ToString().ToUpperInvariant(),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    // Intentionally shrink the letter, because some glyphs are too wide
-                    Scale = new Vector2(0.8f, 1f),
                 }
             });
         }
