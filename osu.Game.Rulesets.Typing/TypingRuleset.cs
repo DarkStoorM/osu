@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Typing
         {
             return new[]
             {
-                new StatisticItem("Key timing distribution", () => new KeyTimingDistribution(score), requiresHitEvents: false)
+                new StatisticItem("Key timing distribution", () => new KeyTimingDistribution(score.HitEvents, score.Mods), requiresHitEvents: false)
             };
         }
 
