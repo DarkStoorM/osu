@@ -56,6 +56,19 @@ namespace osu.Game.Rulesets.Typing
 
         public override IResourceStore<byte[]> CreateResourceStore() => new DllResourceStore(typeof(TypingRuleset).Assembly);
 
+        public override IEnumerable<HitResult> GetValidHitResults()
+        {
+            return new[]
+            {
+                HitResult.Miss,
+                HitResult.Meh,
+                HitResult.Ok,
+                HitResult.Good,
+                HitResult.Great,
+                HitResult.Perfect
+            };
+        }
+
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
             // Note: for this ruleset, the only extra mods I decided to migrate are: NF, HT, DT, DA, CS (auto is self-explanatory).
