@@ -248,6 +248,4 @@ I had to change the `Alpha` on it though, so it's not as distracting
 
 Some stuff I *might* add if I won't get lazy:
 
-- `Hit Error` distribution - at some point it will be an extra overlay on top of the UR display
-- `Pooling` - RIP old PC users
 - Replays - the game is not recording the current session, so I will probably just copy it from osu!taiko

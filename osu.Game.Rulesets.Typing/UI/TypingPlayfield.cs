@@ -7,6 +7,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics.Containers;
+using osu.Game.Rulesets.Typing.Objects;
+using osu.Game.Rulesets.Typing.Objects.Drawables;
 using osu.Game.Rulesets.UI.Scrolling;
 
 namespace osu.Game.Rulesets.Typing.UI
@@ -78,6 +80,8 @@ namespace osu.Game.Rulesets.Typing.UI
                     }
                 }
             );
+
+            RegisterPool<TypingHitObject, DrawableTypingHitObject>(50);
         }
 
         private partial class LaneContainer : BeatSyncedContainer

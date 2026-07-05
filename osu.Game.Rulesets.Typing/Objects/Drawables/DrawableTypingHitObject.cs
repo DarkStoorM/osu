@@ -24,7 +24,12 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
 
         private readonly Colour4 letterColor = Color4Extensions.FromHex("#CDD6F4");
 
-        public DrawableTypingHitObject(TypingHitObject hitObject)
+        private OsuSpriteText letterText = null!;
+
+        public DrawableTypingHitObject()
+            : this(null) { }
+
+        public DrawableTypingHitObject(TypingHitObject? hitObject)
             : base(hitObject) { }
 
         [BackgroundDependencyLoader]
@@ -32,17 +37,37 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
         {
             Origin = Anchor.Centre;
 
-            AddRangeInternal(new Drawable[]
+            letterText = new OsuSpriteText
             {
-                new OsuSpriteText
-                {
-                    Font = OsuFont.Inter.With(size: font_size, weight: FontWeight.SemiBold),
-                    Colour = letterColor,
-                    Text = HitObject.Letter.ToString().ToUpperInvariant(),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                }
-            });
+                Font = OsuFont.Inter.With(size: font_size, weight: FontWeight.SemiBold),
+                Colour = letterColor,
+                Text = string.Empty,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+            };
+
+            AddInternal(letterText);
+        }
+
+        protected override void OnApply()
+        {
+            base.OnApply();
+
+            if (HitObject != null)
+                letterText.Text = HitObject.Letter.ToString().ToUpperInvariant();
+            else
+                letterText.Text = string.Empty;
+        }
+
+        protected override void OnFree()
+        {
+            base.OnFree();
+
+            TypingAction = null;
+            Alpha = 1;
+            ClearTransforms();
+            Scale = Vector2.One;
+            Position = Vector2.Zero;
         }
 
         public override IEnumerable<HitSampleInfo> GetSamples() => new[] { new HitSampleInfo(HitSampleInfo.HIT_NORMAL) };

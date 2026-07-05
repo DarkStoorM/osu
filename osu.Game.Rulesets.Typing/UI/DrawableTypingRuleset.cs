@@ -14,7 +14,6 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Typing.Configuration;
 using osu.Game.Rulesets.Typing.Objects;
-using osu.Game.Rulesets.Typing.Objects.Drawables;
 using osu.Game.Rulesets.Typing.Replays;
 using osu.Game.Rulesets.UI;
 using osu.Game.Rulesets.UI.Scrolling;
@@ -86,7 +85,7 @@ namespace osu.Game.Rulesets.Typing.UI
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new TypingFramedReplayInputHandler(replay);
 
-        public override DrawableHitObject<TypingHitObject> CreateDrawableRepresentation(TypingHitObject h) => new DrawableTypingHitObject(h);
+        public override DrawableHitObject<TypingHitObject>? CreateDrawableRepresentation(TypingHitObject h) => null;
 
         protected override PassThroughInputManager CreateInputManager() => new TypingInputManager(Ruleset.RulesetInfo);
     }
