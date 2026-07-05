@@ -31,15 +31,10 @@ namespace osu.Game.Rulesets.Typing.Skinning
             Child = keyTimingDistribution;
             Child.Alpha = 0.3f;
 
-            scoreProcessor.NewJudgement += updateKeyCards;
+            scoreProcessor.NewJudgement += updateKeyCard;
+            scoreProcessor.JudgementReverted += updateKeyCard;
         }
 
-        private void updateKeyCards(JudgementResult result)
-        {
-            if (scoreProcessor.HitEvents.Count == 0)
-                return;
-
-            keyTimingDistribution.UpdateKeyCard(result, scoreProcessor.HitEvents);
-        }
+        private void updateKeyCard(JudgementResult result) => keyTimingDistribution.UpdateKeyCard(result, scoreProcessor.HitEvents);
     }
 }
