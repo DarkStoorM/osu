@@ -81,7 +81,9 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                 foreach (PhysicalKey key in keys)
                 {
                     var keyHitEvents = score.HitEvents
-                                            .Where(e => e.HitObject is TypingHitObject hitObject && hitObject.Letter == key.Character)
+                                            .Where(e =>
+                                                ((TypingHitObject)e.HitObject).Letter == key.Character &&
+                                                TypingHitEventExtensions.AffectsUnstableRate(e))
                                             .ToList();
                     double? unstableRate = keyHitEvents.CalculateKeyUnstableRate(key.Character)?.Result ?? 0;
 
