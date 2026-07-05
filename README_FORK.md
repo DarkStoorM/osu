@@ -28,6 +28,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Keyboard layouts](#keyboard-layouts)
     - [Sharing Disclaimer](#sharing-disclaimer)
   - [Key Timing Distribution](#key-timing-distribution)
+  - [Skinnable Key Timing Distribution](#skinnable-key-timing-distribution)
     - [Missing Features](#missing-features)
   
 ---
@@ -235,11 +236,18 @@ A hacky keyboard preview with unstable rate per key. The layout is the default s
 
 ![alt](https://i.imgur.com/TWqHIYB.png)
 
+## Skinnable Key Timing Distribution
+
+Initially, I added the Unstable Rate preview to the result screen as mentioned above, but I decided to also add this to the skin editor instead of creating a keyboard layout with flashing keys as you type. This was the laziest implementation and I didn't even want to do it anyway, but since I'd sometimes want to have a live preview of the Unstable Rate for videos, I just reused the result screen component.
+
+I had to change the `Alpha` on it though, so it's not as distracting
+
+![alt](https://i.imgur.com/JbBuUDS.png)
+
 ### Missing Features
 
 Some stuff I *might* add if I won't get lazy:
 
-- `Gameplay overlay` - a live keyboard with highlighted keys
 - `Hit Error` distribution - at some point it will be an extra overlay on top of the UR display
 - `Pooling` - RIP old PC users
 - Replays - the game is not recording the current session, so I will probably just copy it from osu!taiko
