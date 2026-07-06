@@ -60,12 +60,12 @@ namespace osu.Game.Rulesets.Typing.UI
                 return;
 
             double oldVal = configScrollTime.Value;
-            double newVal = Math.Clamp(configScrollTime.Value + amount * SCROLL_TIME_STEP, MIN_SCROLL_TIME, MAX_SCROLL_TIME);
+            double newVal = Math.Clamp(configScrollTime.Value - amount * SCROLL_TIME_STEP, MIN_SCROLL_TIME, MAX_SCROLL_TIME);
 
             configScrollTime.Value = newVal;
 
             if (newVal != oldVal)
-                configScrollAdjustmentCount.Value += amount;
+                configScrollAdjustmentCount.Value -= amount;
 
             timeLengthInMs = newVal;
         }
