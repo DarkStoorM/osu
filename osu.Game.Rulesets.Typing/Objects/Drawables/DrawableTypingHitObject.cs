@@ -125,7 +125,7 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
             typingAction = null;
             Alpha = 1;
             ClearTransforms();
-            Scale = Vector2.One;
+            letterText.Scale = Vector2.One;
             Position = Vector2.Zero;
         }
 
