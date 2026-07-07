@@ -6,8 +6,6 @@ using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Game.Audio;
@@ -30,29 +28,25 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
         private readonly Dictionary<Finger, Colour4> fingerColours = new Dictionary<Finger, Colour4>
         {
             // Blue-ish
-            { Finger.Index, Color4Extensions.FromHex("#38628c77") },
+            { Finger.Index, Color4Extensions.FromHex("#0FB1CF") },
             // Green-ish
-            { Finger.Middle, Color4Extensions.FromHex("#43704877") },
-            // Orange-ish
-            { Finger.Ring, Color4Extensions.FromHex("#8d843f77") },
+            { Finger.Middle, Color4Extensions.FromHex("#369936") },
+            // Yellow-ish
+            { Finger.Ring, Color4Extensions.FromHex("#d9b34c") },
             // Red-ish
-            { Finger.Pinky, Color4Extensions.FromHex("#88445377") },
+            { Finger.Pinky, Color4Extensions.FromHex("#b34747") },
         };
 
-        private const float key_box_width = 90f;
-        private const float key_box_height = 100f;
         private const float font_size = 100;
 
         private readonly Colour4 letterColor = Color4Extensions.FromHex("#CDD6F4");
-        private readonly Colour4 keyColour = Color4Extensions.FromHex("#3c3c5a");
 
-        private Box box = null!;
         private OsuSpriteText letterText = null!;
         private TypingAction? typingAction;
 
         /// <summary>
-        /// When <see langword="true"/>, will change the color of the Box on this object to one that corresponds to the
-        ///
+        /// When <see langword="true"/>, will change the colour of the letter on this object to one that corresponds to
+        /// the finger that should theoretically be used for this object based on touch-typing layouts.
         /// </summary>
         public bool OverrideKeyColor { get; set; }
 
@@ -67,22 +61,6 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
         {
             Origin = Anchor.Centre;
 
-            box = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.White,
-            };
-
-            Container keyContainer = new Container
-            {
-                Size = new Vector2(key_box_width, key_box_height),
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                CornerRadius = 10,
-                Masking = true,
-                Child = box
-            };
-
             letterText = new OsuSpriteText
             {
                 Font = OsuFont.Inter.With(size: font_size, weight: FontWeight.SemiBold),
@@ -92,7 +70,6 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
                 Origin = Anchor.Centre,
             };
 
-            AddInternal(keyContainer);
             AddInternal(letterText);
         }
 
@@ -100,22 +77,11 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
         {
             base.OnApply();
 
-            if (HitObject != null)
-            {
-                box.Colour = OverrideKeyColor
-                    ? fingerColours[HitObject.CurrentKey.Finger]
-                    : keyColour;
+            letterText.Colour = OverrideKeyColor
+                ? fingerColours[HitObject.CurrentKey.Finger]
+                : letterColor;
 
-                letterText.Text = HitObject.Letter.ToString().ToUpperInvariant();
-
-                // Those two glyphs are a bit too wide in the used font
-                if (HitObject.Letter is TypingAction.W or TypingAction.M)
-                    letterText.Scale = new Vector2(0.8f, 1f);
-            }
-            else
-            {
-                letterText.Text = string.Empty;
-            }
+            letterText.Text = HitObject.Letter.ToString().ToUpperInvariant();
         }
 
         protected override void OnFree()

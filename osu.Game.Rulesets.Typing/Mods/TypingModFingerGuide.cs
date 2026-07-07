@@ -8,6 +8,7 @@ using osu.Game.Rulesets.Typing.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Typing.Mods
 {
+    // TODO: Communicate this better, because this basically tells absolutely nothing to the user
     public class TypingModFingerGuide : Mod, IApplicableToDrawableHitObject
     {
         public override string Acronym => "FG";
