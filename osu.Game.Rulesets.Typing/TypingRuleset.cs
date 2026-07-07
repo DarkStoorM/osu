@@ -87,6 +87,7 @@ namespace osu.Game.Rulesets.Typing
                     {
                         new TypingModNoFail(),
                         new TypingModHalfTime(),
+                        new TypingModFingerGuide(),
                     };
 
                 case ModType.DifficultyIncrease:
