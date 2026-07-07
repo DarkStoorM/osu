@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Typing.Tests
             }
 
             score.HitEvents = hitEvents;
-            score.Mods = new Mod[] { new TypingWordsMod() };
+            score.Mods = new Mod[] { new TypingModWords() };
 
             Child = new KeyTimingDistribution(score.HitEvents, score.Mods);
         }

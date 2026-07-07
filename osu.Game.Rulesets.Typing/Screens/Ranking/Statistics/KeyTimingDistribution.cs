@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
 
-            TypingWordsMod? wordsMod = mods.OfType<TypingWordsMod>().FirstOrDefault();
+            TypingModWords? wordsMod = mods.OfType<TypingModWords>().FirstOrDefault();
             KeyboardLayout keyboardLayout = wordsMod == null
                 ? defaultKeyboardLayout
                 : wordsMod.SelectedKeyboardLayout;

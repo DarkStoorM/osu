@@ -48,9 +48,9 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             return 0;
         }
 
-        private static TypingWordsMod createMod(BeatLength beatLength, int seed, DictionarySize size)
+        private static TypingModWords createMod(BeatLength beatLength, int seed, DictionarySize size)
         {
-            return new TypingWordsMod
+            return new TypingModWords
             {
                 Seed = { Value = seed },
                 AdjustBeatLength = { Value = beatLength },

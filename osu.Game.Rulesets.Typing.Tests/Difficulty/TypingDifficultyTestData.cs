@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
             int seed = 1,
             BeatLength beatLength = BeatLength.Half)
         {
-            var mod = new TypingWordsMod
+            var mod = new TypingModWords
             {
                 Seed = { Value = seed },
                 AdjustBeatLength = { Value = beatLength },

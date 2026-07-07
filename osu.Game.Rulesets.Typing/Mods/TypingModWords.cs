@@ -19,7 +19,7 @@ using osu.Game.Rulesets.Typing.Objects;
 namespace osu.Game.Rulesets.Typing.Mods
 {
     // Note: This class contains code copy-pasted from TaikoModFullRandom, because I'm lazy
-    public class TypingWordsMod : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter
+    public class TypingModWords : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter
     {
         private const int max_banned_letters_length = 5;
 
@@ -69,7 +69,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         public KeyboardLayout SelectedKeyboardLayout { get; private set; }
 
-        public TypingWordsMod()
+        public TypingModWords()
         {
             BannedLetters.BindValueChanged(OnBannedLettersChanged);
             KeyboardLayout.BindValueChanged(OnKeyboardLayoutChange);

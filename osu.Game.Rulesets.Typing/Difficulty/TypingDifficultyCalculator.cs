@@ -42,7 +42,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             // Difficulty calculation will not be available if the word generation mods are not enabled,
             // because this ruleset is meant to be played only with those mods due to some skills
             // relying on letters being a part of a word, which in this context form a pattern
-            if (!mods.Any(x => x is TypingWordsMod) || beatmap.HitObjects.Count == 0)
+            if (!mods.Any(x => x is TypingModWords) || beatmap.HitObjects.Count == 0)
                 return new TypingDifficultyAttributes { Mods = mods };
 
             var keyTravel = skills.OfType<KeyTravel>().Single();
