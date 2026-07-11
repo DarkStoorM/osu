@@ -47,6 +47,7 @@ using osu.Game.Input.Bindings;
 using osu.Game.IO;
 using osu.Game.Localisation;
 using osu.Game.Online;
+using osu.Game.Online.API;
 using osu.Game.Online.API.Requests;
 using osu.Game.Online.Chat;
 using osu.Game.Online.Leaderboards;
@@ -1079,6 +1080,9 @@ namespace osu.Game
             MultiplayerClient.PostNotification = n => Notifications.Post(n);
             MultiplayerClient.PresentMatch = PresentMultiplayerMatch;
 
+            if (API is APIAccess api)
+                api.PostNotification = n => Notifications.Post(n);
+
             ScreenFooter.BackReceptor backReceptor;
 
             dependencies.CacheAs(idleTracker = new GameIdleTracker(6000));
@@ -1739,7 +1743,7 @@ namespace osu.Game
 
             horizontalOffsetAdjust = (float)Interpolation.DampContinuously(horizontalOffsetAdjust, adjust, 100, Time.Elapsed);
             // Avoid having everything on the screen moving by miniscule amounts (can create overhead on busy screens).
-            if (Math.Abs(horizontalOffsetAdjust) < 0.5f)
+            if (adjust == 0 && Math.Abs(horizontalOffsetAdjust) < 0.2f)
                 horizontalOffsetAdjust = 0;
 
             ScreenOffsetContainer.X = horizontalOffsetAdjust;
