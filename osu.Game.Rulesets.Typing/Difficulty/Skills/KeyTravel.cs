@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
 {
     public class KeyTravel : StrainSkill
     {
-        private double skillMultiplier => 0.5;
-        private double strainDecayBase => 0.1;
+        private double skillMultiplier => 0.4;
+        private double strainDecayBase => 0.2;
         private double currentStrain;
 
         public KeyTravel(Mod[] mods)
@@ -22,10 +22,11 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
         protected override double StrainValueAt(DifficultyHitObject current)
         {
             TypingDifficultyHitObject currentObject = (TypingDifficultyHitObject)current;
-            TypingDifficultyHitObject previousObject = (TypingDifficultyHitObject)current.Previous(0);
+            TypingDifficultyHitObject previousObject = (TypingDifficultyHitObject)current.Previous();
             TypingHitObject currentHitObject = (TypingHitObject)current.BaseObject;
 
-            // Distance cross-hand is ignored, because only the movement on the same hand matters
+            currentStrain *= strainDecay(current.DeltaTime);
+
             if (previousObject == null || current.Index == 0 || !currentObject.IsOnSameHand)
                 return 0;
 
@@ -47,11 +48,15 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
                 travelDifficulty *= fingerDifficulty * (1 + DiffUtils.Logistic(fingerDelta, 3, 1));
             }
 
-            currentStrain *= strainDecay(current.DeltaTime);
+            // Introduce an extra, small penalty for movement within the same hand, the longer the word is, which
+            // is maximised for words longer than 5 letters
+            double lengthMultiplier = 1 + 0.25 * DiffUtils.Logistic(currentHitObject.IndexInWord, 3, 1);
+
             currentStrain += skillMultiplier
                              * currentObject.DistanceFromPreviousKey
                              * travelDifficulty
-                             * spacingMultiplier;
+                             * spacingMultiplier
+                             * lengthMultiplier;
 
             return currentStrain;
         }
