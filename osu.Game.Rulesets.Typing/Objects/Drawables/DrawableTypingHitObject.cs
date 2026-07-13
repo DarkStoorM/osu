@@ -28,13 +28,13 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
         private readonly Dictionary<Finger, Colour4> fingerColours = new Dictionary<Finger, Colour4>
         {
             // Blue-ish
-            { Finger.Index, Color4Extensions.FromHex("#0FB1CF") },
+            { Finger.Index, Color4Extensions.FromHex("#0dccf2") },
             // Green-ish
-            { Finger.Middle, Color4Extensions.FromHex("#369936") },
-            // Yellow-ish
-            { Finger.Ring, Color4Extensions.FromHex("#d9b34c") },
+            { Finger.Middle, Color4Extensions.FromHex("#40bf40") },
+            // Orange-ish
+            { Finger.Ring, Color4Extensions.FromHex("#ffbf00") },
             // Red-ish
-            { Finger.Pinky, Color4Extensions.FromHex("#b34747") },
+            { Finger.Pinky, Color4Extensions.FromHex("#e64c4c") },
         };
 
         private const float font_size = 100;
