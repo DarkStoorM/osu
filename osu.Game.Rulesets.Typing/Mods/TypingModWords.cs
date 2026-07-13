@@ -337,7 +337,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         private sealed class WordSamplingContext
         {
             private readonly Queue<string> recentWords = new Queue<string>();
-            private const int recent_window = 8;
+            private const int recent_window = 4;
 
             public bool WasRecentlyUsed(string word)
                 => recentWords.Contains(word);

@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Typing
         private readonly string[] words;
         private readonly double[] cumulative;
 
-        public RankedWordGenerator(IReadOnlyList<string> rankedWords, double s = 0.6)
+        public RankedWordGenerator(IReadOnlyList<string> rankedWords, double s = 0.3)
         {
             words = rankedWords.ToArray();
             cumulative = new double[words.Length];
