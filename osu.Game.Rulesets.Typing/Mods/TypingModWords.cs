@@ -247,12 +247,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             if (forceEvenLengthWord)
                 return getWord(isEven: true, EvenLengthWordsRNG);
 
-            // Pick one at random, but from the seeded RNG so we don't end up with a different word sequence
-            Random rng = HelperRNG.NextDouble() < 0.5
-                ? OddLengthWordsRNG
-                : EvenLengthWordsRNG;
-
-            return rng.NextDouble() < EvenWordLengthChance.Value
+            return HelperRNG.NextDouble() < EvenWordLengthChance.Value
                 ? getWord(isEven: true, EvenLengthWordsRNG)
                 : getWord(isEven: false, OddLengthWordsRNG);
 
