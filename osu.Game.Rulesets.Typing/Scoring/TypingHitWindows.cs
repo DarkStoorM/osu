@@ -12,12 +12,12 @@ namespace osu.Game.Rulesets.Typing.Scoring
     /// </summary>
     public class TypingHitWindows : HitWindows
     {
-        public static readonly DifficultyRange PERFECT_WINDOW_RANGE = new DifficultyRange(25, 19, 14);
-        public static readonly DifficultyRange GREAT_WINDOW_RANGE = new DifficultyRange(65, 45, 28);
-        public static readonly DifficultyRange GOOD_WINDOW_RANGE = new DifficultyRange(100, 75, 43);
-        public static readonly DifficultyRange OK_WINDOW_RANGE = new DifficultyRange(130, 105, 59);
-        public static readonly DifficultyRange MEH_WINDOW_RANGE = new DifficultyRange(155, 130, 78);
-        public static readonly DifficultyRange MISS_WINDOW_RANGE = new DifficultyRange(190, 160, 99);
+        public static readonly DifficultyRange PERFECT_WINDOW_RANGE = new DifficultyRange(55, 34, 24);
+        public static readonly DifficultyRange GREAT_WINDOW_RANGE = new DifficultyRange(95, 60, 38);
+        public static readonly DifficultyRange GOOD_WINDOW_RANGE = new DifficultyRange(130, 90, 53);
+        public static readonly DifficultyRange OK_WINDOW_RANGE = new DifficultyRange(160, 120, 69);
+        public static readonly DifficultyRange MEH_WINDOW_RANGE = new DifficultyRange(185, 145, 88);
+        public static readonly DifficultyRange MISS_WINDOW_RANGE = new DifficultyRange(220, 175, 109);
 
         private double perfect;
         private double great;
