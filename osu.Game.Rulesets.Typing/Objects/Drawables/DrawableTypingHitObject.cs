@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
 
         private const float font_size = 100;
 
-        private readonly Colour4 letterColor = Color4Extensions.FromHex("#CDD6F4");
+        private readonly Colour4 defaultLetterColour = Color4Extensions.FromHex("#CDD6F4");
 
         private OsuSpriteText letterText = null!;
         private TypingAction? typingAction;
@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
         /// When <see langword="true"/>, will change the colour of the letter on this object to one that corresponds to
         /// the finger that should theoretically be used for this object based on touch-typing layouts.
         /// </summary>
-        public bool OverrideKeyColor { get; set; }
+        public bool OverrideKeyColour { get; set; }
 
         public DrawableTypingHitObject()
             : this(null) { }
@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
             letterText = new OsuSpriteText
             {
                 Font = OsuFont.Inter.With(size: font_size, weight: FontWeight.SemiBold),
-                Colour = letterColor,
+                Colour = defaultLetterColour,
                 Text = string.Empty,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -77,9 +77,9 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
         {
             base.OnApply();
 
-            letterText.Colour = OverrideKeyColor
+            letterText.Colour = OverrideKeyColour
                 ? fingerColours[HitObject.CurrentKey.Finger]
-                : letterColor;
+                : defaultLetterColour;
 
             letterText.Text = HitObject.Letter.ToString().ToUpperInvariant();
         }
@@ -131,6 +131,10 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
 
                 case ArmedState.Miss:
                     const double duration = 500;
+
+                    // If the player selects Finger Guide mod, the missed letter will try to fade from its current colour
+                    // to Black instead if not reset
+                    letterText.Colour = defaultLetterColour;
 
                     this.ScaleTo(0.5f, duration, Easing.OutQuint);
                     this.MoveToOffset(new Vector2(0, 75), duration, Easing.Out);

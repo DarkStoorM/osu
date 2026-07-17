@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         {
             DrawableTypingHitObject drawableHit = (DrawableTypingHitObject)drawable;
 
-            drawableHit.OverrideKeyColor = true;
+            drawableHit.OverrideKeyColour = true;
         }
     }
 }
