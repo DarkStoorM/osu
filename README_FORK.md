@@ -85,10 +85,7 @@ I got pretty much bored of MonkeyType, and since I had it configured to the `scr
 
 These are just random, ranked words generated from curated dictionaries. I parsed all books from Project Gutenberg, ordered words by frequency and manually went through the list and left 5000 words. I didn't feel like there was a need for some fancy text generation algorithms, but at least it could use some n-gram bias, though.
 
-- `English 0K` - 300 words left after a couple of curation passes. I only left words that were somewhat mechanically nice to type for 
-  muscle memory grinding (for me at least, although I play on `split ortholinear qwerty`). I initially extended the word set from 200 to 
-  500, because the mod would typically be played without even-length words, so there wouldn't be much variety on default 200. I walked 
-  back on that one and reduced it to 300 with some lower difficulty words, because it was making the diffcalc kinda bad
+- `English 0K` - 300 words left after a couple of curation passes. I only left words that were somewhat mechanically nice to type for muscle memory grinding (for me at least, although I play on `split ortholinear qwerty`). I initially extended the word set from 200 to 500, because the mod would typically be played without even-length words, so there wouldn't be much variety on default 200. I walked back on that one and reduced it to 300 with some lower difficulty words, because it was making the diffcalc kinda bad
 - `English 1K` - 1000 words without second pass
 - `English 5k` - as above, but 5000
 
