@@ -21,6 +21,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
         - [Word Seed](#word-seed)
       - [Customisation](#customisation)
     - [Skinnable WPM](#skinnable-wpm)
+    - [WPM In Beatmap Attributes](#wpm-in-beatmap-attributes)
     - [Nothing New](#nothing-new)
     - [Questionable Change](#questionable-change)
     - [Why Not Extract Ruleset?](#why-not-extract-ruleset)
@@ -165,6 +166,14 @@ It would seem like there is no point in using the seed, because ultimately the o
 ### Skinnable WPM
 
 I will just briefly mention that there is a new component for WPM, but it's basically the same counter that is used for `Clicks Per Second`, but it's measuring overall inputs for the current beatmap playtime that will average out as you play to give an approximate realtime WPM.
+
+### WPM In Beatmap Attributes
+
+Since I wanted a WPM preview with the mods applied on the beatmaps, I added it to the song selection:
+
+![alt](https://i.imgur.com/AtLbgVa.png)
+
+![alt](https://i.imgur.com/dhPX6WR.png)
 
 ### Nothing New
 

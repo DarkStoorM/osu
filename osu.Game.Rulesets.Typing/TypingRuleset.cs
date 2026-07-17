@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
@@ -23,6 +24,7 @@ using osu.Game.Rulesets.Typing.UI;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
 using osu.Game.Screens.Ranking.Statistics;
+using osu.Game.Utils;
 
 namespace osu.Game.Rulesets.Typing
 {
@@ -149,6 +151,52 @@ namespace osu.Game.Rulesets.Typing
                 new KeyBinding(InputKey.M, TypingAction.M),
                 new KeyBinding(InputKey.Space, TypingAction.Space),
             };
+
+        public override IEnumerable<RulesetBeatmapAttribute> GetBeatmapAttributesForDisplay(IBeatmapInfo beatmapInfo, IReadOnlyCollection<Mod> mods)
+        {
+            double rate = ModUtils.CalculateRateWithMods(mods);
+            double adjustedBeatLength = 60000 / beatmapInfo.BPM / rate;
+            double modBeatDivisor = 1.0;
+
+            // The Words mod had customisation for beat length, which can generate letters at double or half the beat length,
+            // which naturally affects the WPM. This will make the changes reflect when customising the mod
+            foreach (Mod mod in mods)
+            {
+                if (mod is not TypingModWords typingModWords) continue;
+
+                modBeatDivisor = typingModWords.AdjustBeatLength.Value switch
+                {
+                    BeatLength.Half => 2.0,
+                    BeatLength.Double => 0.5,
+                    _ => 1.0
+                };
+
+                break;
+            }
+
+            // Standard typing WPM assumes 5 characters per word.
+            // Words mod inserts letters every half beat, so:
+            // - letterTime = adjustedBeatLength / 2
+            // - CPM = 120000 / adjustedBeatLength
+            // - WPM = CPM / 5 = 24000 / adjustedBeatLength
+            double wpm = 24000.0 / adjustedBeatLength;
+            double wpmAdjusted = 24000.0 / (adjustedBeatLength / modBeatDivisor);
+
+            var attributes = new List<RulesetBeatmapAttribute>();
+
+            if (!mods.Any(x => x is TypingModWords))
+            {
+                wpm = 0;
+                wpmAdjusted = 0;
+            }
+
+            attributes.Add(new RulesetBeatmapAttribute("WPM", @"WPM", (float)wpm, (float)wpmAdjusted, (float)wpm)
+            {
+                Description = "Approximate Words Per Minute based on beatmap's most common BPM. This only applies to the Words mod and ignores the extra spacing between words."
+            });
+
+            return attributes;
+        }
 
         public override Drawable CreateIcon() => new SpriteIcon { Icon = FontAwesome.Regular.Keyboard };
 
