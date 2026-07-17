@@ -8,8 +8,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
-using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Play;
@@ -53,7 +53,11 @@ namespace osu.Game.Rulesets.Typing.Skinning
             }
 
             int totalInputs = inputCountController.Triggers.Sum(x => x.ActivationCount.Value);
-            int wpm = (int)Math.Round(totalInputs * 12.0 / elapsedSeconds * gameplayClock.GetTrueGameplayRate());
+
+            // Since WPM is calculated from words that are 5 letters long, here, the brief downtime between the words
+            // has to be taken into account, which is done by reducing this value to 4. The factor for 5 letters long
+            // words is 12 (60 / 5), so the factor for 4 letters long words is 15 (60 / 4).
+            int wpm = (int)Math.Round(totalInputs * 15.0 / elapsedSeconds * gameplayClock.GetTrueGameplayRate());
 
             if (Current.Value != wpm)
                 Current.Value = wpm;
