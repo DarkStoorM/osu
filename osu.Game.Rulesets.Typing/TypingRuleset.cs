@@ -4,12 +4,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.IO.Stores;
+using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
@@ -155,6 +158,7 @@ namespace osu.Game.Rulesets.Typing
         public override IEnumerable<RulesetBeatmapAttribute> GetBeatmapAttributesForDisplay(IBeatmapInfo beatmapInfo, IReadOnlyCollection<Mod> mods)
         {
             double rate = ModUtils.CalculateRateWithMods(mods);
+            var adjustedDifficulty = GetAdjustedDisplayDifficulty(beatmapInfo, mods);
             double adjustedBeatLength = 60000 / beatmapInfo.BPM / rate;
             double modBeatDivisor = 1.0;
 
@@ -182,18 +186,38 @@ namespace osu.Game.Rulesets.Typing
             double wpm = 24000.0 / adjustedBeatLength;
             double wpmAdjusted = 24000.0 / (adjustedBeatLength / modBeatDivisor);
 
-            var attributes = new List<RulesetBeatmapAttribute>();
-
             if (!mods.Any(x => x is TypingModWords))
             {
                 wpm = 0;
                 wpmAdjusted = 0;
             }
 
-            attributes.Add(new RulesetBeatmapAttribute("WPM", @"WPM", (float)wpm, (float)wpmAdjusted, (float)wpm)
+            var colours = new OsuColour();
+            var hitWindows = new TypingHitWindows();
+            hitWindows.SetDifficulty(adjustedDifficulty.OverallDifficulty);
+            var attributes = new List<RulesetBeatmapAttribute>
             {
-                Description = "Approximate Words Per Minute based on beatmap's most common BPM. This only applies to the Words mod and ignores the extra spacing between words."
-            });
+                new RulesetBeatmapAttribute("WPM", @"WPM", (float)wpm, (float)wpmAdjusted, (float)wpm)
+                {
+                    Description = "Approximate Words Per Minute based on beatmap's most common BPM. This only applies to the Words mod and ignores the extra spacing between words."
+                },
+                new RulesetBeatmapAttribute("HP", @"HP", beatmapInfo.Difficulty.DrainRate, adjustedDifficulty.DrainRate, 10)
+                {
+                    Description = "Affects the harshness of health drain and the health penalties for missing."
+                },
+                new RulesetBeatmapAttribute("OD", @"OD", beatmapInfo.Difficulty.OverallDifficulty, adjustedDifficulty.OverallDifficulty, 10)
+                {
+                    Description = "Affects timing requirements for hits",
+                    AdditionalMetrics = hitWindows.GetAllAvailableWindows()
+                                                  .Reverse()
+                                                  .Select(window => new RulesetBeatmapAttribute.AdditionalMetric(
+                                                      $"{window.result.GetDescription().ToUpperInvariant()} hit window",
+                                                      LocalisableString.Interpolate($@"±{hitWindows.WindowFor(window.result) / rate:0.##} ms"),
+                                                      colours.ForHitResult(window.result)
+                                                  ))
+                                                  .ToArray()
+                }
+            };
 
             return attributes;
         }
