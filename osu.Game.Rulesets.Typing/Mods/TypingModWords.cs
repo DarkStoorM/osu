@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Typing.Mods
     // Note: This class contains code copy-pasted from TaikoModFullRandom, because I'm lazy
     public class TypingModWords : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter
     {
-        private const int max_banned_letters_length = 5;
+        private const int max_banned_consonants_length = 8;
 
         private static readonly Dictionary<KeyboardLayoutType, KeyboardLayout> keyboard_layouts = new Dictionary<KeyboardLayoutType, KeyboardLayout>
         {
@@ -50,8 +50,8 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Add spacing between words", "Inserts a full beat pause between the words")]
         public BindableBool AddSpacingBetweenWords { get; } = new BindableBool();
 
-        [SettingSource("Banned letters", "Skips words containing the set letters")]
-        public Bindable<string> BannedLetters { get; } = new Bindable<string>(string.Empty);
+        [SettingSource("Banned consonants", "Skips words containing the set consonants.")]
+        public Bindable<string> BannedConsonants { get; } = new Bindable<string>(string.Empty);
 
         [SettingSource("Skip all even length words", "Makes everything land on-beat. Disable this to include even length words, for more off-beat patterns and variety.")]
         public BindableBool SkipEvenLengthWords { get; } = new BindableBool(true);
@@ -71,7 +71,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         public TypingModWords()
         {
-            BannedLetters.BindValueChanged(OnBannedLettersChanged);
+            BannedConsonants.BindValueChanged(OnBannedLettersChanged);
             KeyboardLayout.BindValueChanged(OnKeyboardLayoutChange);
 
             SelectedKeyboardLayout = keyboard_layouts[KeyboardLayoutType.QwertyStaggered];
@@ -81,10 +81,13 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         private void OnBannedLettersChanged(ValueChangedEvent<string> e)
         {
-            string value = e.NewValue;
+            string value = e.NewValue.ToLowerInvariant();
+            char[] letters = new HashSet<char>(value.Where(c => char.IsLetter(c) && !"aeiouy".Contains(c))).ToArray();
+            string filtered = new string(letters);
 
-            if (value.Length > max_banned_letters_length)
-                BannedLetters.Value = value[..max_banned_letters_length];
+            BannedConsonants.Value = filtered.Length > max_banned_consonants_length
+                ? filtered[..max_banned_consonants_length]
+                : filtered;
         }
 
         private TypingBeatmap typingBeatmap = null!;
@@ -98,8 +101,6 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         private double startGenerationAt;
         private double endGenerationAt;
-
-        private HashSet<char> bannedLetters = new HashSet<char>();
 
         /// <summary>
         /// Base beat division for the current timing point (1/1). This length may be adjusted by <see cref="AdjustBeatLength"/>.
@@ -234,8 +235,6 @@ namespace osu.Game.Rulesets.Typing.Mods
             currentTime = startGenerationAt;
 
             currentTimingControlPoint = timingPointAtCurrentTime;
-
-            bannedLetters = new HashSet<char>(BannedLetters.Value.ToLowerInvariant().Where(char.IsLetter));
         }
 
         private string getNextWord(RankedWordGenerator generator, WordSamplingContext samplingContext, bool forceEvenLengthWord = false)
@@ -267,7 +266,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
                 return word;
 
-                bool isWordInvalid(string testedWord) => testedWord.Length % 2 == 0 != isEven || testedWord.Any(bannedLetters.Contains);
+                bool isWordInvalid(string testedWord) => testedWord.Length % 2 == 0 != isEven || testedWord.Any(BannedConsonants.Value.Contains);
             }
         }
 
