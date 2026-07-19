@@ -22,6 +22,7 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
 
         private static readonly (DictionarySize size, Func<BeatLength, int, DictionarySize, Mod> Factory)[] mods =
         {
+            (DictionarySize.Curated, createMod),
             (DictionarySize.E0K, createMod),
             (DictionarySize.E1K, createMod),
             (DictionarySize.E5K, createMod),

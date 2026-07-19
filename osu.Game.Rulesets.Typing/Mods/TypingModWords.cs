@@ -374,6 +374,8 @@ namespace osu.Game.Rulesets.Typing.Mods
 
     public enum DictionarySize
     {
+        Curated,
+
         // For consistency, 0k was preferred over `EnglishSimple
         E0K,
         E1K,

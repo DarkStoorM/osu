@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
     {
         private const double bpm = 140;
         private double drainTime = 60000;
-        private DictionarySize currentDictionarySize = DictionarySize.E0K;
+        private DictionarySize currentDictionarySize = DictionarySize.Curated;
 
         private Beatmap beatmap;
         private TypingDifficultyAttributes currentAttributes;
@@ -40,6 +40,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
 
             var dictionarySizeOptions = new List<DictionarySize>
             {
+                DictionarySize.Curated,
                 DictionarySize.E0K,
                 DictionarySize.E1K,
                 DictionarySize.E5K
@@ -48,7 +49,7 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
             var dictionaryDropdown = new BasicDropdown<DictionarySize>
             {
                 Items = dictionarySizeOptions,
-                Current = { Value = DictionarySize.E0K },
+                Current = { Value = DictionarySize.Curated },
                 Width = 150
             };
 
