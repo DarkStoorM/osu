@@ -14,6 +14,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Motivation](#motivation)
     - [Work-in-progress](#work-in-progress)
     - [Custom Mod Requirement](#custom-mod-requirement)
+    - [Finger Guide](#finger-guide)
     - [About the Custom Mod](#about-the-custom-mod)
       - [What About Other Settings?](#what-about-other-settings)
         - [Increased Spacing](#increased-spacing)
@@ -86,7 +87,14 @@ I got pretty much bored of MonkeyType, and since I had it configured to the `scr
 
 These are just random, ranked words generated from curated dictionaries. I parsed all books from Project Gutenberg, ordered words by frequency and manually went through the list and left 5000 words. I didn't feel like there was a need for some fancy text generation algorithms, but at least it could use some n-gram bias, though.
 
-- `English 0K` - 300 words left after a couple of curation passes. I only left words that were somewhat mechanically nice to type for muscle memory grinding (for me at least, although I play on `split ortholinear qwerty`). I initially extended the word set from 200 to 500, because the mod would typically be played without even-length words, so there wouldn't be much variety on default 200. I walked back on that one and reduced it to 300 with some lower difficulty words, because it was making the diffcalc kinda bad
+- `Curated` - A custom, scored words list, which I took from `5k` and reevaluated based on some personal preferences:
+  - Heavy cross-hand bias per letter
+  - Less same-finger vertical movement
+  - Less counter-roll movement
+  - 1-9 length words, cross-hand only 2/4 length words for even-length mode
+  - > [!Note]
+    > Only applies to QWERTY. I only left words that were somewhat mechanically nice to type for muscle memory grinding (for me at least, since I type on `split ortholinear QWERTY`).
+- `English 0K` - 300 words (300, because the main mod is primarily odd-length words)
 - `English 1K` - 1000 words without second pass
 - `English 5k` - as above, but 5000
 
@@ -116,6 +124,16 @@ The reason for such low amount of mods is that it's pretty much what's sufficien
 
 > [!Note]
 > While `Scroll Speed` can be adjusted through the `Difficulty Adjustment` mod, the keybinds for `Increase/Decrease` scroll speed will also work here.
+
+### Finger Guide
+
+I had this weird idea of coloring the objects so they map to specific fingers, which I don't even think is useful, but I left it in anyway. Might be more distracting later on, but I think the color-to-finger mapping adaptation is quite fast.
+
+![alt](https://i.imgur.com/HwEotLn.png)
+
+![alt](https://i.imgur.com/rgroVQ7.png)
+
+(This is my osu! layer for this ruleset)
 
 ### About the Custom Mod
 
@@ -225,6 +243,9 @@ Still, this was a very interesting experiment to see the following order in the 
 - Colemak - `^ -10% to -15%`
 - Colemak-DH - `^ -1% to -3%`
 - Dvorak - Easiest, `^ -5% to -10%`
+
+> [!Note]
+> The above **does not** apply to the `Curated` dictionary.
 
 In that order, Dvorak resulting in around 15% difficulty drop overall from Qwerty.
 
