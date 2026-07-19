@@ -18,7 +18,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [About the Custom Mod](#about-the-custom-mod)
       - [What About Other Settings?](#what-about-other-settings)
         - [Increased Spacing](#increased-spacing)
-        - [Banned Letters](#banned-letters)
+        - [Banned Consonants](#banned-consonants)
         - [Word Seed](#word-seed)
       - [Customisation](#customisation)
     - [Skinnable WPM](#skinnable-wpm)
@@ -165,9 +165,11 @@ There is also a setting to increase the spacing between words, because why not?
 
 This, instead of inserting a 1/2 break, inserts a full 1/1 break, which gives enough recovery time between the words, allowing to play on higher BPMs, since there is more time to fully parse the incoming word. That comes with a cost of lowered difficulty, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat).
 
-##### Banned Letters
+##### Banned Consonants
 
-This will skip the next word containing any of the letters from this component. You can ban a maximum of 5 letters, but might be pushing it too far. You can simply type something like `xcvbj`.
+This will skip all words containing any of the consonants from this component. You can ban a maximum of 8 consonants. You can simply type something like `xcvbj`.
+
+Not really recommended for usual gameplay, this is more like a *chill* setting.
 
 ##### Word Seed
 
@@ -179,7 +181,7 @@ It would seem like there is no point in using the seed, because ultimately the o
 
 #### Customisation
 
-![alt](https://i.imgur.com/1d7r4nf.png)
+![alt](https://i.imgur.com/vDsnvC5.png)
 
 ### Skinnable WPM
 
