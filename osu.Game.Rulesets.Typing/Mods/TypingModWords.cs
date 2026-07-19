@@ -50,7 +50,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Add spacing between words", "Inserts a full beat pause between the words")]
         public BindableBool AddSpacingBetweenWords { get; } = new BindableBool();
 
-        [SettingSource("Banned consonants", "Skips words containing the set consonants.")]
+        [SettingSource("Banned consonants", "Skips words containing the set consonants. You can add up to 8 characters.")]
         public Bindable<string> BannedConsonants { get; } = new Bindable<string>(string.Empty);
 
         [SettingSource("Skip all even length words", "Makes everything land on-beat. Disable this to include even length words, for more off-beat patterns and variety.")]
