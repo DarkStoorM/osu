@@ -62,14 +62,14 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             double starRating = rescale(combinedRating * 1.4);
 
             // A hacky way perhaps, but I don't have anything else to not make the difficulty explode on short beatmaps
-            int objectCount = beatmap.HitObjects.Count;
-            const double min_objects = 750;
-            const double max_objects = 1500;
-            const double max_bonus = 0.2;
-            double lengthFactor = DiffUtils.ReverseLerp(objectCount, min_objects, max_objects);
+            // Also note: at 900 objects, the scale reaches 92%, which roughly evaluates to the following:
+            // - 120 seconds of playing 140 bpm with halved beat length (or 280 on full beat length)
+            // - 90 seconds of playing 180 bpm
+            const double optimal_maximum_object_count = 1200;
+            double objectCountRatio = beatmap.HitObjects.Count / optimal_maximum_object_count;
+            double lengthScale = DiffUtils.Logistic(4 * objectCountRatio, 0.5, 1);
 
-            lengthFactor = Math.Clamp(lengthFactor, 0.0, 1.0);
-            starRating *= 1.0 + max_bonus * lengthFactor;
+            starRating *= lengthScale;
 
             return new TypingDifficultyAttributes
             {
