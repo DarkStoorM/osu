@@ -12,6 +12,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Disabled the Flying Taiko Hit Animation](#disabled-the-flying-taiko-hit-animation)
   - [Custom Ruleset: Typing](#custom-ruleset-typing)
     - [Motivation](#motivation)
+    - [ZERO Skin elements](#zero-skin-elements)
     - [Work-in-progress](#work-in-progress)
     - [Custom Mod Requirement](#custom-mod-requirement)
     - [Finger Guide](#finger-guide)
@@ -97,6 +98,21 @@ These are just random, ranked words generated from curated dictionaries. I parse
 - `English 0K` - 300 words (300, because the main mod is primarily odd-length words)
 - `English 1K` - 1000 words without second pass
 - `English 5k` - as above, but 5000
+
+### ZERO Skin elements
+
+I decided against making any skin components that would make this look nice and went with just the playfield and simple letters. That was my design choice, but there is a good reason behind this:
+
+- Parsing incoming words on the fly is already hard, especially if you are not a native English speaker
+- Nearby skin elements might be too distracting
+
+So, this basically means there will be none of these ever:
+
+- Playfield styling
+- Ruleset Character
+- Non-miss `HitObject` Judgement display (`max`, `good` etc.)
+
+I don't mind the playfield being basically empty. I could technically make them optional, just like the `Skinnable Key Timing Distribution` and `WPM Counter`, but it's not really worth it.
 
 ### Work-in-progress
 
