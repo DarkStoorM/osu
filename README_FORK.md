@@ -12,7 +12,8 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Disabled the Flying Taiko Hit Animation](#disabled-the-flying-taiko-hit-animation)
   - [Custom Ruleset: Typing](#custom-ruleset-typing)
     - [Motivation](#motivation)
-    - [ZERO Skin elements](#zero-skin-elements)
+    - [A TL;DR On How To Use This](#a-tldr-on-how-to-use-this)
+    - [ZERO Skin Elements](#zero-skin-elements)
     - [Work-in-progress](#work-in-progress)
     - [Custom Mod Requirement](#custom-mod-requirement)
     - [Finger Guide](#finger-guide)
@@ -99,7 +100,21 @@ These are just random, ranked words generated from curated dictionaries. I parse
 - `English 1K` - 1000 words without second pass
 - `English 5k` - as above, but 5000
 
-### ZERO Skin elements
+### A TL;DR On How To Use This
+
+This ruleset is primarily made for `Words` mod, where you type random words from the selected dictionaries, the beatmap contents are **replaced**.
+
+- Go to Mod Selection
+- Select `Words` Mod
+- Customise the `Words` Mod mostly by adjusting the `Beat Length`:
+  - `Half` - letters land on 1/4, for lower BPMs to make it play faster (100 BPM evaluates to around 80 WPM, 150 BPM -> 120 BPM etc.)
+  - `Full` - default, letters land on 1/2, used for 200+BPM
+  - `Double`
+- Probably add `Constant Speed` if there are any `Scroll Speed` changes
+- Mod Selection shows the approximate `WPM` based on the most common BPM next to `Difficulty Attributes`
+- Adjust `Scroll Speed` with keybinds (F3-F4 by default)
+
+### ZERO Skin Elements
 
 I decided against making any skin components that would make this look nice and went with just the playfield and simple letters. That was my design choice, but there is a good reason behind this:
 
