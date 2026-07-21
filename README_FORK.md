@@ -94,8 +94,10 @@ These are just random, ranked words generated from curated dictionaries. I parse
   - Less same-finger vertical movement
   - Less counter-roll movement
   - 1-9 length words, cross-hand only 2/4 length words for even-length mode
-  - > [!Note]
-    > Only applies to QWERTY. I only left words that were somewhat mechanically nice to type for muscle memory grinding (for me at least, since I type on `split ortholinear QWERTY`).
+
+> [!Note]
+> Only applies to QWERTY. I only left words that were somewhat mechanically nice to type for muscle memory grinding (for me at least, since I type on `split ortholinear QWERTY`).
+
 - `English 0K` - 300 words (300, because the main mod is primarily odd-length words)
 - `English 1K` - 1000 words without second pass
 - `English 5k` - as above, but 5000
