@@ -41,13 +41,13 @@ namespace osu.Game.Rulesets.Typing.Mods
         public override string Name => "Words";
         public override bool Ranked => false;
 
-        [SettingSource("Dictionary Size", description: "0K contains first 500 curated words from the whole dictionary")]
+        [SettingSource("Dictionary Size", "\"Curated\" dictionary contains a custom scored words list from English 5K. \"0K\" - 300 words. Other dictionaries are frequency-sorted words lists.")]
         public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
 
-        [SettingSource("Adjust Beat Length", "Makes spacing shorter or longer between the objects. Half = twice as fast, Double = twice as slow")]
+        [SettingSource("Adjust Beat Length", "Halve or Double the existing beat length to make letters appear more or less frequent. \"Full\" will use the current time value of this beatmaps's half beat (1/2). Half: 1/4, Double: 1/1.")]
         public Bindable<BeatLength> AdjustBeatLength { get; } = new Bindable<BeatLength>(BeatLength.Full);
 
-        [SettingSource("Add spacing between words", "Inserts a full beat pause between the words")]
+        [SettingSource("Add spacing between words", "Inserts a full beat pause between the words.")]
         public BindableBool AddSpacingBetweenWords { get; } = new BindableBool();
 
         [SettingSource("Banned consonants", "Skips words containing the set consonants. You can add up to 8 characters.")]
@@ -56,7 +56,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Skip all even length words", "Makes everything land on-beat. Disable this to include even length words, for more off-beat patterns and variety.")]
         public BindableBool SkipEvenLengthWords { get; } = new BindableBool(true);
 
-        [SettingSource("Chance to generate even length words", "Requires disabling the even length word skip")]
+        [SettingSource("Chance to generate even length words", "Requires disabling the even length word skip.")]
         public BindableFloat EvenWordLengthChance { get; } = new BindableFloat(0.1f)
         {
             MinValue = 0.05f,
@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             Precision = 0.01f
         };
 
-        [SettingSource("KeyboardLayout", "Requires disabling the even length word skip")]
+        [SettingSource("KeyboardLayout", "Primarily used for difficulty calculation. Will also visually affect the Key Timing Distribution, changing the key positions on the matrix.")]
         public Bindable<KeyboardLayoutType> KeyboardLayout { get; } = new Bindable<KeyboardLayoutType>();
 
         public KeyboardLayout SelectedKeyboardLayout { get; private set; }
