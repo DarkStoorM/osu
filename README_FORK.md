@@ -107,12 +107,15 @@ This ruleset is primarily made for `Words` mod, where you type random words from
 - Go to Mod Selection
 - Select `Words` Mod
 - Customise the `Words` Mod mostly by adjusting the `Beat Length`:
-  - `Half` - letters land on 1/4, for lower BPMs to make it play faster (100 BPM evaluates to around 80 WPM, 150 BPM -> 120 BPM etc.)
+  - `Half`(*) - letters land on 1/4, for lower BPMs to make it play faster (100 BPM evaluates to around 80 WPM, 150 BPM -> 120 BPM etc.)
   - `Full` - default, letters land on 1/2, used for 200+BPM
   - `Double`
 - Probably add `Constant Speed` if there are any `Scroll Speed` changes
 - Mod Selection shows the approximate `WPM` based on the most common BPM next to `Difficulty Attributes`
 - Adjust `Scroll Speed` with keybinds (F3-F4 by default)
+
+> [!Note]
+> (*) The `Beat Length` adjustment in the mod customisation does not define the actual `Beat Length`, it can halve the current beat length, double it, or leave intact.
 
 ### ZERO Skin Elements
 
