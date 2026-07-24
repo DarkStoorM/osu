@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             if (currentHitObject.WordLength == 1 || currentHitObject.IndexInWord == 1)
                 baseRowDifficulty = 0.50;
 
-            currentStrain *= strainDecay(current.DeltaTime);
+            currentStrain *= strainDecay(current.DeltaTime) * DensityEvaluator.EvaluateDifficultyOf(current);
 
             // Same row contributes nothing as we explicitly have to measure row changes
             if (currentObject.IsOnSameRow)

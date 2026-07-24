@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             // focus and timing correction.
             double offbeatStrainMultiplier = length % 2 == 0 ? 2 : 1;
 
-            currentStrain *= strainDecay(current.DeltaTime);
+            currentStrain *= strainDecay(current.DeltaTime) * DensityEvaluator.EvaluateDifficultyOf(current);
             currentStrain += lengthFactor * wordProgress * offbeatStrainMultiplier * skillMultiplier;
 
             return currentStrain;

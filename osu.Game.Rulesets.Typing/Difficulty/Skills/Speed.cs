@@ -23,13 +23,9 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
         {
             TypingHitObject currentHitObject = (TypingHitObject)current.BaseObject;
 
-            currentStrain *= strainDecay(current.DeltaTime);
-
-            double noteDensityPenalty = 0.02 * Math.Pow(1000.0 / current.DeltaTime, 2.25);
-
+            currentStrain *= strainDecay(current.DeltaTime) * DensityEvaluator.EvaluateDifficultyOf(current);
             currentStrain += 1.5 + DiffUtils.Logistic(currentHitObject.IndexInWord, 0, 1)
-                * skillMultiplier
-                * noteDensityPenalty;
+                * skillMultiplier;
 
             return currentStrain;
         }

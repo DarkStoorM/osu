@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             // The overall strain is bigger based on the finger used
             double fingerPenalty = 1 + DiffUtils.Logistic(currentFinger, 3, 1);
 
-            currentStrain *= strainDecay(current.DeltaTime);
+            currentStrain *= strainDecay(current.DeltaTime) * DensityEvaluator.EvaluateDifficultyOf(current);
             currentStrain += fatigue * skillMultiplier + fingerPenalty;
 
             return currentStrain;

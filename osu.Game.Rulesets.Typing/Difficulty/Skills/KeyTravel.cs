@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             TypingDifficultyHitObject previousObject = (TypingDifficultyHitObject)current.Previous();
             TypingHitObject currentHitObject = (TypingHitObject)current.BaseObject;
 
-            currentStrain *= strainDecay(current.DeltaTime);
+            currentStrain *= strainDecay(current.DeltaTime) * DensityEvaluator.EvaluateDifficultyOf(current);
 
             if (previousObject == null || current.Index == 0 || !currentObject.IsOnSameHand)
                 return 0;
