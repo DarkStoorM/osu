@@ -9,7 +9,6 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Custom Mod](#custom-mod)
     - [Custom Skinnable `UR` Counter and Average `HitError` Counter](#custom-skinnable-ur-counter-and-average-hiterror-counter)
     - [Changes to Statistics Screen](#changes-to-statistics-screen)
-    - [Disabled the Flying Taiko Hit Animation](#disabled-the-flying-taiko-hit-animation)
   - [Custom Ruleset: Typing](#custom-ruleset-typing)
     - [Motivation](#motivation)
     - [A TL;DR On How To Use This](#a-tldr-on-how-to-use-this)
@@ -66,10 +65,6 @@ The same goes for the *average Hit Error*, but this was more for offset correcti
 I added the `UR`/`HitError` values to the result screen, below the timing distribution:
 
 ![img](https://i.imgur.com/FsL4mWe.png)
-
-### Disabled the Flying Taiko Hit Animation
-
-Pretty sure you still can't skin the flying hits out as you can in Stable, and some PRs were opened for this, but got rejected, so I just disabled it myself, even if the solution may not be quite right.
 
 ---
 
