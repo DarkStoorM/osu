@@ -99,7 +99,9 @@ These are just random, ranked words generated from curated dictionaries. I parse
 
 ### A TL;DR On How To Use This
 
-This ruleset is primarily made for `Words` mod, where you type random words from the selected dictionaries, the beatmap contents are **replaced**.
+This ruleset is primarily made for `Words` mod, where you type random words from the selected dictionaries, the beatmap contents are
+**replaced**, no structure is preserved, as intended. This is the same concept as `TaikoModFullRandom`. I am fully aware of the fact
+that those beatmaps make zero sense structurally.
 
 - Go to Mod Selection
 - Select `Words` Mod
