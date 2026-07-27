@@ -107,11 +107,28 @@ Also, I recently decided to remove all even-length words from the `Curated` dict
 
 A note though, the OANC mix contains **mostly** cross-hand words, which I just appended to the previous list. The reason is simple: there is no need to mimic the words generation to make it feel like a typing test app. That initially was the goal, but I realised this feature belongs in typing tests, especially since I am using custom word scoring.
 
+And another, important note: the new curated dictionary is quite overwhelmed with words longer than 3, which was not as much of a problem earlier. That's around `1 : 3.2` ratio for just five letters long words, which in combination with seven letters long words will sound insane for something available and selected by default.
+
+In my defense, the new words that were added, were scored in a way that every letter lands on different hand, having at most one letter on the same hand. This only applies to the second part of the dictionary, as the first half is just the standard word frequency list (mostly). Some exceptions were made, e.g. natural rolls, like the word: `serpent`:
+
+```plaintext
+// Natural roll defines consecutive letters landing from "outward fingers, going inwards" on the same hand
+L: S E R
+R: P
+L: E
+R: N
+L: T
+```
+
+So, with that in mind, even if the longer letters inflate the dictionary a bit, they should be easier to type, at least in theory, but what do I know... sounds counterintuitive. Longer words, more stamina and focus required. I manually went through the list again and removed some weird stuff, and again, only kept those that were actually nicer to type after the scoring script spat them out.
+
+A kinda questionable change to the custom dictionary was that I left some words that represent names and countries, because some of them were actually nice to type (for me, sorry), even if most typing test apps deem them inappropriate (too uncommon in written english).
+
+Another reason why the inflation happened was that I took all 4 and 6 letter words and pluralized them since all even-length words got removed. Not all of them got in, of course. The dictionary would be even bigger, but during the scoring, I decided to "ban" some awkward letter transitions, but we're not gonna talk about that.
+
 ### A TL;DR On How To Use This
 
-This ruleset is primarily made for `Words` mod, where you type random words from the selected dictionaries, the beatmap contents are
-**replaced**, no structure is preserved, as intended. This is the same concept as `TaikoModFullRandom`. I am fully aware of the fact
-that those beatmaps make zero sense structurally.
+This ruleset is primarily made for `Words` mod, where you type random words from the selected dictionaries, the beatmap contents are **replaced**, no structure is preserved, as intended. This is the same concept as `TaikoModFullRandom`. I am fully aware of the fact that those beatmaps make zero sense structurally.
 
 - Go to Mod Selection
 - Select `Words` Mod
