@@ -41,9 +41,9 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
             var dictionarySizeOptions = new List<DictionarySize>
             {
                 DictionarySize.Curated,
-                DictionarySize.E0K,
-                DictionarySize.E1K,
-                DictionarySize.E5K
+                DictionarySize.Basic,
+                DictionarySize.Advanced,
+                DictionarySize.Extended
             };
 
             var dictionaryDropdown = new BasicDropdown<DictionarySize>

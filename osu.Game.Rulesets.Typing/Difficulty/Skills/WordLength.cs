@@ -35,21 +35,14 @@ namespace osu.Game.Rulesets.Typing.Difficulty.Skills
             double wordProgress = index / length;
 
             // Longer words should be disproportionately harder (I think?)
-            // Also, technically, this could be capped above some length, but since the longest words exist in 5k/25k dictionaries
-            // and are rare uncommon anyway, there is no need to do anything more here.
+            // Also, technically, this could be capped above some length, but since the longest words exist in
+            // Extended dictionary there is no need to do anything more here.
             // Still, the speed should affect this strain at least in some way, but it might yield similar
             // results to typing fatigue
             double lengthFactor = Math.Pow(length, 1.125);
 
-            // Because the mod will generate odd-length words by default, all words land on-beat.
-            // Allowing it to generate even-length words results in the words being generated in pairs to ensure the correct rhythm.
-            // That being said, even if the pair combined with the spacing technically results in an odd-length pattern,
-            // mechanically that is still two off-beat patterns, potentially disrupting the flow, which requires more
-            // focus and timing correction.
-            double offbeatStrainMultiplier = length % 2 == 0 ? 2 : 1;
-
             currentStrain *= strainDecay(current.DeltaTime) * DensityEvaluator.EvaluateDifficultyOf(current);
-            currentStrain += lengthFactor * wordProgress * offbeatStrainMultiplier * skillMultiplier;
+            currentStrain += lengthFactor * wordProgress * skillMultiplier;
 
             return currentStrain;
         }

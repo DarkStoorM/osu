@@ -11,16 +11,16 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Changes to Statistics Screen](#changes-to-statistics-screen)
   - [Custom Ruleset: Typing](#custom-ruleset-typing)
     - [Motivation](#motivation)
+      - [Note On Manually Curated Dictionary](#note-on-manually-curated-dictionary)
     - [A TL;DR On How To Use This](#a-tldr-on-how-to-use-this)
     - [ZERO Skin Elements](#zero-skin-elements)
     - [Work-in-progress](#work-in-progress)
     - [Custom Mod Requirement](#custom-mod-requirement)
     - [Finger Guide](#finger-guide)
     - [About the Custom Mod](#about-the-custom-mod)
-      - [What About Other Settings?](#what-about-other-settings)
-        - [Increased Spacing](#increased-spacing)
-        - [Banned Consonants](#banned-consonants)
-        - [Word Seed](#word-seed)
+      - [Increased Spacing](#increased-spacing)
+      - [Banned Consonants](#banned-consonants)
+      - [Word Seed](#word-seed)
       - [Customisation](#customisation)
     - [Skinnable WPM](#skinnable-wpm)
     - [WPM In Beatmap Attributes](#wpm-in-beatmap-attributes)
@@ -82,20 +82,30 @@ I got pretty much bored of MonkeyType, and since I had it configured to the `scr
 
 ![img](https://i.imgur.com/4AewVy9.png)
 
-These are just random, ranked words generated from curated dictionaries. I parsed all books from Project Gutenberg, ordered words by frequency and manually went through the list and left 5000 words. I didn't feel like there was a need for some fancy text generation algorithms, but at least it could use some n-gram bias, though.
+These are just random, ranked words generated from curated dictionaries. I parsed all books from Project Gutenberg, ordered words by frequency and manually went through the list and left 2500 words. I didn't feel like there was a need for some fancy text generation algorithms, but at least it could use some n-gram bias, though.
 
-- `Curated` - A custom, scored words list, which I took from `5k` and reevaluated based on some personal preferences:
+The full dictionary contained 5000 words, but due to some changes, I only left odd-length words, leaving 2500 in total.
+
+- `Curated` - A custom, scored words list, which I took from `Extended` and reevaluated based on some personal preferences:
   - Heavy cross-hand bias per letter
   - Less same-finger vertical movement
   - Less counter-roll movement
-  - 1-9 length words, cross-hand only 2/4 length words for even-length mode
+  - 1-9 length words
 
 > [!Note]
 > Only applies to QWERTY. I only left words that were somewhat mechanically nice to type for muscle memory grinding (for me at least, since I type on `split ortholinear QWERTY`).
 
-- `English 0K` - 300 words (300, because the main mod is primarily odd-length words)
-- `English 1K` - 1000 words without second pass
-- `English 5k` - as above, but 5000
+- `Basic` - 250 words
+- `Advanced` - ~1250 words without second curation pass
+- `Extended` - ~2500
+
+#### Note On Manually Curated Dictionary
+
+While the `Curated` dictionary was initially taken from what I used in the dictionary separation by words count, I felt it needed a change.
+
+Also, I recently decided to remove all even-length words from the `Curated` dictionary. Since this is a personal ruleset anyway, I didn't care much about these since off-beats are always awkward. I remade the `Curated` dictionary by mixing the previous words list I had, with a new, scored OANC list (the Written, Open American National Corpus). The words deletion cut the dictionary in half, so the new mix allows for way more variety.
+
+A note though, the OANC mix contains **mostly** cross-hand words, which I just appended to the previous list. The reason is simple: there is no need to mimic the words generation to make it feel like a typing test app. That initially was the goal, but I realised this feature belongs in typing tests, especially since I am using custom word scoring.
 
 ### A TL;DR On How To Use This
 
@@ -184,27 +194,19 @@ With this, and with DoubleTime/HalfTime, I can play everything adjusted to my co
 - 100 BPM + `half beat length` + DoubleTime rate changed up to 120 BPM
 - 180 BPM + `half beat length` + HalfTime rate changed down to 140-150 BPM
 
-#### What About Other Settings?
-
-There is another setting, which I'm not sure is even worth talking about, because I don't know if what I assumed is correct. Initially, I went with the same strategy as my Random mod for Taiko: odd length pattern lands on beat, even doesn't. I assumed that even length patterns are harder to play, so I extracted them into a separate setting, which makes them disabled by default, plus you can customise the chance for generating even length words.
-
-The `Toggle` for generating even length words might seem redundant with the `Chance` slider, but my reasoning here is that it's better to turn something off, preserving the slider value, so whenever I'd like to use it again with the same value, I can just quickly use the toggle.
-
-For the same exact reason, I increased the strain slightly on word length, which bumps the star rating with this setting, because I believe that off-beats are just harder, even if a pair of off-beats is actually an odd length pattern, which effectively makes no difference between a five object pattern and a pair of two 2-length words, since technically the whole length is equal.
-
-##### Increased Spacing
+#### Increased Spacing
 
 There is also a setting to increase the spacing between words, because why not?
 
 This, instead of inserting a 1/2 break, inserts a full 1/1 break, which gives enough recovery time between the words, allowing to play on higher BPMs, since there is more time to fully parse the incoming word. That comes with a cost of lowered difficulty, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat).
 
-##### Banned Consonants
+#### Banned Consonants
 
 This will skip all words containing any of the consonants from this component. You can ban a maximum of 8 consonants. You can simply type something like `xcvbj`.
 
 Not really recommended for usual gameplay, this is more like a *chill* setting.
 
-##### Word Seed
+#### Word Seed
 
 This makes *everything* deterministic. Custom seed should only be used if you intend on repeating the play on the same beatmap, because this effectively makes *all* visible beatmaps to be regenerated with the same seed.
 
