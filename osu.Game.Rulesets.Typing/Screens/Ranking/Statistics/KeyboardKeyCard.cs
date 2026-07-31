@@ -12,12 +12,14 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 {
     public partial class KeyboardKeyCard : Container
     {
+        private readonly OsuSpriteText keyMissedCountText;
         private readonly OsuSpriteText keyCountText;
+        private readonly OsuSpriteText keyCountSeparatorText;
         private readonly OsuSpriteText keyText;
         private readonly OsuSpriteText unstableRateText;
         private readonly Box cardBox;
 
-        public KeyboardKeyCard(string key, int pressCount, double? unstableRate, Colour4? colour)
+        public KeyboardKeyCard(string key, int pressCount, int missedCount, double? unstableRate, Colour4? colour)
         {
             Width = 75;
             Height = 90;
@@ -58,13 +60,36 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                             Font = OsuFont.Inter.With(size: 50, weight: FontWeight.Bold),
                         },
 
-                        keyCountText = new OsuSpriteText
+                        new FillFlowContainer
                         {
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.Centre,
-                            Text = pressCount.ToString(),
-                            Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
-                        },
+                            RelativeSizeAxes = Axes.Both,
+                            Direction = FillDirection.Horizontal,
+                            Padding = new MarginPadding { Top = 5 },
+                            Children = new[]
+                            {
+                                keyCountText = new OsuSpriteText
+                                {
+                                    Anchor = Anchor.TopCentre,
+                                    Origin = Anchor.Centre,
+                                    Text = pressCount.ToString(),
+                                    Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
+                                },
+                                keyCountSeparatorText = new OsuSpriteText
+                                {
+                                    Anchor = Anchor.TopCentre,
+                                    Origin = Anchor.Centre,
+                                    Text = "/",
+                                    Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
+                                },
+                                keyMissedCountText = new OsuSpriteText
+                                {
+                                    Anchor = Anchor.TopCentre,
+                                    Origin = Anchor.Centre,
+                                    Text = missedCount.ToString(),
+                                    Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
+                                },
+                            }
+                        }
                     }
                 }
             };
@@ -74,10 +99,11 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 
         private static string setUnstableRateText(double? unstableRate) => unstableRate == null ? "N/A" : $"UR: {unstableRate:F0}";
 
-        public void UpdateKeyCard(int pressCount, double? unstableRate = null, Colour4? colour = null)
+        public void UpdateKeyCard(int pressCount, int missedCount, double? unstableRate = null, Colour4? colour = null)
         {
             unstableRateText.Text = setUnstableRateText(unstableRate);
             keyCountText.Text = pressCount.ToString();
+            keyMissedCountText.Text = missedCount.ToString();
 
             updateCardColours(colour);
         }
@@ -97,10 +123,11 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             };
 
             cardBox.Colour = cardColour.Opacity(0.2f);
-
             unstableRateText.Colour = fontColour;
             keyText.Colour = fontColour;
             keyCountText.Colour = fontColour;
+            keyMissedCountText.Colour = fontColour;
+            keyCountSeparatorText.Colour = fontColour;
         }
     }
 }
