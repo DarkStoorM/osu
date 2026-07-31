@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             {
                 KeyCardData keyCardData = createCardData(hitEvents, typingHitObject.CurrentKey);
 
-                keyCards[typingHitObject.CurrentKey.Character].UpdateKeyCard(keyCardData.HitEventsCount, keyCardData.UnstableRate, keyCardData.Colour);
+                keyCards[typingHitObject.CurrentKey.Character].UpdateKeyCard(keyCardData.HitEventsCount, keyCardData.MissEventsCount, keyCardData.UnstableRate, keyCardData.Colour);
             }
 
             private void createRowKeyCards(IReadOnlyList<HitEvent> hitEvents, KeyboardLayout keyboardLayout, KeyboardRow row)
@@ -116,6 +116,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 
                     keyCards.Add(key.Character, new KeyboardKeyCard(key.Character.ToString(),
                             keyCardData.HitEventsCount,
+                            keyCardData.MissEventsCount,
                             keyCardData.UnstableRate,
                             keyCardData.Colour
                         )
@@ -128,6 +129,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
         {
             List<HitEvent> keyHitEvents = filterHitEventsByKey(hitEvents, key);
             double? unstableRate = keyHitEvents.CalculateKeyUnstableRate(key.Character)?.Result ?? 0;
+            int missedHitEvents = hitEvents.Count(hit => hit.Result == HitResult.Miss && ((TypingHitObject)hit.HitObject).Letter == key.Character);
 
             // Hit events per key should be at least ten to deem the unstable rate valid for this key, so we have to force zero
             // it out if there were not enough keypresses. The reason for this is that the unstable rate will converge at higher
@@ -137,7 +139,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 
             Colour4? colour = colorGradient?.Evaluate(unstableRate);
 
-            return new KeyCardData(keyHitEvents.Count, unstableRate, colour);
+            return new KeyCardData(keyHitEvents.Count, missedHitEvents, unstableRate, colour);
         }
 
         /// <summary>
@@ -152,6 +154,6 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                    .ToList();
         }
 
-        private readonly record struct KeyCardData(int HitEventsCount, double? UnstableRate, Colour4? Colour);
+        private readonly record struct KeyCardData(int HitEventsCount, int MissEventsCount, double? UnstableRate, Colour4? Colour);
     }
 }
