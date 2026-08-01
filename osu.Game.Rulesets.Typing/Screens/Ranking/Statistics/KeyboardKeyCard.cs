@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
         private readonly OsuSpriteText unstableRateText;
         private readonly Box cardBox;
 
-        public KeyboardKeyCard(string key, int pressCount, int missedCount, double? unstableRate, Colour4? colour)
+        public KeyboardKeyCard(string key, KeyCardData keyCardData)
         {
             Width = 75;
             Height = 90;
@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.Centre,
                             Padding = new MarginPadding { Top = 5 },
-                            Text = setUnstableRateText(unstableRate),
+                            Text = setUnstableRateText(keyCardData.UnstableRate),
                             Font = OsuFont.Torus.With(size: 20),
                         },
 
@@ -71,7 +71,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                                 {
                                     Anchor = Anchor.TopCentre,
                                     Origin = Anchor.Centre,
-                                    Text = pressCount.ToString(),
+                                    Text = keyCardData.HitEventsCount.ToString(),
                                     Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
                                 },
                                 keyCountSeparatorText = new OsuSpriteText
@@ -85,7 +85,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                                 {
                                     Anchor = Anchor.TopCentre,
                                     Origin = Anchor.Centre,
-                                    Text = missedCount.ToString(),
+                                    Text = keyCardData.MissEventsCount.ToString(),
                                     Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
                                 },
                             }
@@ -94,40 +94,37 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                 }
             };
 
-            updateCardColours(colour);
+            updateCardColours(keyCardData);
         }
 
         private static string setUnstableRateText(double? unstableRate) => unstableRate == null ? "N/A" : $"UR: {unstableRate:F0}";
 
-        public void UpdateKeyCard(int pressCount, int missedCount, double? unstableRate = null, Colour4? colour = null)
+        public void UpdateKeyCard(KeyCardData keyCardData)
         {
-            unstableRateText.Text = setUnstableRateText(unstableRate);
-            keyCountText.Text = pressCount.ToString();
-            keyMissedCountText.Text = missedCount.ToString();
+            unstableRateText.Text = setUnstableRateText(keyCardData.UnstableRate);
+            keyCountText.Text = keyCardData.HitEventsCount.ToString();
+            keyMissedCountText.Text = keyCardData.MissEventsCount.ToString();
 
-            updateCardColours(colour);
+            updateCardColours(keyCardData);
         }
 
-        private void updateCardColours(Colour4? colour)
+        private void updateCardColours(KeyCardData keyCardData)
         {
-            var fontColour = colour == null ? Colour4.DarkGray.Opacity(0.2f) : Colour4.White;
-            var cardColour = colour ?? Colour4.DarkGray.Opacity(0.2f);
-
-            BorderColour = cardColour.Opacity(0.5f);
+            BorderColour = keyCardData.BorderColour;
 
             EdgeEffect = new EdgeEffectParameters
             {
                 Type = EdgeEffectType.Glow,
-                Colour = cardColour.Opacity(0.12f),
+                Colour = keyCardData.GlowColour,
                 Radius = 4,
             };
 
-            cardBox.Colour = cardColour.Opacity(0.2f);
-            unstableRateText.Colour = fontColour;
-            keyText.Colour = fontColour;
-            keyCountText.Colour = fontColour;
-            keyMissedCountText.Colour = fontColour;
-            keyCountSeparatorText.Colour = fontColour;
+            cardBox.Colour = keyCardData.BackgroundColour;
+            unstableRateText.Colour = keyCardData.TextColour;
+            keyText.Colour = keyCardData.TextColour;
+            keyCountText.Colour = keyCardData.TextColour;
+            keyMissedCountText.Colour = keyCardData.TextColour;
+            keyCountSeparatorText.Colour = keyCardData.TextColour;
         }
     }
 }

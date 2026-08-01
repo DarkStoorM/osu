@@ -21,18 +21,6 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
         private readonly KeyboardLayout defaultKeyboardLayout = new QwertyStaggeredLayout();
         private readonly KeyDistributionContainer keyDistributionContainer;
 
-        /// <summary>
-        /// A hacky gradient of color with arbitrary unstable rate value range.
-        /// </summary>
-        private static ColorGradient? colorGradient { get; } = new ColorGradient(
-            new ColorStop(0, new Colour4(0.00f, 0.95f, 0.25f, 1f)),
-            new ColorStop(125, new Colour4(0.45f, 1.00f, 0.15f, 1f)),
-            new ColorStop(175, new Colour4(1.00f, 0.95f, 0.10f, 1f)),
-            new ColorStop(225, new Colour4(1.00f, 0.60f, 0.00f, 1f)),
-            new ColorStop(275, new Colour4(1.00f, 0.18f, 0.18f, 1f)),
-            new ColorStop(325, new Colour4(0.60f, 0.00f, 0.00f, 1f))
-        );
-
         public KeyTimingDistribution(IReadOnlyList<HitEvent> hitEvents, IReadOnlyList<Mod> mods)
         {
             RelativeSizeAxes = Axes.X;
@@ -100,7 +88,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             {
                 KeyCardData keyCardData = createCardData(hitEvents, typingHitObject.CurrentKey);
 
-                keyCards[typingHitObject.CurrentKey.Character].UpdateKeyCard(keyCardData.HitEventsCount, keyCardData.MissEventsCount, keyCardData.UnstableRate, keyCardData.Colour);
+                keyCards[typingHitObject.CurrentKey.Character].UpdateKeyCard(keyCardData);
             }
 
             private void createRowKeyCards(IReadOnlyList<HitEvent> hitEvents, KeyboardLayout keyboardLayout, KeyboardRow row)
@@ -114,13 +102,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                 {
                     KeyCardData keyCardData = createCardData(hitEvents, key);
 
-                    keyCards.Add(key.Character, new KeyboardKeyCard(key.Character.ToString(),
-                            keyCardData.HitEventsCount,
-                            keyCardData.MissEventsCount,
-                            keyCardData.UnstableRate,
-                            keyCardData.Colour
-                        )
-                    );
+                    keyCards.Add(key.Character, new KeyboardKeyCard(key.Character.ToString(), keyCardData));
                 }
             }
         }
@@ -137,9 +119,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             if (keyHitEvents.Count < 10)
                 unstableRate = null;
 
-            Colour4? colour = colorGradient?.Evaluate(unstableRate);
-
-            return new KeyCardData(keyHitEvents.Count, missedHitEvents, unstableRate, colour);
+            return new KeyCardData(keyHitEvents.Count, missedHitEvents, unstableRate);
         }
 
         /// <summary>
@@ -153,7 +133,5 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                        TypingHitEventExtensions.AffectsUnstableRate(e))
                    .ToList();
         }
-
-        private readonly record struct KeyCardData(int HitEventsCount, int MissEventsCount, double? UnstableRate, Colour4? Colour);
     }
 }
