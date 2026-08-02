@@ -52,6 +52,9 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Add spacing between words", "Inserts a full beat pause between the words.")]
         public BindableBool AddSpacingBetweenWords { get; } = new BindableBool();
 
+        [SettingSource("Force cross-hand on new word", "First character in next word starts on the opposite hand. Disable for regular word generation.")]
+        public BindableBool ForceCrossHandOnNewWord { get; } = new BindableBool(true);
+
         [SettingSource("Banned consonants", "Skips words containing the set consonants. You can add up to 8 characters.")]
         public Bindable<string> BannedConsonants { get; } = new Bindable<string>(string.Empty);
 
@@ -115,6 +118,8 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         private bool hasTimingPointChanged => !currentTimingControlPoint.Equals(lastUsedTimingControlPoint);
 
+        private Hand? lastHandUsed;
+
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
             // Breaks have to be deleted, because this mod generates new hit objects, and it WILL place them if the original beatmap had breaks
@@ -135,7 +140,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             RankedWordGenerator wordGenerator = TypingRuleset.RankedDictionaries[DictionarySize.Value];
             WordSamplingContext samplingContext = new WordSamplingContext();
 
-            string currentWord = getNextWord(wordGenerator, samplingContext);
+            string currentWord = generateWord(wordGenerator, samplingContext);
             bool isGeneratingFirstWord = true;
 
             while (isStillWithinPlayingBounds)
@@ -165,7 +170,6 @@ namespace osu.Game.Rulesets.Typing.Mods
                         typingBeatmap.HitObjects.Add(hit);
 
                         advanceTime(beatHalf);
-                        break;
                     }
 
                     typingBeatmap.HitObjects.Add(hit);
@@ -180,7 +184,8 @@ namespace osu.Game.Rulesets.Typing.Mods
                 if (AddSpacingBetweenWords.Value)
                     advanceTime(beatFull);
 
-                currentWord = getNextWord(wordGenerator, samplingContext);
+                lastHandUsed = getKeyFromCharacter(currentWord[^1]).physicalKey.Hand;
+                currentWord = generateWord(wordGenerator, samplingContext);
             }
 
             if (faultyHitObjectsToRemove.Count > 0)
@@ -200,43 +205,25 @@ namespace osu.Game.Rulesets.Typing.Mods
             currentTimingControlPoint = timingPointAtCurrentTime;
         }
 
-        private string getNextWord(RankedWordGenerator generator, WordSamplingContext samplingContext)
-        {
-            string word;
-            bool usesBannedConsonants;
-
-            do
-            {
-                word = generateWord(generator, samplingContext);
-                usesBannedConsonants = word.Any(BannedConsonants.Value.Contains);
-
-                if (usesBannedConsonants && samplingContext.WasRecentlyUsed(word))
-                    samplingContext.RemoveQueuedWord(word);
-            } while (usesBannedConsonants);
-
-            return word;
-        }
-
         private string generateWord(RankedWordGenerator generator, WordSamplingContext context)
         {
-            for (int attempt = 0; attempt < 20; attempt++)
+            while (true)
             {
                 string word = generator.NextWord(WordsRNG);
 
                 if (context.WasRecentlyUsed(word))
                     continue;
 
+                if (word.Any(BannedConsonants.Value.Contains))
+                    continue;
+
+                if (ForceCrossHandOnNewWord.Value && getKeyFromCharacter(word[0]).physicalKey.Hand == lastHandUsed)
+                    continue;
+
                 context.Push(word);
 
                 return word;
             }
-
-            // Always allow at least something
-            string fallback = generator.NextWord(WordsRNG);
-
-            context.Push(fallback);
-
-            return fallback;
         }
 
         private TypingHitObject? createRandomHitObject(char newChar)
@@ -255,14 +242,13 @@ namespace osu.Game.Rulesets.Typing.Mods
                     faultyHitObjectsToRemove.Add(lastHitObjectCreated);
             }
 
-            TypingAction action = LetterToTypingAction(newChar);
-            SelectedKeyboardLayout.TryGetKey(action, out PhysicalKey currentPhysicalKey);
+            (TypingAction typingAction, PhysicalKey physicalKey) physicalKey = getKeyFromCharacter(newChar);
 
             TypingHitObject hitObject = new TypingHitObject
             {
                 StartTime = currentTime,
-                Letter = action,
-                CurrentKey = currentPhysicalKey,
+                Letter = physicalKey.typingAction,
+                CurrentKey = physicalKey.physicalKey,
             };
 
             hitObject.ApplyDefaults(typingBeatmap.ControlPointInfo, typingBeatmap.Difficulty);
@@ -278,6 +264,14 @@ namespace osu.Game.Rulesets.Typing.Mods
         {
             typingBeatmap = null!;
             faultyHitObjectsToRemove.Clear();
+        }
+
+        private (TypingAction typingAction, PhysicalKey physicalKey) getKeyFromCharacter(char character)
+        {
+            TypingAction action = LetterToTypingAction(character);
+            SelectedKeyboardLayout.TryGetKey(action, out PhysicalKey physicalKey);
+
+            return (action, physicalKey);
         }
 
         private sealed class WordSamplingContext
