@@ -167,9 +167,8 @@ namespace osu.Game.Rulesets.Typing.Mods
                     // Avoid placing hit objects on the wrong timing point
                     if (hasTimingPointChanged)
                     {
-                        typingBeatmap.HitObjects.Add(hit);
-
                         advanceTime(beatHalf);
+                        break;
                     }
 
                     typingBeatmap.HitObjects.Add(hit);
