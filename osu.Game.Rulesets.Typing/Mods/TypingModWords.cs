@@ -85,7 +85,6 @@ namespace osu.Game.Rulesets.Typing.Mods
         }
 
         private TypingBeatmap typingBeatmap = null!;
-        private readonly List<TypingHitObject?> faultyHitObjectsToRemove = new List<TypingHitObject?>();
         private TypingHitObject? lastHitObjectCreated;
 
         /// <summary>
@@ -164,11 +163,27 @@ namespace osu.Game.Rulesets.Typing.Mods
                     hit.IndexInWord = index;
                     hit.WordLength = currentWord.Length;
 
-                    // Avoid placing hit objects on the wrong timing point
+                    // An attempt to adjust the placement of the next object if a timing change occurred so that the rhythm
+                    // is still kind of preserved...
+                    // Basically, if the next object is the beginning of the word, start later by moving it forward.
+                    // If we happened to be in the middle of the word, but the split would create an even-length word,
+                    // only advance the time forward
+                    // Still, this will create jank splits and close letters, but that's good enough. I will still
+                    // consider timing change maps as edge cases, not worth investing time into
                     if (hasTimingPointChanged)
                     {
-                        advanceTime(beatHalf);
-                        break;
+                        if (lastHitObjectCreated != null && currentTime - lastHitObjectCreated.StartTime < beatHalf)
+                        {
+                            if (index == 1)
+                            {
+                                hit.StartTime += beatHalf + beatFourth;
+                                advanceTime(beatHalf + beatFourth);
+                            }
+                            else if (index % 2 == 0)
+                            {
+                                advanceTime(beatHalf);
+                            }
+                        }
                     }
 
                     typingBeatmap.HitObjects.Add(hit);
@@ -187,10 +202,7 @@ namespace osu.Game.Rulesets.Typing.Mods
                 currentWord = generateWord(wordGenerator, samplingContext);
             }
 
-            if (faultyHitObjectsToRemove.Count > 0)
-                typingBeatmap.HitObjects.RemoveAll(h => faultyHitObjectsToRemove.Contains(h));
-
-            cleanUp();
+            typingBeatmap = null!;
         }
 
         private void initialiseSettings()
@@ -236,9 +248,6 @@ namespace osu.Game.Rulesets.Typing.Mods
             {
                 currentTimingControlPoint = timingPointAtCurrentTime;
                 currentTime = currentTimingControlPoint.Time;
-
-                if (lastHitObjectCreated != null && currentTime - lastHitObjectCreated.StartTime < beatFourth)
-                    faultyHitObjectsToRemove.Add(lastHitObjectCreated);
             }
 
             (TypingAction typingAction, PhysicalKey physicalKey) physicalKey = getKeyFromCharacter(newChar);
@@ -258,12 +267,6 @@ namespace osu.Game.Rulesets.Typing.Mods
         }
 
         private void advanceTime(double beat) => currentTime += beat;
-
-        private void cleanUp()
-        {
-            typingBeatmap = null!;
-            faultyHitObjectsToRemove.Clear();
-        }
 
         private (TypingAction typingAction, PhysicalKey physicalKey) getKeyFromCharacter(char character)
         {
