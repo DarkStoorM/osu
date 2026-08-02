@@ -97,7 +97,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             updateCardColours(keyCardData);
         }
 
-        private static string setUnstableRateText(double? unstableRate) => unstableRate == null ? "N/A" : $"UR: {unstableRate:F0}";
+        private static string setUnstableRateText(double unstableRate) => unstableRate == 0 ? "N/A" : $"UR: {unstableRate:F0}";
 
         public void UpdateKeyCard(KeyCardData keyCardData)
         {

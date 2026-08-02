@@ -110,14 +110,14 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
         private static KeyCardData createCardData(IReadOnlyList<HitEvent> hitEvents, PhysicalKey key)
         {
             List<HitEvent> keyHitEvents = filterHitEventsByKey(hitEvents, key);
-            double? unstableRate = keyHitEvents.CalculateKeyUnstableRate(key.Character)?.Result ?? 0;
+            double unstableRate = keyHitEvents.CalculateKeyUnstableRate(key.Character)?.Result ?? 0;
             int missedHitEvents = hitEvents.Count(hit => hit.Result == HitResult.Miss && ((TypingHitObject)hit.HitObject).Letter == key.Character);
 
             // Hit events per key should be at least ten to deem the unstable rate valid for this key, so we have to force zero
             // it out if there were not enough keypresses. The reason for this is that the unstable rate will converge at higher
             // amount of hits across the whole gameplay, so a very short beatmap should not yield valuable results
             if (keyHitEvents.Count < 10)
-                unstableRate = null;
+                unstableRate = 0;
 
             return new KeyCardData(keyHitEvents.Count, missedHitEvents, unstableRate);
         }

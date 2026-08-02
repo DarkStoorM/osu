@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 
         public int HitEventsCount { get; }
         public int MissEventsCount { get; }
-        public double? UnstableRate { get; }
+        public double UnstableRate { get; }
 
         public Colour4 BackgroundColour { get; }
         public Colour4 TextColour { get; }
@@ -48,13 +48,13 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             (350f, Color4Extensions.FromHex("5755bd")),
         };
 
-        public KeyCardData(int hitEventsCount, int missEventsCount, double? unstableRate)
+        public KeyCardData(int hitEventsCount, int missEventsCount, double unstableRate)
         {
             HitEventsCount = hitEventsCount;
             MissEventsCount = missEventsCount;
             UnstableRate = unstableRate;
 
-            if (UnstableRate is null or 0)
+            if (UnstableRate == 0)
             {
                 BackgroundColour = default_transparent_gray;
                 TextColour = default_transparent_gray;
@@ -67,7 +67,7 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             GlowColour = borderColourForUnstableRate().Opacity(0.1f);
         }
 
-        private Colour4 colourForUnstableRate() => ColourUtils.SampleFromLinearGradient(unstable_rate_spectrum, (float)Math.Round(UnstableRate.Value, 2, MidpointRounding.AwayFromZero));
+        private Colour4 colourForUnstableRate() => ColourUtils.SampleFromLinearGradient(unstable_rate_spectrum, (float)Math.Round(UnstableRate, 2, MidpointRounding.AwayFromZero));
 
         private Colour4 colourForUnstableRateText()
         {
@@ -77,12 +77,12 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             if (UnstableRate < 310)
                 return Color4Extensions.FromHex(@"ffd966");
 
-            return ColourUtils.SampleFromLinearGradient(unstable_rate_text_spectrum, (float)Math.Round(UnstableRate.Value, 2, MidpointRounding.AwayFromZero));
+            return ColourUtils.SampleFromLinearGradient(unstable_rate_text_spectrum, (float)Math.Round(UnstableRate, 2, MidpointRounding.AwayFromZero));
         }
 
         private Colour4 borderColourForUnstableRate()
         {
-            float ur = (float)Math.Round(UnstableRate.Value, 2, MidpointRounding.AwayFromZero);
+            float ur = (float)Math.Round(UnstableRate, 2, MidpointRounding.AwayFromZero);
             Colour4 colour = ur >= 310
                 ? ColourUtils.SampleFromLinearGradient(unstable_rate_text_spectrum, ur).Lighten(0.75f).Opacity(0.5f)
                 : ColourUtils.SampleFromLinearGradient(unstable_rate_spectrum, ur).Lighten(0.75f);
