@@ -45,5 +45,38 @@ namespace osu.Game.Rulesets.Typing.Tests.Mods
                 return beatmap;
             },
         });
+
+        [Test]
+        public void TestWordsModWithTimingChanges() => CreateModTest(new ModTestData
+        {
+            Mod = new TypingModWords { Seed = { Value = 2 } },
+            Autoplay = true,
+            PassCondition = () => true,
+            CreateBeatmap = () =>
+            {
+                var beatmap = new TypingBeatmap
+                {
+                    HitObjects = new List<TypingHitObject>
+                    {
+                        new TypingHitObject
+                        {
+                            Letter = TypingAction.A,
+                            StartTime = 0,
+                        },
+                        new TypingHitObject
+                        {
+                            Letter = TypingAction.A,
+                            StartTime = beat_fourth * 200,
+                        },
+                    },
+                };
+
+                beatmap.ControlPointInfo.Add(0, new TimingControlPoint { BeatLength = base_beat_length });
+                beatmap.ControlPointInfo.Add(beat_fourth * 11, new TimingControlPoint { BeatLength = base_beat_length });
+                beatmap.ControlPointInfo.Add(beat_fourth * 20, new TimingControlPoint { BeatLength = base_beat_length });
+
+                return beatmap;
+            },
+        });
     }
 }
