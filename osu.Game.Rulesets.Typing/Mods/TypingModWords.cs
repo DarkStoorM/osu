@@ -85,7 +85,6 @@ namespace osu.Game.Rulesets.Typing.Mods
         }
 
         private TypingBeatmap typingBeatmap = null!;
-        private TypingHitObject? lastHitObjectCreated;
 
         /// <summary>
         /// Used to advance the time in the beatmap.
@@ -142,6 +141,8 @@ namespace osu.Game.Rulesets.Typing.Mods
             string currentWord = generateWord(wordGenerator, samplingContext);
             bool isGeneratingFirstWord = true;
             List<TypingHitObject> hitObjectsInWord = new List<TypingHitObject>();
+            List<TypingHitObject> lastInsertedWord = new List<TypingHitObject>();
+            TypingHitObject? lastHitObject = null;
 
             while (isStillWithinPlayingBounds)
             {
@@ -152,7 +153,16 @@ namespace osu.Game.Rulesets.Typing.Mods
                 int index = isGeneratingFirstWord ? -2 : 0;
                 isGeneratingFirstWord = false;
                 hitObjectsInWord.Clear();
+
+                // This condition is almost always true and can become false only if the timing point has changed,
+                // meaning that the current word will never be inserted and new word will be picked. This is
+                // intentional, because the timing change can happen in the middle of the word, causing letters
+                // to be placed closer, resulting in unreadable patterns
                 bool canAddWord = true;
+
+                // Only used to remove the already inserted word into the beatmap if the new word happened
+                // to be too close __after__ a timing point change
+                bool shouldRemoveLastUsedWord = false;
 
                 while (enumerator.MoveNext())
                 {
@@ -168,30 +178,49 @@ namespace osu.Game.Rulesets.Typing.Mods
 
                     // Remove the entire word if the timing change happened split the word, meaning that the change
                     // lands in-between the letters and common divisors (in this case it's below computed half-beat)
-                    if (hasTimingPointChanged && lastHitObjectCreated != null && currentTime - lastHitObjectCreated.StartTime < beatHalf)
+                    if (hasTimingPointChanged)
                     {
+                        // The new word can be too close, this will force the removal of the last inserted word
+                        if (index == 1 && lastHitObject != null && hit.StartTime - lastHitObject.StartTime < beatHalf)
+                            shouldRemoveLastUsedWord = true;
+
+                        // Skip this word and abort, which will start placing a new word at this point in time
                         canAddWord = false;
+                        lastHitObject = null;
+
                         break;
                     }
 
                     hitObjectsInWord.Add(hit);
-
-                    lastHitObjectCreated = hit;
+                    lastHitObject = hit;
 
                     advanceTime(beatHalf);
                 }
 
+                // This will only happen if the timing point has changed and new word was too close
+                if (shouldRemoveLastUsedWord)
+                {
+                    foreach (var o in lastInsertedWord)
+                        typingBeatmap.HitObjects.Remove(o);
+                }
+
                 if (canAddWord)
+                {
                     typingBeatmap.HitObjects.AddRange(hitObjectsInWord);
 
-                // The last spacing is required
-                advanceTime(beatHalf);
+                    lastInsertedWord.Clear();
+                    lastInsertedWord.AddRange(hitObjectsInWord);
 
-                // A full beat of breathing room allows to reduce the cognitive load, and make the key travel a bit easier
-                if (AddSpacingBetweenWords.Value)
-                    advanceTime(beatFull);
+                    // The last spacing is required
+                    advanceTime(beatHalf);
 
-                lastHandUsed = getKeyFromCharacter(currentWord[^1]).physicalKey.Hand;
+                    // A full beat of breathing room allows to reduce the cognitive load, and make the key travel a bit easier
+                    if (AddSpacingBetweenWords.Value)
+                        advanceTime(beatFull);
+
+                    lastHandUsed = getKeyFromCharacter(currentWord[^1]).physicalKey.Hand;
+                }
+
                 currentWord = generateWord(wordGenerator, samplingContext);
             }
 
@@ -207,6 +236,10 @@ namespace osu.Game.Rulesets.Typing.Mods
             currentTime = startGenerationAt;
 
             currentTimingControlPoint = timingPointAtCurrentTime;
+
+            // The very first timing point change check would report `true`, because there was no previously used timing point,
+            // so treat the first timing point as the last one used
+            lastUsedTimingControlPoint = currentTimingControlPoint;
         }
 
         private string generateWord(RankedWordGenerator generator, WordSamplingContext context)
@@ -232,8 +265,16 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         private TypingHitObject? createRandomHitObject(char newChar)
         {
+            lastUsedTimingControlPoint = (TimingControlPoint)currentTimingControlPoint.DeepClone();
+
             if (!isStillWithinPlayingBounds)
                 return null;
+
+            if (!currentTimingControlPoint.Equals(timingPointAtCurrentTime))
+            {
+                currentTimingControlPoint = timingPointAtCurrentTime;
+                currentTime = currentTimingControlPoint.Time;
+            }
 
             (TypingAction typingAction, PhysicalKey physicalKey) physicalKey = getKeyFromCharacter(newChar);
 
@@ -249,18 +290,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             return hitObject;
         }
 
-        private void advanceTime(double beat)
-        {
-            lastUsedTimingControlPoint = (TimingControlPoint)currentTimingControlPoint.DeepClone();
-
-            currentTime += beat;
-
-            if (currentTimingControlPoint.Equals(timingPointAtCurrentTime))
-                return;
-
-            currentTimingControlPoint = timingPointAtCurrentTime;
-            currentTime = currentTimingControlPoint.Time;
-        }
+        private void advanceTime(double beat) => currentTime += beat;
 
         private (TypingAction typingAction, PhysicalKey physicalKey) getKeyFromCharacter(char character)
         {
