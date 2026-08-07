@@ -161,7 +161,9 @@ namespace osu.Game.Rulesets.Typing.Mods
                 bool canAddWord = true;
 
                 // Only used to remove the already inserted word into the beatmap if the new word happened
-                // to be too close __after__ a timing point change
+                // to be too close __after__ a timing point change. The reason for doing it this way is that it's better
+                // to immediately start inserting a new word at the timing point, sacrificing the previous word even
+                // if it introduces a longer gap
                 bool shouldRemoveLastUsedWord = false;
 
                 while (enumerator.MoveNext())
