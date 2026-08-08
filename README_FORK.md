@@ -20,6 +20,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [About the Custom Mod](#about-the-custom-mod)
       - [Increased Spacing](#increased-spacing)
       - [Banned Consonants](#banned-consonants)
+      - [Forced Cross-Hand on New Words](#forced-cross-hand-on-new-words)
       - [Word Seed](#word-seed)
       - [Customisation](#customisation)
     - [Skinnable WPM](#skinnable-wpm)
@@ -33,7 +34,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
   - [Key Timing Distribution](#key-timing-distribution)
   - [Skinnable Key Timing Distribution](#skinnable-key-timing-distribution)
     - [Missing Features](#missing-features)
-  
+
 ---
 
 ## Changes to osu!taiko
@@ -56,7 +57,7 @@ Now, thanks to how awesome things are in osu!lazer, rather than generating the s
 
 Because the unstable Rate in osu! throws all inputs into the same bin, I had to split it into `Don UR` / `Kat UR` to see which hand is actually more unstable during the gameplay, especially since my playstyle is `DD/KK`.
 
-The same goes for the *average Hit Error*, but this was more for offset correction purposes (and to see if the automatic correction does its job).
+The same goes for the _average Hit Error_, but this was more for offset correction purposes (and to see if the automatic correction does its job).
 
 ![img](https://i.imgur.com/JOW5cby.png)
 
@@ -133,7 +134,7 @@ This ruleset is primarily made for `Words` mod, where you type random words from
 - Go to Mod Selection
 - Select `Words` Mod
 - Customise the `Words` Mod mostly by adjusting the `Beat Length`:
-  - `Half`(*) - letters land on 1/4, for lower BPMs to make it play faster (100 BPM evaluates to around 80 WPM, 150 BPM -> 120 BPM etc.)
+  - `Half`(\*) - letters land on 1/4, for lower BPMs to make it play faster (100 BPM evaluates to around 80 WPM, 150 BPM -> 120 BPM etc.)
   - `Full` - default, letters land on 1/2, used for 200+BPM
   - `Double`
 - Probably add `Constant Speed` if there are any `Scroll Speed` changes
@@ -141,7 +142,7 @@ This ruleset is primarily made for `Words` mod, where you type random words from
 - Adjust `Scroll Speed` with keybinds (F3-F4 by default)
 
 > [!Note]
-> (*) The `Beat Length` adjustment in the mod customisation does not define the actual `Beat Length`, it can halve the current beat length, double it, or leave intact.
+> (\*) The `Beat Length` adjustment in the mod customisation does not define the actual `Beat Length`, it can halve the current beat length, double it, or leave intact.
 
 ### ZERO Skin Elements
 
@@ -160,7 +161,7 @@ I don't mind the playfield being basically empty. I could technically make them 
 
 ### Work-in-progress
 
-This ruleset will be in *work-in-progress* state for a long time, because I don't feel like adding or fixing stuff, as the foundation is already sufficient for me to play.
+This ruleset will be in _work-in-progress_ state for a long time, because I don't feel like adding or fixing stuff, as the foundation is already sufficient for me to play.
 
 > [!Note]
 > The mod is applied to all visible difficulties, so the structure of the current beatmap difficulty does not matter, because the mod replaces the entire beatmap. This will result in all difficulties having the same Star Rating if custom Seed is applied.
@@ -221,11 +222,31 @@ This, instead of inserting a 1/2 break, inserts a full 1/1 break, which gives en
 
 This will skip all words containing any of the consonants from this component. You can ban a maximum of 8 consonants. You can simply type something like `xcvbj`.
 
-Not really recommended for usual gameplay, this is more like a *chill* setting.
+Not really recommended for usual gameplay, this is more like a _chill_ setting.
+
+#### Forced Cross-Hand on New Words
+
+I decided to add this option and make it `on` by default.
+
+The reasoning behind is that I already kind of took the inspiration from taiko, where alternating hands make some patterns more comfortable to play, so that's also why the custom dictionary was extended to contain more almost "full alt" words.
+
+Taking this further, I changed how the mod behaves by forcing the next word to start on different hand. Look at the following example:
+
+| Previously                                                        | Now                      |
+| ----------------------------------------------------------------- | ------------------------ |
+| figh**t** - `L` into `L` `[nope]` <- kinda meh transition to next | figh**t** - `L` into `R` |
+| go**d** - `L` into `L` `[nope]`                                   | poin**t** - `L` into `R` |
+| dither**s**                                                       | ma**n**                  |
+
+Not like it matters anyway, some transitions are not that awkward, e.g. same letter, natural roll. I didn't really wanted to think much about this, so I just rolled with it.
+
+In general, hand switch is more comfortable, because in this situation, when one hand types, another one is getting ready to type, so this can be treated as difficulty reduction I guess (?)
+
+Anyway, this can be disabled as I didn't want to force the mod to generate words like that.
 
 #### Word Seed
 
-This makes *everything* deterministic. Custom seed should only be used if you intend on repeating the play on the same beatmap, because this effectively makes *all* visible beatmaps to be regenerated with the same seed.
+This makes _everything_ deterministic. Custom seed should only be used if you intend on repeating the play on the same beatmap, because this effectively makes _all_ visible beatmaps to be regenerated with the same seed.
 
 It results in the same exact Star Rating across all beatmaps with the same properties, especially in a beatmapset, e.g. if all difficulties in a beatmap have the same drain time and no BPM changes, the Star Rating will be the same.
 
@@ -233,7 +254,7 @@ It would seem like there is no point in using the seed, because ultimately the o
 
 #### Customisation
 
-![alt](https://i.imgur.com/vDsnvC5.png)
+![alt](https://i.imgur.com/PY3v5te.png)
 
 ### Skinnable WPM
 
@@ -264,6 +285,8 @@ if (beatmap.Ruleset.ShortName == "taiko" && ruleset.ShortName == "typing")
 ### Why Not Extract Ruleset?
 
 There is a Ruleset Collection in osu! repository, but that requires the ruleset to be its own, separate release with other rulesets cut out. Since I sometimes switch to Taiko, I don't want to launch a different game + I can modify things directly here.
+
+_I am aware that you can just drop the built `.dll` onto your main osu!, but I made other changes that won't allow me to drop the other ones._
 
 ### Difficulty Calculator for Typing Ruleset
 
@@ -318,6 +341,8 @@ Also, I won't be sharing this in the [Custom Ruleset Directory](https://github.c
 
 A hacky keyboard preview with unstable rate per key. The layout is the default staggered, can't be bothered figuring out the split layouts. The keys will be taken from the mod directly since you can now select the layout from the customisation.
 
+> [!Note] The colours have been changed temporarily, so the below graphic shows old colours. The new colours resemble the Star Rating spectrum.
+
 ![alt](https://i.imgur.com/TWqHIYB.png)
 
 ## Skinnable Key Timing Distribution
@@ -330,6 +355,6 @@ I had to change the `Alpha` on it though, so it's not as distracting
 
 ### Missing Features
 
-Some stuff I *might* add if I won't get lazy:
+Some stuff I _might_ add if I won't get lazy:
 
 - Replays - ~~the game is not recording the current session, so I will probably just copy it from osu!taiko.~~ The game can record replays, but it seems that it's not possible to watch them in custom rulesets(?). Maybe I'm missing something, but it looks like the replays are hard locked to the main rulesets.
