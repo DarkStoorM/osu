@@ -140,8 +140,20 @@ namespace osu.Game.Rulesets.Typing.Mods
 
             string currentWord = generateWord(wordGenerator, samplingContext);
             bool isGeneratingFirstWord = true;
+
+            // Since hit objects are not aware of being a part of a word, which form a pattern, we have to keep track of
+            // anything that is about to be inserted into the beatmap, assuming there was no Timing Point to interrupt this
             List<TypingHitObject> hitObjectsInWord = new List<TypingHitObject>();
+
+            // Holds the whole word that was previously inserted into the beatmap, which may be removed if there was a
+            // Timing Point inserted while the word was being generated. This word (a set of letters to be exact) will
+            // be removed if the next Timing Point happens to be placed in a way that the word ends too close to it.
+            // It will be removed if we end up with two words being too close to each other, because we want to make sure
+            // the words are separated and readable
             List<TypingHitObject> lastInsertedWord = new List<TypingHitObject>();
+
+            // Used only when the Timing Point changes for comparison if the pattern is about to be inserted suddenly
+            // with a different BPM than initialised so the previous word can be force-removed
             TypingHitObject? lastHitObject = null;
 
             while (isStillWithinPlayingBounds)
@@ -149,7 +161,10 @@ namespace osu.Game.Rulesets.Typing.Mods
                 using var enumerator = currentWord.GetEnumerator();
 
                 // Because the first two objects are ignored by difficulty calculators, we have to artificially reduce the starting index
-                // so we don't start with index of 2 immediately, bumping the strain
+                // so we don't start with index of 2 immediately, bumping the strain. This is because some Skills may use
+                // the index (the actual, non-zero index) as where the current letter is located in the word. The very
+                // first word would end up with having the first letter as index of 3 instead of 1, because DiffCalc only creates
+                // DHOs after the second hit object
                 int index = isGeneratingFirstWord ? -2 : 0;
                 isGeneratingFirstWord = false;
                 hitObjectsInWord.Clear();
@@ -172,6 +187,9 @@ namespace osu.Game.Rulesets.Typing.Mods
 
                     TypingHitObject? hit = createRandomHitObject(enumerator.Current);
 
+                    // We have to purposely force-break here, because this happens where we fall out of the playing bounds,
+                    // and we don't want to generate the remaining letters of this word. This was done to match exactly
+                    // when the beatmap ends, even if the last resulting word happens to be split
                     if (hit == null)
                         break;
 
