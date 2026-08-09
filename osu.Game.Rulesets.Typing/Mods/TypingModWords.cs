@@ -271,11 +271,16 @@ namespace osu.Game.Rulesets.Typing.Mods
                 if (context.WasRecentlyUsed(word))
                     continue;
 
-                if (word.Any(BannedConsonants.Value.Contains))
-                    continue;
+                // Words that match the customisation settings causing to skip them, can't be kept in the word sampling context,
+                // because they are not actually being used and would inflate the recent context window
+                // Self note: `if (word.Any(BannedConsonants.Value.Contains))` allocates every word
+                if (word.AsSpan().IndexOfAny(BannedConsonants.Value) >= 0 ||
+                    (ForceCrossHandOnNewWord.Value && getKeyFromCharacter(word[0]).physicalKey.Hand == lastHandUsed))
+                {
+                    context.RemoveQueuedWord(word);
 
-                if (ForceCrossHandOnNewWord.Value && getKeyFromCharacter(word[0]).physicalKey.Hand == lastHandUsed)
                     continue;
+                }
 
                 context.Push(word);
 
