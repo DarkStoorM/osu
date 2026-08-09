@@ -21,6 +21,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
       - [Increased Spacing](#increased-spacing)
       - [Banned Consonants](#banned-consonants)
       - [Forced Cross-Hand on New Words](#forced-cross-hand-on-new-words)
+        - [Important Note on Cross-Hand Play](#important-note-on-cross-hand-play)
       - [Word Seed](#word-seed)
       - [Customisation](#customisation)
     - [Skinnable WPM](#skinnable-wpm)
@@ -79,7 +80,7 @@ For the lack of a better name of course.
 
 I've been stalling on this for quite a long time and finally, I decided to move the typing practice to osu!. Normally, I wouldn't care, but the main motivation was to learn touch-typing on [Corne](https://i.imgur.com/6dwFKmk.png), which I bought a while ago.
 
-I got pretty much bored of MonkeyType, and since I had it configured to the `scrolling tape`, it really reminded me of osu!taiko, so I created pretty much identical ruleset to this.
+I got pretty much bored of MonkeyType, and since I had it configured to the `scrolling tape`, it really reminded me of osu!taiko, so I created pretty much identical ruleset to this. To be clear, this is not the main source of typing practice due to multiple factors that differ from normal typing and this gameplay, and I guess everyone is aware of this.
 
 ![img](https://i.imgur.com/4AewVy9.png)
 
@@ -243,6 +244,25 @@ Not like it matters anyway, some transitions are not that awkward, e.g. same let
 In general, hand switch is more comfortable, because in this situation, when one hand types, another one is getting ready to type, so this can be treated as difficulty reduction I guess (?)
 
 Anyway, this can be disabled as I didn't want to force the mod to generate words like that.
+
+##### Important Note on Cross-Hand Play
+
+While, as already mentioned, this is based on taiko gameplay favouring hand alternating, this is obviously not how you normally type, because naturally, typists develop "chording" or they "violate" the touch-typing rules to type even faster.
+
+None of this really applies here, because:
+
+> - You are required to be 100% consistent for perfect score.
+
+Consistency in typing means your time between key presses are nearly identical, which means your consistency drops when chording, which then translates into not hitting the correct `HitWindow` for all letters. So, sadly, chording might not be useful here, because you have to force yourself to wait for correct letter judgement.
+
+To be clear, not like it's a bad thing, because every day typing is not a game, you don't have to type at perfect rate to everyone. Chording is fun.
+
+Anyway, take a look at this example:
+
+- `[R] po` | `[L] wer` | `[R] poin` | `[L] t`
+- Sometimes even with left hand overreaching `[R] po` | `[L] wer` | `[R] poi` | `[L] nt`
+
+Chording helps with "reducing" the keystrokes, but I'm not getting into the theory of this. It increases the Unstable Rate unless you force your hands to get into chording position and only type at consistent rate, which I believe is more taxing (?)
 
 #### Word Seed
 
