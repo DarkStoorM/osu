@@ -109,7 +109,15 @@ Also, I recently decided to remove all even-length words from the `Curated` dict
 
 A note though, the OANC mix contains **mostly** cross-hand words, which I just appended to the previous list. The reason is simple: there is no need to mimic the words generation to make it feel like a typing test app. That initially was the goal, but I realised this feature belongs in typing tests, especially since I am using custom word scoring.
 
-And another, important note: the new curated dictionary is quite overwhelmed with words longer than 3, which was not as much of a problem earlier. That's around `1 : 3.2` ratio for just five letters long words, which in combination with seven letters long words will sound insane for something available and selected by default.
+And another, important note: the new curated dictionary is quite overwhelmed with words longer than 3, which was not as much of a problem earlier. That's around `150 : 350` ratio for just five letters long words (previously: `1:3.2`), which in combination with seven letters long words will sound insane for something available and selected by default.
+
+Approximate breakdown for word lengths:
+
+- `3` ~ 150
+- `5` ~ 350
+- `7` ~ 230
+- `9` ~ 39
+- `11` ~ 5
 
 In my defense, the new words that were added, were scored in a way that every letter lands on different hand, having at most one letter on the same hand. This only applies to the second part of the dictionary, as the first half is just the standard word frequency list (mostly). Some exceptions were made, e.g. natural rolls, like the word: `serpent`:
 
