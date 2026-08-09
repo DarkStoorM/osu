@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using osuTK;
 
@@ -9,6 +10,18 @@ namespace osu.Game.Rulesets.Typing.Layouts.KeyboardData
 {
     public abstract class KeyboardLayout
     {
+        public static readonly ImmutableDictionary<KeyboardLayoutType, KeyboardLayout> KEYBOARD_LAYOUTS = new Dictionary<KeyboardLayoutType, KeyboardLayout>
+        {
+            { KeyboardLayoutType.QwertyStaggered, new QwertyStaggeredLayout() },
+            { KeyboardLayoutType.QwertyOrtholinear, new QwertyOrtholinearLayout() },
+            { KeyboardLayoutType.DvorakStaggered, new DvorakStaggeredLayout() },
+            { KeyboardLayoutType.DvorakOrtholinear, new DvorakOrtholinearLayout() },
+            { KeyboardLayoutType.ColemakStaggered, new ColemakStaggeredLayout() },
+            { KeyboardLayoutType.ColemakOrtholinear, new ColemakOrtholinearLayout() },
+            { KeyboardLayoutType.ColemakDhStaggered, new ColemakDhStaggeredLayout() },
+            { KeyboardLayoutType.ColemakDhOrtholinear, new ColemakDhOrtholinearLayout() },
+        }.ToImmutableDictionary();
+
         private readonly Dictionary<TypingAction, PhysicalKey> keys;
 
         protected KeyboardLayout()

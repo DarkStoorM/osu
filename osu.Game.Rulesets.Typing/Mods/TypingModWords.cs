@@ -15,6 +15,7 @@ using osu.Game.Rulesets.Typing.Beatmaps;
 using osu.Game.Rulesets.Typing.Layouts;
 using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
 using osu.Game.Rulesets.Typing.Objects;
+using static osu.Game.Rulesets.Typing.Layouts.KeyboardData.KeyboardLayout;
 
 namespace osu.Game.Rulesets.Typing.Mods
 {
@@ -22,18 +23,6 @@ namespace osu.Game.Rulesets.Typing.Mods
     public class TypingModWords : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter
     {
         private const int max_banned_consonants_length = 8;
-
-        private static readonly Dictionary<KeyboardLayoutType, KeyboardLayout> keyboard_layouts = new Dictionary<KeyboardLayoutType, KeyboardLayout>
-        {
-            { KeyboardLayoutType.QwertyStaggered, new QwertyStaggeredLayout() },
-            { KeyboardLayoutType.QwertyOrtholinear, new QwertyOrtholinearLayout() },
-            { KeyboardLayoutType.DvorakStaggered, new DvorakStaggeredLayout() },
-            { KeyboardLayoutType.DvorakOrtholinear, new DvorakOrtholinearLayout() },
-            { KeyboardLayoutType.ColemakStaggered, new ColemakStaggeredLayout() },
-            { KeyboardLayoutType.ColemakOrtholinear, new ColemakOrtholinearLayout() },
-            { KeyboardLayoutType.ColemakDhStaggered, new ColemakDhStaggeredLayout() },
-            { KeyboardLayoutType.ColemakDhOrtholinear, new ColemakDhOrtholinearLayout() },
-        };
 
         public override ModType Type => ModType.Conversion;
         public override LocalisableString Description => "Generates random words from dictionary";
@@ -61,17 +50,15 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("KeyboardLayout", "Primarily used for difficulty calculation. Will also visually affect the Key Timing Distribution, changing the key positions on the matrix.")]
         public Bindable<KeyboardLayoutType> KeyboardLayout { get; } = new Bindable<KeyboardLayoutType>();
 
-        public KeyboardLayout SelectedKeyboardLayout { get; private set; }
+        public KeyboardLayout SelectedKeyboardLayout { get; private set; } = KEYBOARD_LAYOUTS[KeyboardLayoutType.QwertyStaggered];
 
         public TypingModWords()
         {
             BannedConsonants.BindValueChanged(OnBannedLettersChanged);
             KeyboardLayout.BindValueChanged(OnKeyboardLayoutChange);
-
-            SelectedKeyboardLayout = keyboard_layouts[KeyboardLayoutType.QwertyStaggered];
         }
 
-        private void OnKeyboardLayoutChange(ValueChangedEvent<KeyboardLayoutType> e) => SelectedKeyboardLayout = keyboard_layouts[e.NewValue];
+        private void OnKeyboardLayoutChange(ValueChangedEvent<KeyboardLayoutType> e) => SelectedKeyboardLayout = KEYBOARD_LAYOUTS[e.NewValue];
 
         private void OnBannedLettersChanged(ValueChangedEvent<string> e)
         {
