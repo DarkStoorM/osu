@@ -46,6 +46,8 @@ namespace osu.Game.Rulesets.Typing
 
         public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new TypingHealthProcessor();
 
+        public override ScoreProcessor CreateScoreProcessor() => new TypingScoreProcessor();
+
         public static Dictionary<DictionarySize, RankedWordGenerator> RankedDictionaries { get; private set; } = new Dictionary<DictionarySize, RankedWordGenerator>();
 
         public TypingRuleset()

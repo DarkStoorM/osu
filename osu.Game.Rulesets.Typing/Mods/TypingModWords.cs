@@ -213,6 +213,18 @@ namespace osu.Game.Rulesets.Typing.Mods
 
                 if (canAddWord)
                 {
+                    // TODO: Add the customisation bindable for adding spaces
+                    // The reason for another bounds check is that the last Space would still be placed, but
+                    // we don't want to add anything extra outside of the playing bounds
+                    if (isStillWithinPlayingBounds)
+                    {
+                        var space = new SpaceHitObject { StartTime = currentTime };
+
+                        space.ApplyDefaults(typingBeatmap.ControlPointInfo, typingBeatmap.Difficulty);
+
+                        hitObjectsInWord.Add(space);
+                    }
+
                     typingBeatmap.HitObjects.AddRange(hitObjectsInWord);
 
                     lastInsertedWord.Clear();
