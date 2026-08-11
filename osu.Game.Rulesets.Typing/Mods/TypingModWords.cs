@@ -44,6 +44,10 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Force cross-hand on new word", "First character in next word starts on the opposite hand. Disable for regular word generation.")]
         public BindableBool ForceCrossHandOnNewWord { get; } = new BindableBool(true);
 
+        [SettingSource("Add bonus Space Hit objects",
+            "Generates hit objects between words that act as Space in typing. They grant bonus score, but are not required to hit. Use with caution, because ignoring them can cause note-locks!")]
+        public BindableBool AddBonusSpaceHitObjects { get; } = new BindableBool();
+
         [SettingSource("Banned consonants", "Skips words containing the set consonants. You can add up to 8 characters.")]
         public Bindable<string> BannedConsonants { get; } = new Bindable<string>(string.Empty);
 
@@ -213,10 +217,9 @@ namespace osu.Game.Rulesets.Typing.Mods
 
                 if (canAddWord)
                 {
-                    // TODO: Add the customisation bindable for adding spaces
                     // The reason for another bounds check is that the last Space would still be placed, but
-                    // we don't want to add anything extra outside of the playing bounds
-                    if (isStillWithinPlayingBounds)
+                    // we don't want to add anything extra outside the playing bounds
+                    if (AddBonusSpaceHitObjects.Value && isStillWithinPlayingBounds)
                     {
                         var space = new SpaceHitObject { StartTime = currentTime };
 
