@@ -84,7 +84,7 @@ I've been stalling on this for quite a long time and finally, I decided to move 
 
 I got pretty much bored of MonkeyType, and since I had it configured to the `scrolling tape`, it really reminded me of osu!taiko, so I created pretty much identical ruleset to this. To be clear, this is not the main source of typing practice due to multiple factors that differ from normal typing and this gameplay, and I guess everyone is aware of this.
 
-![img](https://i.imgur.com/4AewVy9.png)
+![img](https://i.imgur.com/pLbAL4T.png)
 
 These are just random, ranked words generated from curated dictionaries. I parsed all books from Project Gutenberg, ordered words by frequency and manually went through the list and left 2500 words. I didn't feel like there was a need for some fancy text generation algorithms, but at least it could use some n-gram bias, though.
 
@@ -211,7 +211,11 @@ I had this weird idea of coloring the objects so they map to specific fingers, w
 
 This mod recommended to be customised, because beatmaps are so different, it's literally impossible to make all of them playable with a click of a button.
 
-I wanted to be able to play this ruleset on a wide range of beatmaps, so I added the following setting: `Adjust Beat Length`. This will effectively double or halve the BPM to let me play for example a 100 BPM beatmap. The reason why is that the mod is generating hit objects at 1/4 for words, 1/2 for spaces between the words. This can be quite slow, so without having to use the DoubleTime to fine-tune and play on rate changed song, I can play it on 200 BPM, which is roughly 65 WPM.
+I wanted to be able to play this ruleset on a wide range of beatmaps, so I added the following setting: `Adjust Beat Length`. This will effectively double or halve the BPM to let me play for example a 100 BPM beatmap. The reason why is that the mod is generating hit objects at 1/4 for words, 1/2 for spaces between the words. This can be quite slow, so without having to use the DoubleTime to fine-tune and play on rate changed song, I can play it on 200 BPM, which is roughly 80 WPM.
+
+By accident, I noticed that `BPM / 2.5 = WPM`, assuming the default `full beat` length is used.
+
+E.g. if a song is 260 BPM and default settings are used (like playing 130 BPM), the WPM is approximately 104.
 
 > [!Note]
 > 100 BPM with halved beat length equals to 200 BPM with default full beat length.
