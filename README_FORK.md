@@ -84,6 +84,9 @@ I've been stalling on this for quite a long time and finally, I decided to move 
 
 I got pretty much bored of MonkeyType, and since I had it configured to the `scrolling tape`, it really reminded me of osu!taiko, so I created pretty much identical ruleset to this. To be clear, this is not the main source of typing practice due to multiple factors that differ from normal typing and this gameplay, and I guess everyone is aware of this.
 
+> [!Important]
+> I really need to record a video on this, should record one soon if I don't find anything else to add to this ruleset :thinking: (I hope so)
+
 ![img](https://i.imgur.com/pLbAL4T.png)
 
 These are just random, ranked words generated from curated dictionaries. I parsed all books from Project Gutenberg, ordered words by frequency and manually went through the list and left 2500 words. I didn't feel like there was a need for some fancy text generation algorithms, but at least it could use some n-gram bias, though.
