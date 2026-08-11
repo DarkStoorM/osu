@@ -4,6 +4,7 @@
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics.Containers;
@@ -18,12 +19,13 @@ namespace osu.Game.Rulesets.Typing.UI
     {
         public static readonly Colour4 LANE_FILL_COLOR = Color4Extensions.FromHex("#1E1E2E");
 
+        private const float fade_height = 100;
         private const float judgment_box_width = 70;
-        private readonly Colour4 judgmentBoxColour = new Colour4(255, 255, 255, 25);
-        private readonly Colour4 judgmentLineColour = Color4Extensions.FromHex("#A6E3A177");
-
         private const float lane_height = 200;
         private const float lane_left_padding = 200;
+
+        private readonly Colour4 judgmentBoxColour = new Colour4(255, 255, 255, 25);
+        private readonly Colour4 judgmentLineColour = Color4Extensions.FromHex("#A6E3A177");
 
         [BackgroundDependencyLoader]
         private void load()
@@ -77,7 +79,49 @@ namespace osu.Game.Rulesets.Typing.UI
                         Height = 100,
                         Width = judgment_box_width,
                         Colour = judgmentBoxColour,
-                    }
+                    },
+                    // Top gradient of the lane
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Height = fade_height,
+                        Margin = new MarginPadding { Top = -lane_height - fade_height },
+
+                        Children = new Drawable[]
+                        {
+                            new Box
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                Height = fade_height,
+                                Anchor = Anchor.TopLeft,
+                                Origin = Anchor.TopLeft,
+                                Colour = ColourInfo.GradientVertical(LANE_FILL_COLOR.Opacity(0), LANE_FILL_COLOR),
+                            },
+                        },
+                    },
+                    // Bottom gradient of the lane
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Height = fade_height,
+                        Margin = new MarginPadding { Top = lane_height + fade_height },
+
+                        Children = new Drawable[]
+                        {
+                            new Box
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                Height = fade_height,
+                                Anchor = Anchor.BottomLeft,
+                                Origin = Anchor.BottomLeft,
+                                Colour = ColourInfo.GradientVertical(LANE_FILL_COLOR, LANE_FILL_COLOR.Opacity(0)),
+                            },
+                        },
+                    },
                 }
             );
 

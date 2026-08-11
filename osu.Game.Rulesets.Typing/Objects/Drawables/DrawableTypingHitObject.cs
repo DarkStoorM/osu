@@ -21,6 +21,8 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
 {
     public partial class DrawableTypingHitObject : DrawableHitObject<TypingHitObject>, IKeyBindingHandler<TypingAction>
     {
+        private const string space_text_character = "|";
+
         // Note: while this does not belong here and these colours are only used through the mod, this was the fastest
         // change to get this to work since I couldn't figure out how to do this directly inside the mod in
         // IApplicableToDrawableHitObject. HitObject is null at that point, so I moved this here. Not ideal, but this
@@ -77,11 +79,24 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
         {
             base.OnApply();
 
-            letterText.Colour = OverrideKeyColour
-                ? fingerColours[HitObject.CurrentKey.Finger]
-                : defaultLetterColour;
+            if (HitObject is SpaceHitObject)
+            {
+                // This is very specific only to the current object that represents a space, which is the Pipe|Character
+                // so it appears as a word separator vertically across the playfield. Change this accordingly if a
+                // different character is used
+                letterText.Colour = defaultLetterColour;
+                letterText.Alpha = 0.5f;
+                letterText.Text = space_text_character;
+                letterText.Scale = new Vector2(2, 2);
+            }
+            else
+            {
+                letterText.Colour = OverrideKeyColour
+                    ? fingerColours[HitObject.CurrentKey.Finger]
+                    : defaultLetterColour;
 
-            letterText.Text = HitObject.Letter.ToString().ToUpperInvariant();
+                letterText.Text = HitObject.Letter.ToString().ToUpperInvariant();
+            }
         }
 
         protected override void OnFree()
@@ -91,6 +106,7 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
             typingAction = null;
             Alpha = 1;
             ClearTransforms();
+            letterText.Alpha = 1;
             letterText.Scale = Vector2.One;
             Position = Vector2.Zero;
         }
@@ -114,7 +130,11 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
             if (result == HitResult.None)
                 return;
 
-            if (typingAction == HitObject.Letter)
+            // Self note: space key does not belong here and should in fact be its own DHO, but I don't think I care enough
+            // about this right now. I will revisit this some day. Same thing about armed miss state
+            if (HitObject is SpaceHitObject && typingAction == TypingAction.Space)
+                ApplyResult(HitResult.LargeBonus);
+            else if (HitObject is not SpaceHitObject && typingAction == HitObject.Letter)
                 ApplyResult(result);
             else
                 ApplyMinResult();
@@ -130,6 +150,16 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
+                    // We don't really care what happens when we miss the bonus object
+                    if (HitObject is SpaceHitObject)
+                    {
+                        Alpha = 0;
+
+                        Expire();
+
+                        break;
+                    }
+
                     const double duration = 500;
 
                     // If the player selects Finger Guide mod, the missed letter will try to fade from its current colour

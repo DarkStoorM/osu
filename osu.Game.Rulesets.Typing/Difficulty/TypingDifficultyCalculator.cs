@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Difficulty.Utils;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Typing.Difficulty.Skills;
 using osu.Game.Rulesets.Typing.Mods;
+using osu.Game.Rulesets.Typing.Objects;
 using osu.Game.Utils;
 
 namespace osu.Game.Rulesets.Typing.Difficulty
@@ -160,6 +161,10 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 
             for (int i = 2; i < beatmap.HitObjects.Count; i++)
             {
+                // Bonus objects contribute nothing, so just ignore them
+                if (beatmap.HitObjects[i] is SpaceHitObject)
+                    continue;
+
                 objects.Add(
                     new TypingDifficultyHitObject(
                         beatmap.HitObjects[i],
