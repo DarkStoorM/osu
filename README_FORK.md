@@ -23,6 +23,8 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
       - [Forced Cross-Hand on New Words](#forced-cross-hand-on-new-words)
         - [Important Note on Cross-Hand Play](#important-note-on-cross-hand-play)
       - [Word Seed](#word-seed)
+      - [Space Between Words as Bonus](#space-between-words-as-bonus)
+        - [The Issues](#the-issues)
       - [Customisation](#customisation)
     - [Skinnable WPM](#skinnable-wpm)
     - [WPM In Beatmap Attributes](#wpm-in-beatmap-attributes)
@@ -280,9 +282,35 @@ It results in the same exact Star Rating across all beatmaps with the same prope
 
 It would seem like there is no point in using the seed, because ultimately the only difference would be how individual songs feel.
 
+#### Space Between Words as Bonus
+
+Although out of order, had to save this one for last. I really didn't want to add this, but I felt like the mod wouldn't be "whole" without it. The TL;DR of it is that it creates some issues I don't know how to deal with.
+
+Either way, normally, between the words there is an extra spacing so you have extra time to parse next word and don't have to press space. What this option does is that in the place of that spacing, it inserts a `bonus` HitObject:
+
+![alt](https://i.imgur.com/84ldmoa.png)
+
+I didn't really have anything better to put there as a clickable Space, so I used the `|` character, which is scaled up so it doesn't mix with the text.
+
+The bonus is calculated to be 25% extra of maximum score, so you get `1_250_000` with an SS.
+
+I initially set it to 10%, but it's really hard to play with this as it's a constant stream...
+
+I'm not really using it myself, because this technically creates an actual stream that basically forces you to 100% lock in or you die (there are literally no recovery times since you are always pressing something). This is basically the main reason why, by default, space was never really intended to be used.
+
+So, I will only treat this as an experiment on `ScoreProcessor` and optional objects.
+
+##### The Issues
+
+My design choice was to not make it a required `HitObject`, e.g. adding the same object that is used for letters, but with Space, so I made a new one, whose `HitResult` is `LargeBonus`, which makes it so that you can miss it safely or even press a different key on it without losing combo.
+
+Now, the issue is that while I wanted this to be fully optional, its `HitWindow` may overlap with the letters if you play on low `OD`. This created an issue where you are actually required to hit it, otherwise you will note-lock, because you will attempt to start typing a word when `Space` hit window was still active, which, sadly sucks, but I couldn't figure anything out here.
+
+If I were to make the `Space` hit window very narrow, which would make it harsher than OD10 taiko hit to fix this (somewhere around OD10 mania MAX), it would "work", but man, try hitting space a bit late and you start note-locking again.
+
 #### Customisation
 
-![alt](https://i.imgur.com/PY3v5te.png)
+![alt](https://i.imgur.com/jvDwtFW.png)
 
 ### Skinnable WPM
 
