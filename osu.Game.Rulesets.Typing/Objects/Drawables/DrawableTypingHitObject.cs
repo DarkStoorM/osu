@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
 {
     public partial class DrawableTypingHitObject : DrawableHitObject<TypingHitObject>, IKeyBindingHandler<TypingAction>
     {
-        private const string space_text_character = "_";
+        private const string space_text_character = "|";
 
         // Note: while this does not belong here and these colours are only used through the mod, this was the fastest
         // change to get this to work since I couldn't figure out how to do this directly inside the mod in
@@ -81,10 +81,13 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
 
             if (HitObject is SpaceHitObject)
             {
+                // This is very specific only to the current object that represents a space, which is the Pipe|Character
+                // so it appears as a word separator vertically across the playfield. Change this accordingly if a
+                // different character is used
                 letterText.Colour = defaultLetterColour;
-                letterText.Text = space_text_character;
                 letterText.Alpha = 0.5f;
-                letterText.Scale = new Vector2(1, 0.75f);
+                letterText.Text = space_text_character;
+                letterText.Scale = new Vector2(2, 2);
             }
             else
             {
