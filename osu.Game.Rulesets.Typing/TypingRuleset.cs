@@ -48,6 +48,8 @@ namespace osu.Game.Rulesets.Typing
 
         public override ScoreProcessor CreateScoreProcessor() => new TypingScoreProcessor();
 
+        public override ScoreMultiplierCalculator CreateScoreMultiplierCalculator(ScoreMultiplierContext context) => new TypingScoreMultiplierCalculator(context);
+
         public static Dictionary<DictionarySize, RankedWordGenerator> RankedDictionaries { get; private set; } = new Dictionary<DictionarySize, RankedWordGenerator>();
 
         public TypingRuleset()

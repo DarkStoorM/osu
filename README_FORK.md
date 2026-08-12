@@ -29,6 +29,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
       - [Space Between Words as Bonus](#space-between-words-as-bonus)
         - [The Issues](#the-issues)
       - [Customisation](#customisation)
+    - [Scoring Changes](#scoring-changes)
     - [Skinnable WPM](#skinnable-wpm)
     - [WPM In Beatmap Attributes](#wpm-in-beatmap-attributes)
     - [Nothing New](#nothing-new)
@@ -346,6 +347,15 @@ If I were to make the `Space` hit window very narrow, which would make it harshe
 #### Customisation
 
 ![alt](https://i.imgur.com/jvDwtFW.png)
+
+### Scoring Changes
+
+While Scoring was basically taken from osu!taiko, I made some small changes:
+
+- `Overall Difficulty` will award up to +10% extra score, which is calculated from a set range of OD. I initially set it at 5-10, so for OD6, the bonus is 2% and so on
+- `Perfect` takes a bigger max score portion, because there was no difference between Perfect and Great and there was no real reason to play more accurately. I bumped it from 300 to 325 (an arbitrary number for now). This is a combo between high OD and an indirect force on accuracy. This might result in tightening the window for Perfects on high OD, though
+- The `Words` mod can insert `Space` between the words, which grant extra score. This bonus score is set to 25% of total max score. Because it is very note-lock prone, the bonus is high
+- The `Words` mod allows adjusting the beat length that is calculated for beatmaps. It directly affects the score, because it can double the amount of objects or halve it. This can change the score from 2x to 0.5x
 
 ### Skinnable WPM
 
