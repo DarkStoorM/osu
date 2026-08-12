@@ -159,20 +159,21 @@ namespace osu.Game.Rulesets.Typing.Difficulty
             var objects = new List<DifficultyHitObject>();
             double clockRate = ModUtils.CalculateRateWithMods(mods);
 
-            for (int i = 2; i < beatmap.HitObjects.Count; i++)
-            {
-                // Bonus objects contribute nothing, so just ignore them
-                if (beatmap.HitObjects[i] is SpaceHitObject)
-                    continue;
+            // As a happy little accident, even though the bonus objects were supposed to contribute nothing, they happen
+            // to be affecting the delta time between objects. This is technically correct as space is an actual object
+            // inserted by the mod and the spacing between the letters effectively become twice as small
+            List<TypingHitObject> letters = beatmap.HitObjects.Where(o => o is not SpaceHitObject).Cast<TypingHitObject>().ToList();
 
+            for (int i = 2; i < letters.Count; i++)
+            {
                 objects.Add(
                     new TypingDifficultyHitObject(
-                        beatmap.HitObjects[i],
-                        beatmap.HitObjects[i - 1],
+                        letters[i],
+                        letters[i - 1],
                         clockRate,
                         objects,
                         objects.Count,
-                        beatmap.HitObjects.ElementAtOrDefault(i + 1)
+                        letters.ElementAtOrDefault(i + 1)
                     )
                 );
             }
