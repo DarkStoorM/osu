@@ -11,6 +11,9 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Changes to Statistics Screen](#changes-to-statistics-screen)
   - [Custom Ruleset: Typing](#custom-ruleset-typing)
     - [Motivation](#motivation)
+    - [The Big Question... What, and Why?](#the-big-question-what-and-why)
+      - [About Beatmap Content Replacement](#about-beatmap-content-replacement)
+    - [A Very Poor Screenshot + Explanation](#a-very-poor-screenshot--explanation)
       - [Note On Manually Curated Dictionary](#note-on-manually-curated-dictionary)
     - [A TL;DR On How To Use This](#a-tldr-on-how-to-use-this)
     - [ZERO Skin Elements](#zero-skin-elements)
@@ -84,10 +87,35 @@ I've been stalling on this for quite a long time and finally, I decided to move 
 
 I got pretty much bored of MonkeyType, and since I had it configured to the `scrolling tape`, it really reminded me of osu!taiko, so I created pretty much identical ruleset to this. To be clear, this is not the main source of typing practice due to multiple factors that differ from normal typing and this gameplay, and I guess everyone is aware of this.
 
-> [!Important]
-> I really need to record a video on this, should record one soon if I don't find anything else to add to this ruleset :thinking: (I hope so)
+### The Big Question... What, and Why?
+
+So, this is something very much against the vision of osu!. It's supposed to be played with a special mod that basically deletes someone's work (swaps contents in place for current session).
+
+To someone who doesn't really play osu!: you get a background song, you tap words to the actual beat. In reality, it wouldn't be much different than playing music and sitting on Monkeytype, but you know, there is no "layer of freedom" with you being forced to play consistently, no errors allowed, and it's inside osu!, which is nice.
+
+#### About Beatmap Content Replacement
+
+As somewhere mentioned (I guess), the main goal is to "type words". Attempting to generate actual words with the existing beatmap contents would make _absolutely no sense_, because words would be split by object spacing in time.
+
+Of course, I've done no research on this, but I'm 100% sure the cognitive load would be too much to consider it playable that way. It would be too hard to parse incoming words while also being split by variable time spacing. Just, no.
+
+I took the same approach as my osu!taiko mod: take the first and last object from the beatmap and insert random stuff in-between. Those two objects define the `Playable Bounds`. **All** existing objects from the selected beatmap are deleted. Again, this might feel like a middle finger towards the mappers like with my osu!taiko mod, because I just got bored of the current content.
+
+Now, back to the second part of the Big Question, _Why?_
+
+Well, two answers:
+
+- Having an excuse to play osu! again, but do something new at the same time as I don't want to play other modes
+- Having some more fun with typing on new keyboard
+
+But yeah, the real answer is that I was just curious if such thing would even be playable inside osu!, and so far, I mean personally, I find it fun once you start picking up some more speed.
+
+### A Very Poor Screenshot + Explanation
 
 ![img](https://i.imgur.com/pLbAL4T.png)
+
+> [!Important]
+> I really need to record a video on this, should record one soon if I don't find anything else to add to this ruleset :thinking: (I hope so)
 
 These are just random, ranked words generated from curated dictionaries. I parsed all books from Project Gutenberg, ordered words by frequency and manually went through the list and left 2500 words. I didn't feel like there was a need for some fancy text generation algorithms, but at least it could use some n-gram bias, though.
 
