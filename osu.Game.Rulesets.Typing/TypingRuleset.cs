@@ -72,8 +72,19 @@ namespace osu.Game.Rulesets.Typing
                 HitResult.Ok,
                 HitResult.Good,
                 HitResult.Great,
-                HitResult.Perfect
+                HitResult.Perfect,
+                HitResult.LargeBonus
             };
+        }
+
+        public override LocalisableString GetDisplayNameForHitResult(HitResult result)
+        {
+            // The only hit result that needs a name is the Space really, because otherwise it would be confusing where
+            // the "LargeBonus" comes from
+            if (result == HitResult.LargeBonus)
+                return "Spaces";
+
+            return base.GetDisplayNameForHitResult(result);
         }
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
