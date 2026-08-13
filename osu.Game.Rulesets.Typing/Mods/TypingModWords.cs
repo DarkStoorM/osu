@@ -34,9 +34,9 @@ namespace osu.Game.Rulesets.Typing.Mods
             "\"Curated\" dictionary contains a custom scored words list from Extended dictionary with extra words from OANC. \"Basic\" - 300 words. Other dictionaries are frequency-sorted words lists.")]
         public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
 
-        [SettingSource("Adjust Beat Length",
-            "Halve or Double the existing beat length to make letters appear more or less frequent. \"Full\" will use the current time value of this beatmaps's half beat (1/2). Half: 1/4, Double: 1/1.")]
-        public Bindable<BeatLength> AdjustBeatLength { get; } = new Bindable<BeatLength>(BeatLength.Full);
+        [SettingSource("Beat Length Adjustment",
+            "Halve or Double the existing beat length to make letters appear more or less frequent. \"Default\" will use the current value of this beatmaps's half beat (1/2). Halved: 1/4, Doubled: 1/1.")]
+        public Bindable<BeatLengthAdjustment> AdjustBeatLength { get; } = new Bindable<BeatLengthAdjustment>(BeatLengthAdjustment.Default);
 
         [SettingSource("Add spacing between words", "Inserts a full beat pause between the words.")]
         public BindableBool AddSpacingBetweenWords { get; } = new BindableBool();
@@ -90,9 +90,9 @@ namespace osu.Game.Rulesets.Typing.Mods
         /// </summary>
         private double beatFull => currentTimingControlPoint.BeatLength * AdjustBeatLength.Value switch
         {
-            BeatLength.Half => 0.5,
-            BeatLength.Full => 1,
-            BeatLength.Double => 2,
+            BeatLengthAdjustment.Halved => 0.5,
+            BeatLengthAdjustment.Default => 1,
+            BeatLengthAdjustment.Doubled => 2,
             _ => 1
         };
 
@@ -358,11 +358,16 @@ namespace osu.Game.Rulesets.Typing.Mods
         }
     }
 
-    public enum BeatLength
+    public enum BeatLengthAdjustment
     {
-        Half,
-        Full,
-        Double,
+        // Half of the Default beat length. In short: twice the BPM
+        Halved,
+
+        // Default beat length value that was calculated for the beatmap
+        Default,
+
+        // Twice the Default beat length. In short: half the BPM
+        Doubled,
     }
 
     public enum DictionarySize

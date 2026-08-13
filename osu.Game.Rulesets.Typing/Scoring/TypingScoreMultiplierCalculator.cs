@@ -19,9 +19,9 @@ namespace osu.Game.Rulesets.Typing.Scoring
             {
                 // So, the reason for doing it this way is that the mod may generate twice as many objects, because the
                 // default beat length calculated from the beatmap is doubled
-                BeatLength.Half => 2,
-                BeatLength.Full => 1,
-                BeatLength.Double => 0.5,
+                BeatLengthAdjustment.Halved => 2,
+                BeatLengthAdjustment.Default => 1,
+                BeatLengthAdjustment.Doubled => 0.5,
                 _ => 1
             });
         }

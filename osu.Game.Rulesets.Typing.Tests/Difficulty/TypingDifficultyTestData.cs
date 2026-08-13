@@ -36,12 +36,12 @@ namespace osu.Game.Rulesets.Typing.Tests.Difficulty
             Beatmap beatmap,
             DictionarySize dictionarySize,
             int seed = 1,
-            BeatLength beatLength = BeatLength.Half)
+            BeatLengthAdjustment beatLengthAdjustment = BeatLengthAdjustment.Halved)
         {
             var mod = new TypingModWords
             {
                 Seed = { Value = seed },
-                AdjustBeatLength = { Value = beatLength },
+                AdjustBeatLength = { Value = beatLengthAdjustment },
                 DictionarySize = { Value = dictionarySize }
             };
 

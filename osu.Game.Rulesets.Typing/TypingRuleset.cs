@@ -185,8 +185,8 @@ namespace osu.Game.Rulesets.Typing
 
                 modBeatDivisor = typingModWords.AdjustBeatLength.Value switch
                 {
-                    BeatLength.Half => 2.0,
-                    BeatLength.Double => 0.5,
+                    BeatLengthAdjustment.Halved => 2.0,
+                    BeatLengthAdjustment.Doubled => 0.5,
                     _ => 1.0
                 };
 
