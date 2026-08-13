@@ -357,6 +357,30 @@ While Scoring was basically taken from osu!taiko, I made some small changes:
 - The `Words` mod can insert `Space` between the words, which grant extra score. This bonus score is set to 25% of total max score. Because it is very note-lock prone, the bonus is high
 - The `Words` mod allows adjusting the beat length that is calculated for beatmaps. It directly affects the score, because it can double the amount of objects or halve it. This can change the score from 2x to 0.5x
 
+This is probably the moment where I should explain myself for adding such a big bonus to the `Space`.
+
+You'd think it makes no sense to have an automatically computed bonus score, which, yes, would be weird if a beatmap is very short, because the resulting score per bonus object is big.
+
+Two things here:
+
+- Bonus is tiny on long maps, but there are lots of spaces to hit
+- Bonus is large on short maps, and there is not much of spaces to hit (my approximation was 70 over 1 minute of 120bpm)
+
+Let's look at more details here:
+
+- You play some 200bpm song with default settings (default beat length, which makes it actually 100bpm), and the score multiplier here is `1x`
+- You achieve somewhere around 900k score with a full combo
+- Someone comes in and adds `Space`s for extra score and achieves 950k without a full combo and with less accuracy
+- You think: "bro, I almost SS'd it, how is this fair"
+
+Now, fair, on very slow maps it makes little sense, I agree, but in this situation someone wouldn't just go for bonus score, but doubled object count from beat length adjustment, which applies `2x` score multiplier.
+
+Naturally, you would then adjust your play to match the score, which turns into accuracy battle like in the good old osu!.
+
+Now, with all this in mind, I want you to imagine the situation from above, but on osu! Stable, with some random `Easy` full of max scores, and one score at the top with DoubleTime, no SS and maybe an early/late miss. That's all I guess
+
+I know that's hardly a comparison due to how both modes work, but still, the `Spaces Between Words` customisation is not just free score. It's effectively a constant stream, which greatly increases the risk, especially on higher BPM. I'm aware that all this doesn't really answer the question why `Spaces` are bonus objects, this was just the decision I made.
+
 ### Skinnable WPM
 
 I will just briefly mention that there is a new component for WPM, but it's basically the same counter that is used for `Clicks Per Second`, but it's measuring overall inputs for the current beatmap playtime that will average out as you play to give an approximate realtime WPM.
