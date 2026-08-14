@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
 {
     public partial class TypingScoreProcessor : ScoreProcessor
     {
-        private const double bonus_space_score_fraction = 0.25;
+        private const double bonus_space_score_fraction = 0.15;
         private const double bonus_space_score_budget = MAX_SCORE * bonus_space_score_fraction;
 
         /// <summary>
