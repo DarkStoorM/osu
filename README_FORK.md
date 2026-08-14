@@ -30,7 +30,6 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
         - [The Issues](#the-issues)
       - [Customisation](#customisation)
     - [Scoring Changes](#scoring-changes)
-    - [Skinnable WPM](#skinnable-wpm)
     - [WPM In Beatmap Attributes](#wpm-in-beatmap-attributes)
     - [Nothing New](#nothing-new)
     - [Questionable Change](#questionable-change)
@@ -200,7 +199,7 @@ So, this basically means there will be none of these ever:
 - Ruleset Character
 - Non-miss `HitObject` Judgement display (`max`, `good` etc.)
 
-I don't mind the playfield being basically empty. I could technically make them optional, just like the `Skinnable Key Timing Distribution` and `WPM Counter`, but it's not really worth it.
+I don't mind the playfield being basically empty. I could technically make them optional, just like the `Skinnable Key Timing Distribution`, but it's not really worth it.
 
 ### Work-in-progress
 
@@ -380,10 +379,6 @@ Naturally, you would then adjust your play to match the score, which turns into 
 Now, with all this in mind, I want you to imagine the situation from above, but on osu! Stable, with some random `Easy` full of max scores, and one score at the top with DoubleTime, no SS and maybe an early/late miss. That's all I guess
 
 I know that's hardly a comparison due to how both modes work, but still, the `Spaces Between Words` customisation is not just free score. It's effectively a constant stream, which greatly increases the risk, especially on higher BPM. I'm aware that all this doesn't really answer the question why `Spaces` are bonus objects, this was just the decision I made.
-
-### Skinnable WPM
-
-I will just briefly mention that there is a new component for WPM, but it's basically the same counter that is used for `Clicks Per Second`, but it's measuring overall inputs for the current beatmap playtime that will average out as you play to give an approximate realtime WPM.
 
 ### WPM In Beatmap Attributes
 
