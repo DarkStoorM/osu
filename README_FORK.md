@@ -351,43 +351,21 @@ If I were to make the `Space` hit window very narrow, which would make it harshe
 
 While Scoring was basically taken from osu!taiko, I made some small changes:
 
-- `Overall Difficulty` will award up to +10% extra score, which is calculated from a set range of OD. I initially set it at 5-10, so for OD6, the bonus is 2% and so on
+- `Overall Difficulty` will award up to +25% extra score, which is calculated from a set range of OD. I initially set it at 5-10, so for `OD 6`, the bonus is 5% and so on. Below this value, the score is deducted for balance purposes to not make `OD 0` be worth more than `OD 5`, which requires more accuracy
 - `Perfect` takes a bigger max score portion, because there was no difference between Perfect and Great and there was no real reason to play more accurately. I bumped it from 300 to 325 (an arbitrary number for now). This is a combo between high OD and an indirect force on accuracy. This might result in tightening the window for Perfects on high OD, though
-- The `Words` mod can insert `Space` between the words, which grant extra score. This bonus score is set to 12.5% of total max score. Because it is very note-lock prone on faster beatmaps, the bonus is high.
-- The `Words` mod allows adjusting the beat length that is calculated for beatmaps. It directly affects the score, because it can double the amount of objects or halve it. This can change the score from 2x to 0.5x
+- The `Words` mod can insert `Space` between the words, which grant extra score. This bonus score is set to 25% of total max score. Because it is very note-lock prone on faster beatmaps, the bonus is high.
+- The `Words` mod allows adjusting the beat length that is calculated for beatmaps. It directly affects the score, because it can double the amount of objects or halve it. This will change the score from 2x to 0.5x
 
-This is probably the moment where I should explain myself for adding such a big bonus to the `Space`.
-
-You'd think it makes no sense to have an automatically computed bonus score, which, yes, would be weird if a beatmap is very short, because the resulting score per bonus object is big.
-
-Two things here:
-
-- Bonus is tiny on long maps, but there are lots of spaces to hit
-- Bonus is large on short maps, and there is not much of spaces to hit (my approximation was 70 over 1 minute of 120bpm)
-
-Let's look at more details here:
-
-- You play some 200bpm song with default settings (default beat length, which makes it actually 100bpm), and the score multiplier here is `1x`
-- You achieve somewhere around 900k score with a full combo
-- Someone comes in and adds `Space`s for extra score and achieves 950k without a full combo and with less accuracy
-- You think: "bro, I almost SS'd it, how is this fair"
-
-Now, fair, on very slow maps it makes little sense, I agree, but in this situation someone wouldn't just go for bonus score, but doubled object count from beat length adjustment, which applies `2x` score multiplier.
-
-Naturally, you would then adjust your play to match the score, which turns into accuracy battle like in the good old osu!.
-
-Now, with all this in mind, I want you to imagine the situation from above, but on osu! Stable, with some random `Easy` full of max scores, and one score at the top with DoubleTime, no SS and maybe an early/late miss. That's all I guess
-
-I know that's hardly a comparison due to how both modes work, but still, the extra `Space` keys customisation is not just free score. It's effectively a constant stream, which greatly increases the risk of missing/note-locking, especially on higher BPM. I'm aware that all this doesn't really answer the question why `Spaces` are bonus objects, this was just the decision I made.
+Anyway, the extra `Space` keys customisation is not just free score. It's effectively a constant stream, which greatly increases the risk of missing/note-locking, especially on higher BPM. On slow beatmaps it's a "whatever". I'm aware that all this doesn't really answer the question why `Spaces` are bonus objects, this was just the decision I made.
 
 That being said, a quick breakdown of total score based on the beat length:
 
 | Spaces / Beat Length | Halved        | Default       | Doubled     |
 | -------------------- | ------------- | ------------- | ----------- |
 | Off                  | 2 000 000     | 1 000 000     | 500 000     |
-| On                   | 2 **300 000** | 1 **150 000** | 5**75 000** |
+| On                   | 2 **500 000** | 1 **250 000** | **625 000** |
 
-`Spaces` are excluded from **Overall Difficulty** multiplier, so on `OD10`, the maximum score for SS with `Spaces` is `2 500 000`.
+`Spaces` are excluded from **Overall Difficulty** multiplier, so on `OD10`, the maximum score for SS with `Spaces` is `3 000 000`. Should barely be possible on higher WPMs anyway.
 
 ### WPM In Beatmap Attributes
 
