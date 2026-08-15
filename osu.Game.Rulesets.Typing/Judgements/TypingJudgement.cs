@@ -22,13 +22,16 @@ namespace osu.Game.Rulesets.Typing.Judgements
                     return 0.5;
 
                 case HitResult.Good:
-                    return 1.0;
+                    return 1.5;
 
                 case HitResult.Great:
-                    return 2.5;
+                    return 3;
 
+                // Due to the Perfect window being almost twice as tight as Great on higher ODs, and stable typing
+                // on higher speeds being quite hard, the health increase for Perfects should be higher.
+                // This is tuned specifically for later gameplay above 120~WPM
                 case HitResult.Perfect:
-                    return 3.0;
+                    return 3.5;
 
                 default:
                     return 0;
