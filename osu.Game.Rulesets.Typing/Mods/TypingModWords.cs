@@ -26,7 +26,40 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         public override ModType Type => ModType.Conversion;
         public override LocalisableString Description => "Generates random words from dictionary";
-        public override string Acronym => "ENG";
+
+        public override string Acronym => "W";
+
+        public override string ExtendedIconInformation
+        {
+            get
+            {
+                string info = DictionarySize.Value switch
+                {
+                    Mods.DictionarySize.Curated => "C",
+                    Mods.DictionarySize.Basic => "B",
+                    Mods.DictionarySize.Advanced => "A",
+                    Mods.DictionarySize.Extended => "X",
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+
+                if (AddBonusSpaceHitObjects.Value)
+                    info += "_";
+
+                switch (AdjustBeatLength.Value)
+                {
+                    case BeatLengthAdjustment.Halved:
+                        info += "+";
+                        break;
+
+                    case BeatLengthAdjustment.Doubled:
+                        info += "-";
+                        break;
+                }
+
+                return info;
+            }
+        }
+
         public override string Name => "Words";
         public override bool Ranked => false;
 
