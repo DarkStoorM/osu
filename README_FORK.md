@@ -448,17 +448,27 @@ Also, I won't be sharing this in the [Custom Ruleset Directory](https://github.c
 
 A hacky keyboard preview with unstable rate per key. The layout is the default staggered, can't be bothered figuring out the split layouts. The keys will be taken from the mod directly since you can now select the layout from the customisation.
 
-> [!Note] The colours have been changed temporarily, so the below graphic shows old colours. The new colours resemble the Star Rating spectrum.
+![alt](https://i.imgur.com/elxKdHD.png)
 
-![alt](https://i.imgur.com/TWqHIYB.png)
+Couldn't really come up with anything better for now, I just needed the Unstable Rate. The size is hardcoded, though, couldn't figure out how to make the auto scale to work. The cards show the key with successful hits (green) and missed (red). The colours were taken directly from Star Rating, except I made it darker, because with more surface area, they were too prominent.
+
+The colour spectrum from SR, where starting point (green) is `80`, ends on `260` (dark blue).
+
+![alt](https://i.imgur.com/qz0Jbcp.png)
+
+The current colour spectrum for keys don't include Blue, I just started from Green, which naturally says "good", and the value for Unstable Rate where the colour starts fading into others is `80`. Just an arbitrary value I chose for the lowest I could personally reach while playing, so there was no real tweaking for what the best value would be.
+
+Conveniently, the mid point where the player should consider the UR to be bad is where the text colour changes from black to yellow, which is at `160` Unstable Rate. After that, the keys become darker, meaning that the play was either offset or just bad and needs improvement.
+
+When the text colour is black, you aim for improvement from pink to orange, which is a jump from ~`150` to `120` UR. Then it's a pure grind to yellow.
 
 ## Skinnable Key Timing Distribution
 
 Initially, I added the Unstable Rate preview to the result screen as mentioned above, but I decided to also add this to the skin editor instead of creating a keyboard layout with flashing keys as you type. This was the laziest implementation and I didn't even want to do it anyway, but since I'd sometimes want to have a live preview of the Unstable Rate for videos, I just reused the result screen component.
 
-I had to change the `Alpha` on it though, so it's not as distracting
+Might be a bit too distracting, though...
 
-![alt](https://i.imgur.com/JbBuUDS.png)
+![alt](https://i.imgur.com/qamL2EV.png)
 
 ### Missing Features
 

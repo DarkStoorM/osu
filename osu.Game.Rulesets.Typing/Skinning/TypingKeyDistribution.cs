@@ -29,7 +29,6 @@ namespace osu.Game.Rulesets.Typing.Skinning
             keyTimingDistribution = new KeyTimingDistribution(scoreProcessor.HitEvents, scoreProcessor.Mods.Value);
 
             Child = keyTimingDistribution;
-            Child.Alpha = 0.3f;
 
             scoreProcessor.NewJudgement += updateKeyCard;
             scoreProcessor.JudgementReverted += updateKeyCard;

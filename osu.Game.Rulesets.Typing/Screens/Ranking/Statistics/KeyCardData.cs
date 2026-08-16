@@ -13,13 +13,14 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
     // as it didn't need to reflect the values 1:1
     public readonly record struct KeyCardData
     {
-        private static readonly Colour4 default_transparent_gray = Colour4.DarkGray.Opacity(0.2f);
+        private static readonly Colour4 default_gray = Color4Extensions.FromHex(@"333");
 
         public int HitEventsCount { get; }
         public int MissEventsCount { get; }
         public double UnstableRate { get; }
 
         public Colour4 BackgroundColour { get; }
+        public Colour4 AdditionalInformationBackgroundColour { get; }
         public Colour4 TextColour { get; }
         public Colour4 BorderColour { get; }
         public Colour4 GlowColour { get; }
@@ -56,20 +57,22 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 
             if (UnstableRate == 0)
             {
-                BackgroundColour = default_transparent_gray;
-                TextColour = default_transparent_gray;
+                BackgroundColour = default_gray;
+                AdditionalInformationBackgroundColour = default_gray.Darken(0.75f);
+                TextColour = default_gray.Lighten(0.5f);
                 return;
             }
 
-            BackgroundColour = colourForUnstableRate();
-            TextColour = colourForUnstableRateText();
+            BackgroundColour = colourForUnstableRate().Darken(0.25f);
+            AdditionalInformationBackgroundColour = colourForUnstableRate().Darken(0.75f);
+            TextColour = textColourForUnstableRate().Darken(0.25f);
             BorderColour = borderColourForUnstableRate();
             GlowColour = borderColourForUnstableRate().Opacity(0.1f);
         }
 
         private Colour4 colourForUnstableRate() => ColourUtils.SampleFromLinearGradient(unstable_rate_spectrum, (float)Math.Round(UnstableRate, 2, MidpointRounding.AwayFromZero));
 
-        private Colour4 colourForUnstableRateText()
+        private Colour4 textColourForUnstableRate()
         {
             if (UnstableRate < 160)
                 return Color4.Black.Opacity(0.75f);

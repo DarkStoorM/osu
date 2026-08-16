@@ -1,93 +1,146 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 {
     public partial class KeyboardKeyCard : Container
     {
+        private const float card_size = 55;
+        private const float additional_information_box_height = 16;
+
         private readonly OsuSpriteText keyMissedCountText;
         private readonly OsuSpriteText keyCountText;
-        private readonly OsuSpriteText keyCountSeparatorText;
         private readonly OsuSpriteText keyText;
         private readonly OsuSpriteText unstableRateText;
+
         private readonly Box cardBox;
+        private readonly Box unstableRateBox;
+        private readonly Box hitCountBox;
+
+        private readonly Container cardContainer;
+        private readonly Container unstableRateContainer;
+        private readonly Container hitCountContainer;
+
+        private readonly Color4 unstableRateTextColour = Color4Extensions.FromHex("d9d450");
+        private readonly Color4 keysHitCountTextColour = Color4Extensions.FromHex("7fcc33");
+        private readonly Color4 hitCountSeparatorTextColour = Color4Extensions.FromHex("d9d450");
+        private readonly Color4 keysMissedCountTextColour = Color4Extensions.FromHex("eb4747");
 
         public KeyboardKeyCard(string key, KeyCardData keyCardData)
         {
-            Width = 75;
-            Height = 90;
-            Masking = true;
-            CornerRadius = 8;
-            BorderThickness = 1.5f;
+            Width = card_size;
+            Height = 35 + additional_information_box_height * 2;
             Margin = new MarginPadding(5);
 
             InternalChildren = new Drawable[]
             {
-                cardBox = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                },
-
                 new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Direction = FillDirection.Vertical,
-                    Padding = new MarginPadding(10),
+                    Padding = new MarginPadding(0),
 
                     Children = new Drawable[]
                     {
-                        unstableRateText = new OsuSpriteText
+                        unstableRateContainer = new Container
                         {
                             Anchor = Anchor.TopCentre,
-                            Origin = Anchor.Centre,
-                            Padding = new MarginPadding { Top = 5 },
-                            Text = setUnstableRateText(keyCardData.UnstableRate),
-                            Font = OsuFont.Torus.With(size: 20),
-                        },
+                            Origin = Anchor.TopCentre,
+                            Width = card_size - 8,
+                            Height = additional_information_box_height,
+                            Masking = true,
+                            CornerRadius = 4,
+                            BorderThickness = 1.5f,
+                            Margin = new MarginPadding { Bottom = -8 },
 
-                        keyText = new OsuSpriteText
-                        {
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.Centre,
-                            Text = key,
-                            Font = OsuFont.Inter.With(size: 50, weight: FontWeight.Bold),
-                        },
-
-                        new FillFlowContainer
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Direction = FillDirection.Horizontal,
-                            Padding = new MarginPadding { Top = 5 },
-                            Children = new[]
+                            Children = new Drawable[]
                             {
-                                keyCountText = new OsuSpriteText
+                                unstableRateBox = new Box
                                 {
-                                    Anchor = Anchor.TopCentre,
-                                    Origin = Anchor.Centre,
-                                    Text = keyCardData.HitEventsCount.ToString(),
-                                    Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
+                                    RelativeSizeAxes = Axes.Both,
                                 },
-                                keyCountSeparatorText = new OsuSpriteText
+                                unstableRateText = new OsuSpriteText
                                 {
-                                    Anchor = Anchor.TopCentre,
+                                    Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Text = "/",
-                                    Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
-                                },
-                                keyMissedCountText = new OsuSpriteText
+                                    Text = setUnstableRateText(keyCardData.UnstableRate),
+                                    Font = OsuFont.Torus.With(size: 13),
+                                    Colour = unstableRateTextColour
+                                }
+                            }
+                        },
+
+                        cardContainer = new Container
+                        {
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Width = card_size,
+                            Height = card_size,
+                            Masking = true,
+                            CornerRadius = 8,
+                            BorderThickness = 1.5f,
+                            Depth = 1,
+
+                            Children = new Drawable[]
+                            {
+                                cardBox = new Box
                                 {
-                                    Anchor = Anchor.TopCentre,
-                                    Origin = Anchor.Centre,
-                                    Text = keyCardData.MissEventsCount.ToString(),
-                                    Font = OsuFont.Numeric.With(size: 14, weight: FontWeight.Bold),
+                                    RelativeSizeAxes = Axes.Both,
                                 },
+                                keyText = new OsuSpriteText
+                                {
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Text = key,
+                                    Font = OsuFont.Inter.With(size: 40, weight: FontWeight.Bold),
+                                }
+                            }
+                        },
+
+                        hitCountContainer = new Container
+                        {
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Width = card_size - 8,
+                            Height = additional_information_box_height,
+                            Masking = true,
+                            CornerRadius = 4,
+                            BorderThickness = 1.5f,
+                            Margin = new MarginPadding { Top = -8 },
+
+                            Children = new Drawable[]
+                            {
+                                hitCountBox = new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                },
+                                new FillFlowContainer
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Direction = FillDirection.Horizontal,
+                                    Padding = new MarginPadding(5),
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+
+                                    Children = new Drawable[]
+                                    {
+                                        keyCountText = additionalInformationText(keyCardData.HitEventsCount.ToString(), keysHitCountTextColour),
+
+                                        // The separator never changes, so no need to store it
+                                        additionalInformationText("/", hitCountSeparatorTextColour),
+
+                                        keyMissedCountText = additionalInformationText(keyCardData.MissEventsCount.ToString(), keysMissedCountTextColour)
+                                    }
+                                }
                             }
                         }
                     }
@@ -95,6 +148,18 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             };
 
             updateCardColours(keyCardData);
+        }
+
+        private static OsuSpriteText additionalInformationText(string content, Colour4 colour)
+        {
+            return new OsuSpriteText
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Text = content,
+                Font = OsuFont.Torus.With(size: 13, weight: FontWeight.Bold),
+                Colour = colour
+            };
         }
 
         private static string setUnstableRateText(double unstableRate) => unstableRate == 0 ? "N/A" : $"UR: {unstableRate:F0}";
@@ -112,19 +177,24 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
         {
             BorderColour = keyCardData.BorderColour;
 
-            EdgeEffect = new EdgeEffectParameters
+            cardContainer.EdgeEffect = setEdgeEffect(keyCardData);
+            unstableRateContainer.EdgeEffect = setEdgeEffect(keyCardData);
+            hitCountContainer.EdgeEffect = setEdgeEffect(keyCardData);
+
+            cardBox.Colour = keyCardData.BackgroundColour;
+            unstableRateBox.Colour = keyCardData.AdditionalInformationBackgroundColour;
+            hitCountBox.Colour = keyCardData.AdditionalInformationBackgroundColour;
+            keyText.Colour = keyCardData.TextColour;
+        }
+
+        private static EdgeEffectParameters setEdgeEffect(KeyCardData keyCardData)
+        {
+            return new EdgeEffectParameters
             {
                 Type = EdgeEffectType.Glow,
                 Colour = keyCardData.GlowColour,
                 Radius = 4,
             };
-
-            cardBox.Colour = keyCardData.BackgroundColour;
-            unstableRateText.Colour = keyCardData.TextColour;
-            keyText.Colour = keyCardData.TextColour;
-            keyCountText.Colour = keyCardData.TextColour;
-            keyMissedCountText.Colour = keyCardData.TextColour;
-            keyCountSeparatorText.Colour = keyCardData.TextColour;
         }
     }
 }
