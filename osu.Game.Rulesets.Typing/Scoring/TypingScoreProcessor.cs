@@ -30,11 +30,10 @@ namespace osu.Game.Rulesets.Typing.Scoring
         {
         }
 
-        // Same as in osu!taiko
         protected override double ComputeTotalScore(double comboProgress, double accuracyProgress, double bonusPortion)
         {
-            double totalScore = 250000 * comboProgress
-                                + 750000 * DiffUtils.Pow(Accuracy.Value, 3.6) * accuracyProgress;
+            double totalScore = 200000 * comboProgress
+                                + 800000 * DiffUtils.Pow(Accuracy.Value, 4) * accuracyProgress;
 
             // The Overall Difficulty multiplier is applied to incentivise more accurate plays
             return totalScore * overallDifficultyMultiplier + bonusPortion;
