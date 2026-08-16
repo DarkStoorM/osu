@@ -31,6 +31,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
       - [Customisation](#customisation)
     - [Scoring Changes](#scoring-changes)
     - [WPM In Beatmap Attributes](#wpm-in-beatmap-attributes)
+      - [Other Beatmap Attributes](#other-beatmap-attributes)
     - [Nothing New](#nothing-new)
     - [Questionable Change](#questionable-change)
     - [Why Not Extract Ruleset?](#why-not-extract-ruleset)
@@ -374,6 +375,22 @@ Since I wanted a WPM preview with the mods applied on the beatmaps, I added it t
 ![alt](https://i.imgur.com/AtLbgVa.png)
 
 ![alt](https://i.imgur.com/dhPX6WR.png)
+
+#### Other Beatmap Attributes
+
+Since WPM is not really enough, other attributes are also kind of important.
+
+OD grants extra score, so it would be nice to also have an adjustable value visible in the song/mod select. Same with the HP to be honest, because high HP can be devastating on accuracy drops, so, good to know what's the current difficulty on the beatmap.
+
+I also added the computed `Total Score` to the beatmap attributes with a breakdown thanks to `Additional Metrics`:
+
+![alt](https://i.imgur.com/IUIZ3kK.png)
+
+Although, it does not look very good in the mod select if HP is a two-digit...
+
+![alt](https://i.imgur.com/wFhuzyy.png)
+
+That's a _whatever_.
 
 ### Nothing New
 

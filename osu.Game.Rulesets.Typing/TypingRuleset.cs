@@ -170,28 +170,28 @@ namespace osu.Game.Rulesets.Typing
                 new KeyBinding(InputKey.Space, TypingAction.Space),
             };
 
+        // Self note: I know this is messy, but it will do for now
         public override IEnumerable<RulesetBeatmapAttribute> GetBeatmapAttributesForDisplay(IBeatmapInfo beatmapInfo, IReadOnlyCollection<Mod> mods)
         {
+            TypingModWords? typingModWords = mods.OfType<TypingModWords>().FirstOrDefault();
+
+            // Nothing else to do here if the mod was not selected
+            if (typingModWords == null)
+                return Array.Empty<RulesetBeatmapAttribute>();
+
             double rate = ModUtils.CalculateRateWithMods(mods);
             var adjustedDifficulty = GetAdjustedDisplayDifficulty(beatmapInfo, mods);
             double adjustedBeatLength = 60000 / beatmapInfo.BPM / rate;
-            double modBeatDivisor = 1.0;
 
-            // The Words mod had customisation for beat length, which can generate letters at double or half the beat length,
+            // The Words mod has customisation for beat length, which can generate letters at double or half the beat length,
             // which naturally affects the WPM. This will make the changes reflect when customising the mod
-            foreach (Mod mod in mods)
-            {
-                if (mod is not TypingModWords typingModWords) continue;
-
-                modBeatDivisor = typingModWords.AdjustBeatLength.Value switch
+            double modBeatDivisor =
+                typingModWords.AdjustBeatLength.Value switch
                 {
                     BeatLengthAdjustment.Halved => 2.0,
                     BeatLengthAdjustment.Doubled => 0.5,
                     _ => 1.0
                 };
-
-                break;
-            }
 
             // Standard typing WPM assumes 5 characters per word.
             // Words mod inserts letters every half beat, so:
@@ -201,24 +201,55 @@ namespace osu.Game.Rulesets.Typing
             double wpm = 24000.0 / adjustedBeatLength;
             double wpmAdjusted = 24000.0 / (adjustedBeatLength / modBeatDivisor);
 
-            if (!mods.Any(x => x is TypingModWords))
-            {
-                wpm = 0;
-                wpmAdjusted = 0;
-            }
-
             var colours = new OsuColour();
             var hitWindows = new TypingHitWindows();
+
             hitWindows.SetDifficulty(adjustedDifficulty.OverallDifficulty);
+
+            const float max_score = (float)ScoreProcessor.MAX_SCORE;
+
+            // Mod multiplier also affects bonus score, because the total consists of regular results + bonus results
+            double bonusSpacesScore = typingModWords.AddBonusSpaceHitObjects.Value
+                ? (float)(max_score * TypingScoreProcessor.BONUS_SPACE_SCORE_FRACTION * modBeatDivisor)
+                : 0;
+
+            double scoreWithBeatDivisor = (float)(max_score * modBeatDivisor);
+
+            double odMultiplier = (float)TypingScoreProcessor.CalculateOverallDifficultyMultiplier(adjustedDifficulty.OverallDifficulty);
+            double adjustedScore = scoreWithBeatDivisor * odMultiplier + bonusSpacesScore;
+
+            // This is only for the tiny bar display in the song select, where the beatmap attributes show the
+            // adjusted values
+            double od10Multiplier = TypingScoreProcessor.CalculateOverallDifficultyMultiplier(10);
+            double maxPossibleScore = scoreWithBeatDivisor * od10Multiplier + bonusSpacesScore;
+
+            List<RulesetBeatmapAttribute.AdditionalMetric> additionalMetrics = new List<RulesetBeatmapAttribute.AdditionalMetric>();
+
+            if (typingModWords.AdjustBeatLength.Value != BeatLengthAdjustment.Default)
+                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Beat Length Score Adjustment", $"{scoreWithBeatDivisor - max_score:N0}"));
+
+            if (Math.Abs(adjustedDifficulty.OverallDifficulty - 5) > double.Epsilon)
+                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Overall Difficulty score", $"{max_score * modBeatDivisor * (odMultiplier - 1):N0}"));
+
+            if (typingModWords.AddBonusSpaceHitObjects.Value)
+                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Spaces bonus score", $"{bonusSpacesScore:N0}"));
+
             var attributes = new List<RulesetBeatmapAttribute>
             {
-                new RulesetBeatmapAttribute("WPM", @"WPM", (float)wpm, (float)wpmAdjusted, (float)wpm)
+                // This will sadly result in displaying a large number in the mod selection, but it was positioned next to a smaller
+                // attribute for this reason to not overlap. The resulting number will be close anyway because of the float formatting...
+                new RulesetBeatmapAttribute("Total Score", @"TS", max_score, (float)adjustedScore, (float)maxPossibleScore)
                 {
-                    Description = "Approximate Words Per Minute based on beatmap's most common BPM. This only applies to the Words mod and ignores the extra spacing between words."
+                    Description = "Maximum achievable score based on selected mod customisation.",
+                    AdditionalMetrics = additionalMetrics.ToArray()
                 },
                 new RulesetBeatmapAttribute("HP", @"HP", beatmapInfo.Difficulty.DrainRate, adjustedDifficulty.DrainRate, 10)
                 {
                     Description = "Affects the harshness of health drain and the health penalties for missing."
+                },
+                new RulesetBeatmapAttribute("WPM", @"WPM", (float)wpm, (float)wpmAdjusted, (float)wpm)
+                {
+                    Description = "Approximate Words Per Minute based on beatmap's most common BPM. This only applies to the Words mod and ignores the extra spacing between words."
                 },
                 new RulesetBeatmapAttribute("OD", @"OD", beatmapInfo.Difficulty.OverallDifficulty, adjustedDifficulty.OverallDifficulty, 10)
                 {

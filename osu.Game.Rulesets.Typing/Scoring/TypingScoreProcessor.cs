@@ -12,8 +12,9 @@ namespace osu.Game.Rulesets.Typing.Scoring
 {
     public partial class TypingScoreProcessor : ScoreProcessor
     {
-        private const double bonus_space_score_fraction = 0.25;
-        private const double bonus_space_score_budget = MAX_SCORE * bonus_space_score_fraction;
+        public const double BONUS_SPACE_SCORE_FRACTION = 0.25;
+
+        private const double bonus_space_score_budget = MAX_SCORE * BONUS_SPACE_SCORE_FRACTION;
 
         /// <summary>
         /// Overall Difficulty (or Accuracy) where the score multiplier is 1. Below this value, multiplier is negative, positive above it.
@@ -48,7 +49,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
                                     .Count();
 
             perSpaceBonus = spaceCount > 0 ? bonus_space_score_budget / spaceCount : 0;
-            overallDifficultyMultiplier = calculateOverallDifficultyMultiplier(beatmap.Difficulty.OverallDifficulty);
+            overallDifficultyMultiplier = CalculateOverallDifficultyMultiplier(beatmap.Difficulty.OverallDifficulty);
         }
 
         public override int GetBaseScoreForResult(HitResult result)
@@ -73,7 +74,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
         /// making it unfair against OD 10 plays, which could barely scratch 1000000 with accuracy drops.
         /// <para/>Bonus value for OD was also increased for this reason.
         /// </summary>
-        private double calculateOverallDifficultyMultiplier(float? overallDifficulty)
+        public static double CalculateOverallDifficultyMultiplier(float? overallDifficulty)
         {
             if (overallDifficulty == null)
                 return 1;
