@@ -17,6 +17,8 @@ using osu.Game.Utils;
 
 namespace osu.Game.Rulesets.Typing.Difficulty
 {
+    // Note: This entire difficulty calculator can go straight into the trash, because nothing here makes sense regarding
+    // the Skills. It was hastily hacked together without any proper research and no actual maths behind anything here.
     public class TypingDifficultyCalculator : DifficultyCalculator
     {
         private const double difficulty_multiplier = 0.03;
