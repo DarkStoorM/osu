@@ -420,7 +420,7 @@ I myself did no research on measuring the typing difficulty whatsoever, I did en
 
 While I had four other rulesets at my disposal, it would make zero sense to copy what they do if I have no clue what the hell I am doing. I understand that the code for difficulty calculation will look weird to anyone who knows actual Maths, this is still just a personal project, so I don't think I care enough. That also applies to code quality.
 
-I included a bunch of tests which I used to tweak the values, which are in the end based on aiming to get a four stars beatmap from 140 BPM over three minutes of gameplay (that's around 90 BPM I think). I don't know how Strain Skills work anyway, so I just rolled with it and only glanced at other skills without checking what they do, then tweaked the values, looking at graphs.
+I included a bunch of tests which I used to tweak the values, which are in the end based on aiming to get a four stars beatmap from 140 BPM (112 WPM) over three minutes of gameplay. I don't know how Strain Skills work anyway, so I just rolled with it and only glanced at other skills without checking what they do, then tweaked the values, looking at graphs.
 
 Both test scene and console project were written by AI, because I couldn't care less about something I would use once (slop gpt, to be specific, I don't give a shit about the agentic slop people use).
 
