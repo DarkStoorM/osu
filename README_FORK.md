@@ -94,6 +94,9 @@ So, this is something very much against the vision of osu!. It's supposed to be 
 
 To someone who doesn't really play osu!: you get a background song, you tap words to the actual beat. In reality, it wouldn't be much different than playing music and sitting on Monkeytype, but you know, there is no "layer of freedom" with you being forced to play consistently, no errors allowed, and it's inside osu!, which is nice.
 
+> [!Note]
+> This is already explained later in this document, but this ruleset should not be treated as something you would enjoy playing for more than 30 minutes. It's the same case as with typing tests. Here, the only difference between typing sessions is choosing a different song and a random seed. Still, you just play to `1/2` beat without any meaningful beatmap structure.
+
 #### About Beatmap Content Replacement
 
 As somewhere mentioned (I guess), the main goal is to "type words". Attempting to generate actual words with the existing beatmap contents would make _absolutely no sense_, because words would be split by object spacing in time.
@@ -202,6 +205,8 @@ So, this basically means there will be none of these ever:
 
 I don't mind the playfield being basically empty. I could technically make them optional, just like the `Skinnable Key Timing Distribution`, but it's not really worth it.
 
+By default, whole playfield is intentionally empty, so cluttering the window is going to be on player's side.
+
 ### Work-in-progress
 
 This ruleset will be in _work-in-progress_ state for a long time, because I don't feel like adding or fixing stuff, as the foundation is already sufficient for me to play.
@@ -215,7 +220,7 @@ This ruleset will be in _work-in-progress_ state for a long time, because I don'
 
 Since the whole idea was to play with generated words, it's mandatory to have the `Words` mods enabled:
 
-![img](https://i.imgur.com/KztcqtG.png)
+![img](https://i.imgur.com/3O2Sfxr.png)
 
 It's still possible to play the actual beatmap with random letters, but I disabled the difficulty calculation for this and explicitly require `Words` mod to be present in order to calculate the star rating. It's not correct anyway, but I'm just experimenting. There is a better ruleset for this in the ruleset collection in the repository, ppy added a `Typer` ruleset, which I just now discovered, go play that for random letters and preserved beatmap objects.
 
@@ -227,37 +232,52 @@ The reason for such low amount of mods is that it's pretty much what's sufficien
 - `Difficulty Adjustment` mostly for `OD` adjustment and scroll speed fine-tuning, sometimes for `HP`
 
 > [!Note]
-> While `Scroll Speed` can be adjusted through the `Difficulty Adjustment` mod, the keybinds for `Increase/Decrease` scroll speed will also work here.
+> While `Scroll Speed` can be adjusted through the `Difficulty Adjustment` mod, the keybinds for `Increase/Decrease` scroll speed will also work in case the beatmap Scroll Speed is super low and the keybind adjustment happens to not increase as much on the maximum value (`100`).
 
 ### Finger Guide
 
-I had this weird idea of coloring the objects so they map to specific fingers, which I don't even think is useful, but I left it in anyway. Might be more distracting later on, but I think the color-to-finger mapping adaptation is quite fast.
+I had this weird idea of colouring the objects so they map to specific fingers, which I don't even think is useful, but I left it in anyway. Might be more distracting later on, but I think the colour-to-finger mapping adaptation is quite fast.
 
-![alt](https://i.imgur.com/HwEotLn.png)
+I also didn't add any images for this, because I wasn't planning on keeping this mod. Not like anyone would choose this to learn touch-typing over things like `Keybr`.
+
+![alt](https://i.imgur.com/OFvaKPn.png)
 
 ![alt](https://i.imgur.com/rgroVQ7.png)
 
 (This is my osu! layer for this ruleset)
 
+The reason I didn't add a guide image for this is because osu!lazer already allows you to add a custom image through skinning, so I won't bother preparing coloured layouts. You can add one yourself through:
+
+- Skin Editor -> File -> Edit Externally
+  - Add a custom image to the folder opened by osu!
+  - Go back to osu! and import changes
+  - Select: `Skinnable Sprite`
+  - Select your image from the dropdown (if this is the only image in the folder, it will be there by default)
+
+![alt](https://i.imgur.com/sNxBqc7.png)
+
 ### About the Custom Mod
 
 This mod recommended to be customised, because beatmaps are so different, it's literally impossible to make all of them playable with a click of a button.
 
-I wanted to be able to play this ruleset on a wide range of beatmaps, so I added the following setting: `Adjust Beat Length`. This will effectively double or halve the BPM to let me play for example a 100 BPM beatmap. The reason why is that the mod is generating hit objects at 1/4 for words, 1/2 for spaces between the words. This can be quite slow, so without having to use the DoubleTime to fine-tune and play on rate changed song, I can play it on 200 BPM, which is roughly 80 WPM.
+I wanted to be able to play this ruleset on a wide range of beatmaps, so I added the following setting: `Beat Length Adjustment`. This will effectively double or halve the BPM to let me play for example a 100 BPM beatmap. The reason why is that the mod is generating hit objects at 1/4 for words, 1/2 for spaces between the words. This can be quite slow, so without having to use the DoubleTime to fine-tune and play on rate changed song, I can play it on 200 BPM, which is roughly 80 WPM.
 
-By accident, I noticed that `BPM / 2.5 = WPM`, assuming the default `full beat` length is used.
+By accident, I noticed that `BPM / 2.5 = WPM`, assuming the `default beat length` is used. For `Halved` beat length, the bpm divisor is `1.25`. Everything is recalculated in the game, so no need to do this manually. Still, a fun fact.
 
 E.g. if a song is 260 BPM and default settings are used (like playing 130 BPM), the WPM is approximately 104.
 
 > [!Note]
-> 100 BPM with halved beat length equals to 200 BPM with default full beat length.
+> For example, 120 WPM can be set through the following
+>
+> - 150 BPM + Halved Beat Length (on 1/4): `150 BPM / 1.25` or `150 BPM * 0.8` ~ 120 WPM
+> - 300 BPM + Default Beat Length (on 1/2): `300 BPM / 2.5` or `300 BPM * 0.4` ~120 WPM
+> - 240 BPM + DT -> 300 BPM + Default Beat Length
 
-With this, and with DoubleTime/HalfTime, I can play everything adjusted to my comfortable speed. For example, I play at around 100 WPM only (around 150 BPM in this ruleset), so to adjust to this speed, I can play something that was mapped to:
+I'm not really covering the `Doubled Beat Length` (`5` divisor or `0.2` BPM multiplier), because it's meant for lower WPM, which I'm not really interested in.
 
-- 300 BPM + `full beat length`
-- 240 BPM + `full beat length`
-- 100 BPM + `half beat length` + DoubleTime rate changed up to 120 BPM
-- 180 BPM + `half beat length` + HalfTime rate changed down to 140-150 BPM
+But, in short, `60 WPM` with this customisation can be set on things like:
+
+- 240 BPM + DT -> 300 BPM
 
 #### Increased Spacing
 
@@ -346,7 +366,7 @@ If I were to make the `Space` hit window very narrow, which would make it harshe
 
 #### Customisation
 
-![alt](https://i.imgur.com/jvDwtFW.png)
+![alt](https://i.imgur.com/f98akPQ.png)
 
 ### Scoring Changes
 
