@@ -179,68 +179,65 @@ namespace osu.Game.Rulesets.Typing
             if (typingModWords == null)
                 return Array.Empty<RulesetBeatmapAttribute>();
 
-            double rate = ModUtils.CalculateRateWithMods(mods);
-            var adjustedDifficulty = GetAdjustedDisplayDifficulty(beatmapInfo, mods);
-            double adjustedBeatLength = 60000 / beatmapInfo.BPM / rate;
-
             // The Words mod has customisation for beat length, which can generate letters at double or half the beat length,
             // which naturally affects the WPM. This will make the changes reflect when customising the mod
-            double modBeatDivisor =
-                typingModWords.AdjustBeatLength.Value switch
-                {
-                    BeatLengthAdjustment.Halved => 2.0,
-                    BeatLengthAdjustment.Doubled => 0.5,
-                    _ => 1.0
-                };
+            double modBeatDivisor = typingModWords.AdjustBeatLength.Value switch
+            {
+                BeatLengthAdjustment.Halved => 2.0,
+                BeatLengthAdjustment.Doubled => 0.5,
+                _ => 1.0
+            };
 
-            // Standard typing WPM assumes 5 characters per word.
-            // Words mod inserts letters every half beat, so:
-            // - letterTime = adjustedBeatLength / 2
-            // - CPM = 120000 / adjustedBeatLength
-            // - WPM = CPM / 5 = 24000 / adjustedBeatLength
-            double wpm = 24000.0 / adjustedBeatLength;
-            double wpmAdjusted = 24000.0 / (adjustedBeatLength / modBeatDivisor);
+            const double max_score = ScoreProcessor.MAX_SCORE;
+            var calculator = new TypingScoreMultiplierCalculator(new ScoreMultiplierContext(beatmapInfo.Difficulty));
+            double scoreMultiplier = calculator.CalculateFor(mods);
 
+            double rate = ModUtils.CalculateRateWithMods(mods);
+            var adjustedDifficulty = GetAdjustedDisplayDifficulty(beatmapInfo, mods);
             var colours = new OsuColour();
             var hitWindows = new TypingHitWindows();
 
             hitWindows.SetDifficulty(adjustedDifficulty.OverallDifficulty);
 
-            const float max_score = (float)ScoreProcessor.MAX_SCORE;
+            // In general, if we treat 5 letters as a standard length of full word on average, we can assume that one word
+            // also consists of five beats (every letter is considered beat).
+            // Since letters are spaced by 1/2, we can calculate WPM with [WPM = BPM / (5 * spacing)].
+            // The spacing is further adjusted by beat length customisation
+            const double wpm_beat_factor = 2.5;
+            double bpmAdjusted = beatmapInfo.BPM * rate;
+
+            double wpm = bpmAdjusted / wpm_beat_factor;
+            double wpmAdjusted = bpmAdjusted / (wpm_beat_factor / modBeatDivisor);
 
             // Mod multiplier also affects bonus score, because the total consists of regular results + bonus results
             double bonusSpacesScore = typingModWords.AddBonusSpaceHitObjects.Value
-                ? (float)(max_score * TypingScoreProcessor.BONUS_SPACE_SCORE_FRACTION * modBeatDivisor)
+                ? max_score * TypingScoreProcessor.BONUS_SPACE_SCORE_FRACTION * scoreMultiplier
                 : 0;
 
-            double scoreWithBeatDivisor = (float)(max_score * modBeatDivisor);
-
-            double odMultiplier = (float)TypingScoreProcessor.CalculateOverallDifficultyMultiplier(adjustedDifficulty.OverallDifficulty);
-            double adjustedScore = scoreWithBeatDivisor * odMultiplier + bonusSpacesScore;
-
-            // This is only for the tiny bar display in the song select, where the beatmap attributes show the
-            // adjusted values
+            double scoreWithModMultiplier = max_score * scoreMultiplier;
+            double odMultiplier = TypingScoreProcessor.CalculateOverallDifficultyMultiplier(adjustedDifficulty.OverallDifficulty);
             double od10Multiplier = TypingScoreProcessor.CalculateOverallDifficultyMultiplier(10);
-            double maxPossibleScore = scoreWithBeatDivisor * od10Multiplier + bonusSpacesScore;
+            double adjustedScore = Math.Round(scoreWithModMultiplier * odMultiplier + bonusSpacesScore);
+            double maxPossibleScore = scoreWithModMultiplier * od10Multiplier + bonusSpacesScore;
 
             List<RulesetBeatmapAttribute.AdditionalMetric> additionalMetrics = new List<RulesetBeatmapAttribute.AdditionalMetric>();
 
             if (typingModWords.AdjustBeatLength.Value != BeatLengthAdjustment.Default)
-                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Beat Length Score Adjustment", $"{scoreWithBeatDivisor - max_score:N0}"));
+                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Beat Length Score", $"{scoreWithModMultiplier - max_score:N0}"));
 
             if (Math.Abs(adjustedDifficulty.OverallDifficulty - 5) > double.Epsilon)
-                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Overall Difficulty score", $"{max_score * modBeatDivisor * (odMultiplier - 1):N0}"));
+                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Overall Difficulty Score", $"{max_score * scoreMultiplier * (odMultiplier - 1):N0}"));
 
             if (typingModWords.AddBonusSpaceHitObjects.Value)
-                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Spaces bonus score", $"{bonusSpacesScore:N0}"));
+                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Spaces Bonus Score", $"{bonusSpacesScore:N0}"));
 
             var attributes = new List<RulesetBeatmapAttribute>
             {
                 // This will sadly result in displaying a large number in the mod selection, but it was positioned next to a smaller
                 // attribute for this reason to not overlap. The resulting number will be close anyway because of the float formatting...
-                new RulesetBeatmapAttribute("Total Score", @"TS", max_score, (float)adjustedScore, (float)maxPossibleScore)
+                new RulesetBeatmapAttribute("Total Score", @"TS", (float)max_score, (float)adjustedScore, (float)maxPossibleScore)
                 {
-                    Description = "Maximum achievable score based on selected mod customisation.",
+                    Description = "Maximum achievable score based on selected mod customisation, which applies score adjustments. These values are affected by total mod score multiplier.",
                     AdditionalMetrics = additionalMetrics.ToArray()
                 },
                 new RulesetBeatmapAttribute("HP", @"HP", beatmapInfo.Difficulty.DrainRate, adjustedDifficulty.DrainRate, 10)
@@ -253,7 +250,7 @@ namespace osu.Game.Rulesets.Typing
                 },
                 new RulesetBeatmapAttribute("OD", @"OD", beatmapInfo.Difficulty.OverallDifficulty, adjustedDifficulty.OverallDifficulty, 10)
                 {
-                    Description = "Affects timing requirements for hits",
+                    Description = "Affects total score and timing requirements for hits",
                     AdditionalMetrics = hitWindows.GetAllAvailableWindows()
                                                   .Reverse()
                                                   .Select(window => new RulesetBeatmapAttribute.AdditionalMetric(
