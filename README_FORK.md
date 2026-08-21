@@ -153,9 +153,9 @@ Approximate breakdown for word lengths:
 
 - `3` ~ 150
 - `5` ~ 350
-- `7` ~ 230
-- `9` ~ 39
-- `11` ~ 5
+- `7` ~ 275
+- `9` ~ 45
+- `11` 8
 
 In my defense, the new words that were added, were scored in a way that every letter lands on different hand, having at most one letter on the same hand. This only applies to the second part of the dictionary, as the first half is just the standard word frequency list (mostly). Some exceptions were made, e.g. natural rolls, like the word: `serpent`:
 
@@ -305,7 +305,7 @@ Not really recommended for usual gameplay, this is more like a _chill_ setting.
 
 I decided to add this option and make it `on` by default.
 
-The reasoning behind is that I already kind of took the inspiration from taiko, where alternating hands make some patterns more comfortable to play, so that's also why the custom dictionary was extended to contain more almost "full alt" words.
+The reasoning behind is that I already kind of took the inspiration from taiko, where alternating hands make some patterns more comfortable to play, so that's also why the custom dictionary was extended to contain more _almost_ "full alt" words, with some exceptions, e.g. allowing at most one or two keys on same hand on longer words, and `-ing` trigram.
 
 Taking this further, I changed how the mod behaves by forcing the next word to start on different hand. Look at the following example:
 
