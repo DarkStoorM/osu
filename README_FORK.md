@@ -16,6 +16,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [A Very Poor Screenshot + Explanation](#a-very-poor-screenshot--explanation)
       - [Note On Manually Curated Dictionary](#note-on-manually-curated-dictionary)
     - [A TL;DR On How To Use This](#a-tldr-on-how-to-use-this)
+      - [Note on Letter Spacing](#note-on-letter-spacing)
     - [ZERO Skin Elements](#zero-skin-elements)
     - [Work-in-progress](#work-in-progress)
     - [Custom Mod Requirement](#custom-mod-requirement)
@@ -179,16 +180,25 @@ This ruleset is primarily made for `Words` mod, where you type random words from
 
 - Go to Mod Selection
 - Select `Words` Mod
-- Customise the `Words` Mod mostly by adjusting the `Beat Length`:
-  - `Half`(\*) - letters land on 1/4, for lower BPMs to make it play faster (100 BPM evaluates to around 80 WPM, 150 BPM -> 120 BPM etc.)
-  - `Full` - default, letters land on 1/2, used for 200+BPM
-  - `Double`
+- Customise the `Words` Mod mostly by adjusting the `Letter Spacing`:
+  - `Narrow`(\*) - letters land on `1/4`, used for lower BPMs to make the game "play faster" without changing the song rate (100 BPM evaluates to around 80 WPM, 150 BPM -> 120 BPM etc.)
+  - `Default` - default, letters land on `1/2`, used for 200~ BPM (~80WPM) or 100~ BPM (40 WPM)
+  - `Wide` - letters land on `1/1`. Not really used, maybe for starter WPMs around 40-60 (if songs were mapped to 200-300 BPM)
 - Probably add `Constant Speed` if there are any `Scroll Speed` changes
 - Mod Selection shows the approximate `WPM` based on the most common BPM next to `Difficulty Attributes`
 - Adjust `Scroll Speed` with keybinds (F3-F4 by default)
 
-> [!Note]
-> (\*) The `Beat Length` adjustment in the mod customisation does not define the actual `Beat Length`, it can halve the current beat length, double it, or leave intact.
+#### Note on Letter Spacing
+
+Very short:
+
+```plaintext
+          1/1
+    beat   | 4 2 4 | . . . | . . . |
+Narrow     W O R D
+Default    W . O . R . D
+Wide       W . . . O . . . R . . . D
+```
 
 ### ZERO Skin Elements
 
@@ -260,20 +270,20 @@ The reason I didn't add a guide image for this is because osu!lazer already allo
 
 This mod recommended to be customised, because beatmaps are so different, it's literally impossible to make all of them playable with a click of a button.
 
-I wanted to be able to play this ruleset on a wide range of beatmaps, so I added the following setting: `Beat Length Adjustment`. This will effectively double or halve the BPM to let me play for example a 100 BPM beatmap. The reason why is that the mod is generating hit objects at 1/4 for words, 1/2 for spaces between the words. This can be quite slow, so without having to use the DoubleTime to fine-tune and play on rate changed song, I can play it on 200 BPM, which is roughly 80 WPM.
+I wanted to be able to play this ruleset on a wide range of beatmaps, so I added the following setting: `Letter Spacing`. This will effectively double or halve the BPM to let me play for example a 100 BPM beatmap. The reason why is that the mod is generating hit objects at 1/4 for words, 1/2 for spaces between the words. This can be quite slow, so without having to use the DoubleTime to fine-tune and play on rate changed song, I can play it on 200 BPM, which is roughly 80 WPM.
 
-By accident, I noticed that `BPM / 2.5 = WPM`, assuming the `default beat length` is used. For `Halved` beat length, the bpm divisor is `1.25`. Everything is recalculated in the game, so no need to do this manually. Still, a fun fact.
+_Words Per Minute_ can be calculated simply by dividing BPM by 5. Average word is assumed to be 5 letters, thus 5 beats, but since letters are spaces by 1/2, this value becomes 2.5. This only applies to `Default Letter Spacing`.
 
 E.g. if a song is 260 BPM and default settings are used (like playing 130 BPM), the WPM is approximately 104.
 
 > [!Note]
 > For example, 120 WPM can be set through the following
 >
-> - 150 BPM + Halved Beat Length (on 1/4): `150 BPM / 1.25` or `150 BPM * 0.8` ~ 120 WPM
-> - 300 BPM + Default Beat Length (on 1/2): `300 BPM / 2.5` or `300 BPM * 0.4` ~120 WPM
-> - 240 BPM + DT -> 300 BPM + Default Beat Length
+> - 150 BPM + `Narrow Letter Spacing` (on 1/4): `150 BPM / 1.25` or `150 BPM * 0.8` ~ 120 WPM
+> - 300 BPM + `Default Letter Spacing` (on 1/2): `300 BPM / 2.5` or `300 BPM * 0.4` ~120 WPM
+> - 240 BPM + DT -> 300 BPM + `Default Letter Spacing`
 
-I'm not really covering the `Doubled Beat Length` (`5` divisor or `0.2` BPM multiplier), because it's meant for lower WPM, which I'm not really interested in.
+I'm not really covering the `Wide Letter Spacing` (`5` divisor or `0.2` BPM multiplier), because it's meant for lower WPM, which I'm not really interested in.
 
 But, in short, `60 WPM` with this customisation can be set on things like:
 
@@ -366,7 +376,7 @@ If I were to make the `Space` hit window very narrow, which would make it harshe
 
 #### Customisation
 
-![alt](https://i.imgur.com/f98akPQ.png)
+![alt](https://i.imgur.com/wIzwHKA.png)
 
 ### Scoring Changes
 
@@ -375,16 +385,16 @@ While Scoring was basically taken from osu!taiko, I made some small changes:
 - `Overall Difficulty` will award up to +25% extra score, which is calculated from a set range of OD. I initially set it at 5-10, so for `OD 6`, the bonus is 5% and so on. Below this value, the score is deducted for balance purposes to not make `OD 0` be worth more than `OD 5`, which requires more accuracy
 - `Perfect` takes a bigger max score portion, because there was no difference between Perfect and Great and there was no real reason to play more accurately. I bumped it from 300 to 325 (an arbitrary number for now). This is a combo between high OD and an indirect force on accuracy. This might result in tightening the window for Perfects on high OD, though
 - The `Words` mod can insert `Space` between the words, which grant extra score. This bonus score is set to 25% of total max score. Because it is very note-lock prone on faster beatmaps, the bonus is high.
-- The `Words` mod allows adjusting the beat length that is calculated for beatmaps. It directly affects the score, because it can double the amount of objects or halve it. This will change the score from 2x to 0.5x
+- The `Words` mod allows adjusting the Letter Spacing. It directly affects the score, because it can double the amount of objects or halve it. This will change the score from 2x to 0.5x
 
 Anyway, the extra `Space` keys customisation is not just free score. It's effectively a constant stream, which greatly increases the risk of missing/note-locking, especially on higher BPM. On slow beatmaps it's a "whatever". I'm aware that all this doesn't really answer the question why `Spaces` are bonus objects, this was just the decision I made.
 
-That being said, a quick breakdown of total score based on the beat length:
+That being said, a quick breakdown of total score based on the Letter Spacing:
 
-| Spaces / Beat Length | Halved        | Default       | Doubled     |
-| -------------------- | ------------- | ------------- | ----------- |
-| Off                  | 2 000 000     | 1 000 000     | 500 000     |
-| On                   | 2 **500 000** | 1 **250 000** | **625 000** |
+| Spaces / Letter Spacing | Narrow        | Default       | Wide        |
+| ----------------------- | ------------- | ------------- | ----------- |
+| Off                     | 2 000 000     | 1 000 000     | 500 000     |
+| On                      | 2 **500 000** | 1 **250 000** | **625 000** |
 
 `Spaces` are excluded from **Overall Difficulty** multiplier, so on `OD10`, the maximum score for SS with `Spaces` is `3 000 000`. Should barely be possible on higher WPMs anyway.
 
@@ -404,7 +414,7 @@ OD grants extra score, so it would be nice to also have an adjustable value visi
 
 I also added the computed `Total Score` to the beatmap attributes with a breakdown thanks to `Additional Metrics`:
 
-![alt](https://i.imgur.com/IUIZ3kK.png)
+![alt](https://i.imgur.com/vMTmEfA.png)
 
 Although, it does not look very good in the mod select if HP is a two-digit...
 

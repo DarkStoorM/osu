@@ -16,11 +16,11 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
         private const bool include_double_time = false;
         private const double bpm = 140;
         private const double beatmap_drain_time_in_ms = 180000;
-        private const BeatLengthAdjustment mod_beat_length = BeatLengthAdjustment.Halved;
+        private const LetterSpacing mod_letter_spacing = LetterSpacing.Narrow;
 
         private const int seed_count = 100;
 
-        private static readonly (DictionarySize size, Func<BeatLengthAdjustment, int, DictionarySize, Mod> Factory)[] mods =
+        private static readonly (DictionarySize size, Func<LetterSpacing, int, DictionarySize, Mod> Factory)[] mods =
         {
             (DictionarySize.Curated, createMod),
             (DictionarySize.Basic, createMod),
@@ -36,7 +36,7 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
                                          .Select(x => calculateAveraged(
                                              beatmap,
                                              x.size,
-                                             seed => x.Factory(mod_beat_length, seed, x.size)))
+                                             seed => x.Factory(mod_letter_spacing, seed, x.size)))
                                          .ToArray();
 
             Console.Clear();
@@ -49,12 +49,12 @@ namespace osu.Game.Tools.Typing.DifficultyCalculator
             return 0;
         }
 
-        private static TypingModWords createMod(BeatLengthAdjustment beatLengthAdjustment, int seed, DictionarySize size)
+        private static TypingModWords createMod(LetterSpacing letterSpacing, int seed, DictionarySize size)
         {
             return new TypingModWords
             {
                 Seed = { Value = seed },
-                AdjustBeatLength = { Value = beatLengthAdjustment },
+                LetterSpacing = { Value = letterSpacing },
                 DictionarySize = { Value = size }
             };
         }

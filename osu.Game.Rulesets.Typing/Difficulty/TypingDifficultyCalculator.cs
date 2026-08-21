@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 
             // A hacky way perhaps, but I don't have anything else to not make the difficulty explode on short beatmaps
             // Also note: at 900 objects, the scale reaches 92%, which roughly evaluates to the following:
-            // - 120 seconds of playing 140 bpm with halved beat length (or 280 on full beat length)
+            // - 120 seconds of playing 140 bpm with Narrow Letter Spacing (or 280 on Default Letter Spacing)
             // - 90 seconds of playing 180 bpm
             const double optimal_maximum_object_count = 1200;
             double objectCountRatio = beatmap.HitObjects.Count / optimal_maximum_object_count;

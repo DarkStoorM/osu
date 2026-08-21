@@ -45,13 +45,13 @@ namespace osu.Game.Rulesets.Typing.Mods
                 if (AddBonusSpaceHitObjects.Value)
                     info += "_";
 
-                switch (AdjustBeatLength.Value)
+                switch (LetterSpacing.Value)
                 {
-                    case BeatLengthAdjustment.Halved:
+                    case Mods.LetterSpacing.Narrow:
                         info += "+";
                         break;
 
-                    case BeatLengthAdjustment.Doubled:
+                    case Mods.LetterSpacing.Wide:
                         info += "-";
                         break;
                 }
@@ -67,9 +67,8 @@ namespace osu.Game.Rulesets.Typing.Mods
             "\"Curated\" dictionary contains a custom scored words list from Extended dictionary with extra words from OANC. \"Basic\" - 300 words. Other dictionaries are frequency-sorted words lists.")]
         public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
 
-        [SettingSource("Beat Length Adjustment",
-            "Halve or Double the existing beat length to make letters appear more or less frequent. \"Default\" will use the current value of this beatmaps's half beat (1/2). Halved: 1/4, Doubled: 1/1.")]
-        public Bindable<BeatLengthAdjustment> AdjustBeatLength { get; } = new Bindable<BeatLengthAdjustment>(BeatLengthAdjustment.Default);
+        [SettingSource("Letter Spacing", "Halves or Doubles the existing beat length to make letters appear more or less frequent.")]
+        public Bindable<LetterSpacing> LetterSpacing { get; } = new Bindable<LetterSpacing>(Mods.LetterSpacing.Default);
 
         [SettingSource("Add spacing between words", "Inserts a full beat pause between the words.")]
         public BindableBool AddSpacingBetweenWords { get; } = new BindableBool();
@@ -119,18 +118,17 @@ namespace osu.Game.Rulesets.Typing.Mods
         private double endGenerationAt;
 
         /// <summary>
-        /// Base beat division for the current timing point (1/1). This length may be adjusted by <see cref="AdjustBeatLength"/>.
+        /// Base beat division for the current timing point (1/1). This length may be adjusted by <see cref="LetterSpacing"/>.
         /// </summary>
-        private double beatFull => currentTimingControlPoint.BeatLength * AdjustBeatLength.Value switch
+        private double beatFull => currentTimingControlPoint.BeatLength * LetterSpacing.Value switch
         {
-            BeatLengthAdjustment.Halved => 0.5,
-            BeatLengthAdjustment.Default => 1,
-            BeatLengthAdjustment.Doubled => 2,
+            Mods.LetterSpacing.Narrow => 0.5,
+            Mods.LetterSpacing.Default => 1,
+            Mods.LetterSpacing.Wide => 2,
             _ => 1
         };
 
         private double beatHalf => beatFull / 2;
-        private double beatFourth => beatFull / 4;
 
         private bool isStillWithinPlayingBounds => currentTime <= endGenerationAt;
 
@@ -391,16 +389,16 @@ namespace osu.Game.Rulesets.Typing.Mods
         }
     }
 
-    public enum BeatLengthAdjustment
+    public enum LetterSpacing
     {
         // Half of the Default beat length. In short: twice the BPM
-        Halved,
+        Narrow,
 
         // Default beat length value that was calculated for the beatmap
         Default,
 
         // Twice the Default beat length. In short: half the BPM
-        Doubled,
+        Wide,
     }
 
     public enum DictionarySize

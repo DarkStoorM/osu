@@ -179,12 +179,12 @@ namespace osu.Game.Rulesets.Typing
             if (typingModWords == null)
                 return Array.Empty<RulesetBeatmapAttribute>();
 
-            // The Words mod has customisation for beat length, which can generate letters at double or half the beat length,
+            // The Words mod has customisation for Letter Spacing, which can generate letters at double or half the beat length,
             // which naturally affects the WPM. This will make the changes reflect when customising the mod
-            double modBeatDivisor = typingModWords.AdjustBeatLength.Value switch
+            double modBeatDivisor = typingModWords.LetterSpacing.Value switch
             {
-                BeatLengthAdjustment.Halved => 2.0,
-                BeatLengthAdjustment.Doubled => 0.5,
+                LetterSpacing.Narrow => 2.0,
+                LetterSpacing.Wide => 0.5,
                 _ => 1.0
             };
 
@@ -201,8 +201,9 @@ namespace osu.Game.Rulesets.Typing
 
             // In general, if we treat 5 letters as a standard length of full word on average, we can assume that one word
             // also consists of five beats (every letter is considered beat).
-            // Since letters are spaced by 1/2, we can calculate WPM with [WPM = BPM / (5 * spacing)].
-            // The spacing is further adjusted by beat length customisation
+            // WPM can be calculated from [WPM = BPM / (5 * spacing)], spacing is further adjusted by Letter Spacing customisation.
+            // The 2.5 value is a result of five required beats per word divided by two, since, by default, letters
+            // are spaced by 1/2. Then, this value is adjusted to 1.25 for Narrow Spacing, 5 for Wide
             const double wpm_beat_factor = 2.5;
             double bpmAdjusted = beatmapInfo.BPM * rate;
 
@@ -222,8 +223,8 @@ namespace osu.Game.Rulesets.Typing
 
             List<RulesetBeatmapAttribute.AdditionalMetric> additionalMetrics = new List<RulesetBeatmapAttribute.AdditionalMetric>();
 
-            if (typingModWords.AdjustBeatLength.Value != BeatLengthAdjustment.Default)
-                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Beat Length Score", $"{scoreWithModMultiplier - max_score:N0}"));
+            if (typingModWords.LetterSpacing.Value != LetterSpacing.Default)
+                additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Letter Spacing Score", $"{scoreWithModMultiplier - max_score:N0}"));
 
             if (Math.Abs(adjustedDifficulty.OverallDifficulty - 5) > double.Epsilon)
                 additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Overall Difficulty Score", $"{max_score * scoreMultiplier * (odMultiplier - 1):N0}"));
