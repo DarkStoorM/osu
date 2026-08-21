@@ -63,20 +63,19 @@ namespace osu.Game.Rulesets.Typing.Mods
         public override string Name => "Words";
         public override bool Ranked => false;
 
-        [SettingSource("Dictionary Size",
-            "\"Curated\" dictionary contains a custom scored words list from Extended dictionary with extra words from OANC. \"Basic\" - 300 words. Other dictionaries are frequency-sorted words lists.")]
-        public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
-
         [SettingSource("Letter Spacing", "Halves or Doubles the existing beat length to make letters appear more or less frequent.")]
         public Bindable<LetterSpacing> LetterSpacing { get; } = new Bindable<LetterSpacing>(Mods.LetterSpacing.Default);
 
-        [SettingSource("Add spacing between words", "Inserts a full beat pause between the words.")]
+        [SettingSource("Dictionary Size", "\"Curated\" dictionary contains a custom, scored and curated words list from Extended dictionary (OANC). Basic/Advanced/Extended - 300/1250/~2500")]
+        public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
+
+        [SettingSource("Add extra spacing between words", "Inserts a full beat pause between the words.")]
         public BindableBool AddSpacingBetweenWords { get; } = new BindableBool();
 
         [SettingSource("Force cross-hand on new word", "First character in next word starts on the opposite hand. Disable for regular word generation.")]
         public BindableBool ForceCrossHandOnNewWord { get; } = new BindableBool(true);
 
-        [SettingSource("Add bonus Space Hit objects",
+        [SettingSource("Add bonus Space key objects",
             "Generates hit objects between words that act as Space in typing. They grant bonus score, but are not required to hit. Use with caution, because ignoring them can cause note-locks!")]
         public BindableBool AddBonusSpaceHitObjects { get; } = new BindableBool();
 
