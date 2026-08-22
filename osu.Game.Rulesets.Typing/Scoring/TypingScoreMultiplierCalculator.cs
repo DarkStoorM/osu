@@ -11,17 +11,21 @@ namespace osu.Game.Rulesets.Typing.Scoring
         public TypingScoreMultiplierCalculator(ScoreMultiplierContext context)
             : base(context)
         {
-            // HalfTime should forcibly override the multiplier in presence of Narrow Letter Spacing, because it
-            // affects the mod multiplier (2x due to twice the object count), so we will decrease Words mod multiplier
-            // because of that. The reason for that is that it was possible to select Narrow Letter Spacing + minimum
-            // HalfTime rate to achieve the same typing speed with extra double score
-            Combination<TypingModHalfTime, TypingModWords>(hasMultiplier: (halfTime, words)
-                => words.LetterSpacing.Value == LetterSpacing.Narrow
-                    // Since HalfTime does not start from 1x, but 0.99, it should initially reduce the first 0.01 point
-                    // The speed change deducts twice as much in this case to match 1x multiplier at minimum rate.
-                    // HT rate from 1 -> 0.5 changes the Narrow Latter Spacing multiplier from 2 -> 1
-                    ? getWordsModMultiplier(words) - 0.02 - (0.99 - halfTime.SpeedChange.Value) * 2
-                    : halfTime.SpeedChange.Value * getWordsModMultiplier(words));
+            // HalfTime should reduce more than 0.01 per step in its 50-99% rate range. It will automatically scale
+            // to whatever was the resulting multiplier from the mod itself.
+            // It means that for every each letter spacing the factor will evaluate to 0.03, 0.02, 0.01 respectively,
+            // assuming no other customisations were selected.
+            // The reason for this change is that it was possible to select Narrow Letter Spacing + minimum
+            // HalfTime rate to achieve the same typing speed with extra double score when there was no multiplier for HT
+            Combination<TypingModHalfTime, TypingModWords>(hasMultiplier: (halfTime, modWords) =>
+            {
+                double wordsModMultiplier = getWordsModMultiplier(modWords);
+                double halfTimeSubtractionFactor = wordsModMultiplier * 1.5;
+
+                // Since HalfTime does not start from 1x, but 0.99, it should initially reduce the first 0.01 step.
+                // Every 0.01 step of HalfTime, the score multiplier is reduced by scaled subtraction factor
+                return wordsModMultiplier - halfTimeSubtractionFactor / 100 - (0.99 - halfTime.SpeedChange.Value) * halfTimeSubtractionFactor;
+            });
 
             // HalfTime alone is not really used, because Words mod is required to actually play this ruleset,
             // but it's here just for completeness
@@ -53,8 +57,12 @@ namespace osu.Game.Rulesets.Typing.Scoring
             };
 
             // The Downbeat Snap customisation creates a gap between the words so big that continuous typing is less straining
+            // and this is reason why this value is so low. It also reduces the object count by around 60-65%, but that's not
+            // directly relevant. What's important here is that normally, the recovery time between the words is exactly one letter,
+            // and with this setting it can be maximum 9 letters long. Words too long to fit in a whole beat will extend the snap
+            // to the next downbeat
             if (modWords.SnapWordsToDownbeat.Value)
-                multiplier *= modWords.SnapWordsToDownbeat.Value ? 0.75 : 1;
+                multiplier *= modWords.SnapWordsToDownbeat.Value ? 0.35 : 1;
 
             return multiplier;
         }
