@@ -69,8 +69,8 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Dictionary Size", "\"Curated\" dictionary contains a custom, scored and curated words list from Extended dictionary (OANC). Basic/Advanced/Extended - 300/1250/~2500")]
         public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
 
-        [SettingSource("Add extra spacing between words", "Inserts a full beat pause between the words.")]
-        public BindableBool AddSpacingBetweenWords { get; } = new BindableBool();
+        [SettingSource("Snap Words To Downbeat", "Snaps words to downbeats (1/1) for easier reading with spacing between them.")]
+        public BindableBool SnapWordsToDownbeat { get; } = new BindableBool();
 
         [SettingSource("Force cross-hand on new word", "First character in next word starts on the opposite hand. Disable for regular word generation.")]
         public BindableBool ForceCrossHandOnNewWord { get; } = new BindableBool(true);
@@ -263,12 +263,18 @@ namespace osu.Game.Rulesets.Typing.Mods
                     lastInsertedWord.Clear();
                     lastInsertedWord.AddRange(hitObjectsInWord);
 
-                    // The last spacing is required
+                    // The last spacing is required after the word to "close the beat" (to not land on ticks between 1/2)
                     advanceTime(beatHalf);
 
-                    // A full beat of breathing room allows to reduce the cognitive load, and make the key travel a bit easier
-                    if (AddSpacingBetweenWords.Value)
-                        advanceTime(beatFull);
+                    if (SnapWordsToDownbeat.Value)
+                    {
+                        // The reason for using the BeatLength directly from the timing control point instead of the computed
+                        // `beatFull` for moving forward by a full beat is that `beatFull` may be changed by mod customisation.
+                        // It would be an incorrect value to use (1/2 in reality or twice the downbeat).
+                        double nextSnapTime = typingBeatmap.ControlPointInfo.GetClosestSnappedTime(currentTime + currentTimingControlPoint.BeatLength, 1);
+
+                        advanceTime(nextSnapTime - currentTime);
+                    }
 
                     lastHandUsed = getKeyFromCharacter(currentWord[^1]).physicalKey.Hand;
                 }
@@ -356,6 +362,11 @@ namespace osu.Game.Rulesets.Typing.Mods
 
             return (action, physicalKey);
         }
+
+        /// <summary>
+        /// Alias for <see cref="ControlPointInfo.GetClosestSnappedTime(double, int, double?)"/>
+        /// </summary>
+        private double getSnappedTime(TypingBeatmap beatmap, double time, int beatDivisor) => beatmap.ControlPointInfo.GetClosestSnappedTime(time, beatDivisor);
 
         private sealed class WordSamplingContext
         {
