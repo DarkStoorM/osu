@@ -69,7 +69,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Dictionary Size", "\"Curated\" dictionary contains a custom, scored and curated words list from Extended dictionary (OANC). Basic/Advanced/Extended - 300/1250/~2500")]
         public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
 
-        [SettingSource("Snap Words To Downbeat", "Snaps words to downbeats (1/1) for easier reading with spacing between them.")]
+        [SettingSource("Snap words to downbeats", "Snaps words to downbeats (1/1) for easier reading with spacing between them.")]
         public BindableBool SnapWordsToDownbeat { get; } = new BindableBool();
 
         [SettingSource("Force cross-hand on new word", "First character in next word starts on the opposite hand. Disable for regular word generation.")]
