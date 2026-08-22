@@ -174,6 +174,7 @@ namespace osu.Game.Rulesets.Taiko
                 case ModType.Conversion:
                     return new Mod[]
                     {
+                        new TaikoModFullRandom(),
                         new TaikoModRandom(),
                         new TaikoModDifficultyAdjust(),
                         new TaikoModClassic(),
@@ -349,7 +350,8 @@ namespace osu.Game.Rulesets.Taiko
                                                   LocalisableString.Interpolate($@"±{hitWindows.WindowFor(window.result) / rate:0.##} ms"),
                                                   colours.ForHitResult(window.result)
                                               ))
-                                              .Append(new RulesetBeatmapAttribute.AdditionalMetric(TaikoRulesetStrings.HitsPerSecondRequiredToClearSwells, LocalisableString.Interpolate($@"{TaikoBeatmapConverter.RequiredSwellHitsPerSecond(modAdjustedDifficulty.OverallDifficulty):0.#}")))
+                                              .Append(new RulesetBeatmapAttribute.AdditionalMetric(TaikoRulesetStrings.HitsPerSecondRequiredToClearSwells,
+                                                  LocalisableString.Interpolate($@"{TaikoBeatmapConverter.RequiredSwellHitsPerSecond(modAdjustedDifficulty.OverallDifficulty):0.#}")))
                                               .ToArray()
             };
 
