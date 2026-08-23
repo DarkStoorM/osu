@@ -22,7 +22,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Custom Mod Requirement](#custom-mod-requirement)
     - [Finger Guide](#finger-guide)
     - [About the Custom Mod](#about-the-custom-mod)
-      - [Increased Spacing](#increased-spacing)
+      - [Snapping Words to Downbeats](#snapping-words-to-downbeats)
       - [Banned Consonants](#banned-consonants)
       - [Forced Cross-Hand on New Words](#forced-cross-hand-on-new-words)
         - [Important Note on Cross-Hand Play](#important-note-on-cross-hand-play)
@@ -96,7 +96,9 @@ So, this is something very much against the vision of osu!. It's supposed to be 
 To someone who doesn't really play osu!: you get a background song, you tap words to the actual beat. In reality, it wouldn't be much different than playing music and sitting on Monkeytype, but you know, there is no "layer of freedom" with you being forced to play consistently, no errors allowed, and it's inside osu!, which is nice.
 
 > [!Note]
-> This is already explained later in this document, but this ruleset should not be treated as something you would enjoy playing for more than 30 minutes. It's the same case as with typing tests. Here, the only difference between typing sessions is choosing a different song and a random seed. Still, you just play to `1/2` beat without any meaningful beatmap structure.
+> This is already explained later in this document, but this ruleset should not be treated as something you would enjoy playing for more than 30 minutes. It's the same case as with typing tests. Here, the only difference between typing sessions is choosing a different song and a random seed. Still, you just play to `1/2` beat, without any meaningful beatmap structure.
+>
+> On another note, I call the letter insertion `1/2`, which is what we actually call `Single Tap` in general, so this is a half of the Quarter Note provided by beatmap. 1/4 is just _stream_.
 
 #### About Beatmap Content Replacement
 
@@ -289,11 +291,15 @@ But, in short, `60 WPM` with this customisation can be set on things like:
 
 - 240 BPM + DT -> 300 BPM
 
-#### Increased Spacing
+#### Snapping Words to Downbeats
 
 There is also a setting to increase the spacing between words, because why not?
 
-This, instead of inserting a 1/2 break, inserts a full 1/1 break, which gives enough recovery time between the words, allowing to play on higher BPMs, since there is more time to fully parse the incoming word. That comes with a cost of lowered difficulty, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat).
+This, instead of inserting a one letter break, it inserts at least a full 1/1 break, which gives enough recovery time between the words, allowing to play on higher BPMs, since there is more time to fully parse the incoming word.
+
+That comes with a cost of lowered difficulty and score, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat, but it's still jank).
+
+This has been changed from the initial double spacing, which created uncomfortable and variable off-beats.
 
 #### Banned Consonants
 
@@ -376,7 +382,7 @@ If I were to make the `Space` hit window very narrow, which would make it harshe
 
 #### Customisation
 
-![alt](https://i.imgur.com/wIzwHKA.png)
+![alt](https://i.imgur.com/0oISwrM.png)
 
 ### Scoring Changes
 
