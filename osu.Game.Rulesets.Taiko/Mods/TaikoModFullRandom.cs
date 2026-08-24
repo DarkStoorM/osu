@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.Taiko.Mods
         public override string Name => "Full Random";
         public override string Acronym => "FR";
         public override LocalisableString Description => "Goodbye beatmap, hello chaos!";
-        public override ModType Type => ModType.Fun;
+        public override ModType Type => ModType.Conversion;
 
         public override string ExtendedIconInformation
         {
