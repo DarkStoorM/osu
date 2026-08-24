@@ -287,7 +287,7 @@ namespace osu.Game.Rulesets.Typing.Mods
                         // to somewhat maintain the rhythm on the strong beats. I don't know what's the correct terminology here, but in short,
                         // it's more comfortable to start the patterns like this.
                         // Each word length has its own "filler" defined as a group of beats forming a big spacing so they don't start on
-                        // Beat 2 or Beat 4. Beat 6 also didn't feel quite right. This was manually selected as a personal preference
+                        // Beat 2 or Beat 4. Beat 3 also didn't feel quite right. This was manually selected as a personal preference
                         double nextSnapTime = beatsToInsertAsGap * quarterHalfBeat;
 
                         advanceTime(nextSnapTime);
