@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Input;
+using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
+using osu.Game.Database;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Mods;
@@ -32,17 +34,6 @@ namespace osu.Game.Rulesets.Typing.UI
 
         public const double MAX_SCROLL_ADJUSTMENT_AMOUNT = 100.0;
 
-        // This should be responsible only for encoding the replay frames, e.g. time + TypingAction,
-        // and probably without the versions/headers since this will MOST LIKELY never change. Header
-        // I guess would also not be required, there's probably no other purpose in a custom ruleset
-        // other than storing a short info about what kind of ruleset the replay belongs to.
-        // private readonly TypingReplaySerialiser replaySerialiser;
-        //
-        // This should only be responsible for persisting the replay in Realm, keeping in mind the
-        // important fact that ScoreInfo might not exist yet while trying to persist and associate the
-        // replay with certain Score.
-        // private readonly TypingReplayRealmStorage replayRealmStorage;
-
         private double timeLengthInMs = DEFAULT_SCROLL_TIME;
 
         public DrawableTypingRuleset(TypingRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod>? mods = null)
@@ -51,8 +42,22 @@ namespace osu.Game.Rulesets.Typing.UI
             Direction.Value = ScrollingDirection.Left;
         }
 
+        [Resolved]
+        private RealmAccess realmAccess { get; } = null!;
+
+        private TypingReplaySerialiser replaySerialiser { get; set; } = null!;
+
+        private TypingReplayRealmStorage replayRealmStorage { get; set; } = null!;
+
         private readonly BindableDouble configScrollTime = new BindableDouble();
         private readonly BindableDouble configScrollAdjustmentCount = new BindableDouble();
+
+        [BackgroundDependencyLoader]
+        private void load(Storage storage)
+        {
+            replaySerialiser = new TypingReplaySerialiser(storage);
+            replayRealmStorage = new TypingReplayRealmStorage(replaySerialiser, realmAccess);
+        }
 
         protected override void LoadComplete()
         {
@@ -97,10 +102,19 @@ namespace osu.Game.Rulesets.Typing.UI
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new TypingFramedReplayInputHandler(replay);
 
-        // Note: Intentionally left here so I don't forget what I needed to do
-        public override void SetReplayScore(Score replayScore) => base.SetReplayScore(replayScore);
+        public override void SetReplayScore(Score replayScore)
+        {
+            replaySerialiser.Read(replayScore);
 
-        protected override ReplayRecorder CreateReplayRecorder(Score score) => new TypingReplayRecorder(score);
+            base.SetReplayScore(replayScore);
+        }
+
+        protected override ReplayRecorder CreateReplayRecorder(Score score)
+        {
+            replayRealmStorage.StoreReplayOnScorePersisted(score);
+
+            return new TypingReplayRecorder(score);
+        }
 
         public override DrawableHitObject<TypingHitObject>? CreateDrawableRepresentation(TypingHitObject h) => null;
 
