@@ -17,6 +17,7 @@ using osu.Game.Rulesets.Typing.Objects;
 using osu.Game.Rulesets.Typing.Replays;
 using osu.Game.Rulesets.UI;
 using osu.Game.Rulesets.UI.Scrolling;
+using osu.Game.Scoring;
 
 namespace osu.Game.Rulesets.Typing.UI
 {
@@ -30,6 +31,17 @@ namespace osu.Game.Rulesets.Typing.UI
         public const double MAX_SCROLL_TIME = 11000.0;
 
         public const double MAX_SCROLL_ADJUSTMENT_AMOUNT = 100.0;
+
+        // This should be responsible only for encoding the replay frames, e.g. time + TypingAction,
+        // and probably without the versions/headers since this will MOST LIKELY never change. Header
+        // I guess would also not be required, there's probably no other purpose in a custom ruleset
+        // other than storing a short info about what kind of ruleset the replay belongs to.
+        // private readonly TypingReplaySerialiser replaySerialiser;
+        //
+        // This should only be responsible for persisting the replay in Realm, keeping in mind the
+        // important fact that ScoreInfo might not exist yet while trying to persist and associate the
+        // replay with certain Score.
+        // private readonly TypingReplayRealmStorage replayRealmStorage;
 
         private double timeLengthInMs = DEFAULT_SCROLL_TIME;
 
@@ -84,6 +96,11 @@ namespace osu.Game.Rulesets.Typing.UI
         protected override Playfield CreatePlayfield() => new TypingPlayfield();
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new TypingFramedReplayInputHandler(replay);
+
+        // Note: Intentionally left here so I don't forget what I needed to do
+        public override void SetReplayScore(Score replayScore) => base.SetReplayScore(replayScore);
+
+        protected override ReplayRecorder CreateReplayRecorder(Score score) => new TypingReplayRecorder(score);
 
         public override DrawableHitObject<TypingHitObject>? CreateDrawableRepresentation(TypingHitObject h) => null;
 
