@@ -1,5 +1,11 @@
 # Custom osu! fork
 
+TL;DR
+
+This is not a technical README, but more of a thing that kind of reads like a blog post, so, a heads-up, if you hate reading, close this document. Also, this is not some AI auto-generated crap.
+
+---
+
 This fork is my small personal playground, where I make adjustments to the client for my own needs. I would not recommend trying this fork, even if you found out about the `Typing` ruleset from anywhere, because it's not fun for the first time users, and I'm not going to bother making things look pretty, because I simply don't care.
 
 I've been playing on osu!lazer for a long time, not only because I don't care about ranked plays, but because I can do whatever I want to this client, no matter how bad the code is.
@@ -41,8 +47,8 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Sharing Disclaimer](#sharing-disclaimer)
   - [Key Timing Distribution](#key-timing-distribution)
   - [Skinnable Key Timing Distribution](#skinnable-key-timing-distribution)
+  - [Replays](#replays)
     - [Missing Features](#missing-features)
-      - [About Replays](#about-replays)
 
 ---
 
@@ -524,29 +530,19 @@ Might be a bit too distracting, though...
 
 ![alt](https://i.imgur.com/qamL2EV.png)
 
+## Replays
+
+I initially rejected the idea of having replays due to some technical issues (skill issues), but after another swing at it, I attempted to make the replays work, which I thought would work with everything that is provided by osu! out of the box.
+
+But, since apparently, the replays are locked to the legacy rulesets, custom rulesets have to store the replays through their own internals, I took some time to look into it again. In general, and after some playtests, the replays should work for regular gameplay and failed scores (*).
+
+> [!Note]
+> (*) There was some jank happening with failed scores where replay frames were generated with time going in reverse.
+
+I still don't know how to use osu! Realm, so it will eventually break.
+
 ### Missing Features
 
-Some stuff I _might_ add if I won't get lazy:
+Some stuff I _might_ add/do if I won't get lazy:
 
-- Replays (**rejected for now**) - ~~the game is not recording the current session, so I will probably just copy it from osu!taiko. The game can record replays, but it seems that it's not possible to watch them in custom rulesets(?). Maybe I'm missing something, but it looks like the replays are hard locked to the main rulesets.~~
-
-#### About Replays
-
-I just noticed that storing replays **is** possible for custom rulesets and it requires manual encoding + replay storage, which makes replays downloadable and watchable. The thing is, why would I actually care about such thing in a custom ruleset?
-
-There are _probably_ three answers to that:
-
-1. Having access to post-gameplay statistics
-2. Having a replay for video purposes
-
-To answer the first, this is totally a valid one, you would want to compare your Unstable Rate after a while to see the progress.
-
-- My counter: you would normally play again, and naturally, if your score is better or the ratio of hits is better, you've made progress. If your hit ratio is already insanely good, you _could_ be aiming for better Unstable Rate, but hey, this is a custom ruleset, also unranked, no nobody really cares. I _could_ do this for completeness, because it's always a nice thing to have, I just don't see any value in doing so.
-
-The second one, also totally valid, but...
-
-My counter: I do not expect anyone to actually want to record any videos about this _IF_ they even get to discover this ruleset. First off, it's not really an enjoyable thing to play due to the nature of it (pure randomness and no beatmap structure), second, no real reason to show this off. Go on Monkeytype or something. Second, this REALLY does not fit osu! at all. Even a single play will tell you why. It's a thing you REALLY need to get used to, and given how I mostly did this for myself, I don't see any reasons to do this. My main inspiration for this comes from my custom Taiko mod that generates random patterns, which I wrote MANY years ago for osu! Stable, so I am used to it.
-
-I could obviously just ask AI to write the replay storage, but why should I? I could even look at other custom rulesets how they do it and "derive" from their work. I already tested this from the `Sticks` ruleset as it seems to sand out among other ones, and _replays_ actually work, so, maybe. Their solution looks simple as it's just replay frame serialisation to the file with matching score id. Since I hate asking AI for code on something I would actually use, I might eventually check how osu! Realm storage works, but for now, as I said, I see no value in this.
-
-"_Just copy someone else's code_"? Yeah, that works too, especially since this is not a commercial project. But hey, I'm a nice guy.
+- Finally extract the typing ruleset and publicly share it

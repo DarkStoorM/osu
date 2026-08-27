@@ -11,11 +11,8 @@ namespace osu.Game.Rulesets.Typing.Replays
     {
         public List<TypingAction> Actions = new List<TypingAction>();
 
-        public TypingReplayFrame(TypingAction? button = null)
-        {
-            if (button.HasValue)
-                Actions.Add(button.Value);
-        }
+        public TypingReplayFrame(double time, params TypingAction[] actions)
+            : base(time) => Actions.AddRange(actions);
 
         public override bool IsEquivalentTo(ReplayFrame other)
             => other is TypingReplayFrame typingFrame && Time == typingFrame.Time && Actions.SequenceEqual(typingFrame.Actions);

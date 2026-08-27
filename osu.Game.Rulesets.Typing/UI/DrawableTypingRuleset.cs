@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Input;
+using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
+using osu.Game.Database;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Mods;
@@ -17,6 +19,7 @@ using osu.Game.Rulesets.Typing.Objects;
 using osu.Game.Rulesets.Typing.Replays;
 using osu.Game.Rulesets.UI;
 using osu.Game.Rulesets.UI.Scrolling;
+using osu.Game.Scoring;
 
 namespace osu.Game.Rulesets.Typing.UI
 {
@@ -39,8 +42,22 @@ namespace osu.Game.Rulesets.Typing.UI
             Direction.Value = ScrollingDirection.Left;
         }
 
+        [Resolved]
+        private RealmAccess realmAccess { get; set; } = null!;
+
+        private TypingReplaySerialiser replaySerialiser { get; set; } = null!;
+
+        private TypingReplayRealmStorage replayRealmStorage { get; set; } = null!;
+
         private readonly BindableDouble configScrollTime = new BindableDouble();
         private readonly BindableDouble configScrollAdjustmentCount = new BindableDouble();
+
+        [BackgroundDependencyLoader]
+        private void load(Storage storage)
+        {
+            replaySerialiser = new TypingReplaySerialiser(storage);
+            replayRealmStorage = new TypingReplayRealmStorage(replaySerialiser, realmAccess);
+        }
 
         protected override void LoadComplete()
         {
@@ -84,6 +101,20 @@ namespace osu.Game.Rulesets.Typing.UI
         protected override Playfield CreatePlayfield() => new TypingPlayfield();
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new TypingFramedReplayInputHandler(replay);
+
+        public override void SetReplayScore(Score replayScore)
+        {
+            replaySerialiser.ReadAndAddReplayToScore(replayScore);
+
+            base.SetReplayScore(replayScore);
+        }
+
+        protected override ReplayRecorder CreateReplayRecorder(Score score)
+        {
+            replayRealmStorage.StoreReplayOnScorePersisted(score);
+
+            return new TypingReplayRecorder(score);
+        }
 
         public override DrawableHitObject<TypingHitObject>? CreateDrawableRepresentation(TypingHitObject h) => null;
 

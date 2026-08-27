@@ -16,16 +16,14 @@ namespace osu.Game.Rulesets.Typing.Replays
 
         protected override void GenerateFrames()
         {
-            Frames.Add(new TypingReplayFrame());
-
             foreach (TypingHitObject hitObject in Beatmap.HitObjects)
                 addFrame(hitObject.StartTime, hitObject.Letter);
         }
 
-        private void addFrame(double time, TypingAction direction)
+        private void addFrame(double time, TypingAction keyPressed)
         {
-            Frames.Add(new TypingReplayFrame(direction) { Time = time });
-            Frames.Add(new TypingReplayFrame { Time = time + KEY_UP_DELAY }); //Release the keys as well
+            Frames.Add(new TypingReplayFrame(time, keyPressed));
+            Frames.Add(new TypingReplayFrame(time + KEY_UP_DELAY));
         }
     }
 }

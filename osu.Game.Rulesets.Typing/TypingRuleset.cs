@@ -33,8 +33,10 @@ namespace osu.Game.Rulesets.Typing
 {
     public class TypingRuleset : Ruleset
     {
-        public override string Description => "osu!typing";
-        public override string ShortName => "typing";
+        public const string SHORT_NAME = "typing";
+
+        public override string Description => $"osu!{SHORT_NAME}";
+        public override string ShortName => SHORT_NAME;
 
         public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new TypingRulesetConfigManager(settings, RulesetInfo);
 
