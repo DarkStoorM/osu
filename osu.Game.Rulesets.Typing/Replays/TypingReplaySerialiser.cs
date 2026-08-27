@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Typing.Replays
 {
     public class TypingReplaySerialiser
     {
-        private const string replay_storage_directory = "ruleset-data/typing/replays";
+        private const string replay_storage_directory = $"rulesets/{TypingRuleset.SHORT_NAME}/replays";
 
         /// <summary>
         /// Header written to the replay file. Most likely unnecessary for custom rulesets, but maybe
@@ -152,7 +152,7 @@ namespace osu.Game.Rulesets.Typing.Replays
             score.Replay.HasReceivedAllFrames = true;
         }
 
-        public static void SetScoreHash(Score score) => score.ScoreInfo.Hash = $"typing-replay-{score.ScoreInfo.ID:N}";
+        public static void SetScoreHash(Score score) => score.ScoreInfo.Hash = $"{TypingRuleset.SHORT_NAME}-replay-{score.ScoreInfo.ID:N}";
 
         private static string createReplayFileName(Guid scoreId) => $"{scoreId:N}.osr";
     }
