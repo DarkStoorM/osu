@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
@@ -17,10 +16,20 @@ namespace osu.Game.Rulesets.Typing.Beatmaps
     {
         private readonly TypingAction[] allActions = Enum.GetValues<TypingAction>();
 
-        private readonly TypingAction[] allActionsWithoutSpace = Enum.GetValues<TypingAction>().Where(action => action != TypingAction.Space).ToArray();
+        private readonly Random beatmapSeededRng;
 
         public TypingBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
-            : base(beatmap, ruleset) { }
+            : base(beatmap, ruleset)
+        {
+            byte[] hash = System.Convert.FromHexString(Beatmap.BeatmapInfo.MD5Hash);
+            int seed = 0;
+
+            // "Combine" the bytes I guess? Probably doesn't do much anyway
+            for (int i = 0; i < hash.Length; i += 4)
+                seed ^= BitConverter.ToInt32(hash, i);
+
+            beatmapSeededRng = new Random(seed);
+        }
 
         public override bool CanConvert() => true;
 
@@ -29,6 +38,8 @@ namespace osu.Game.Rulesets.Typing.Beatmaps
             yield return createHitObject(original.Samples, original.StartTime);
 
             // For conversion of beatmaps with sliders/etc, it might be good to have an extra object for the tail
+            // There might be an issue with some beatmaps that have a very long slider/spinner at the end of the map,
+            // but I'd consider that an edge case
             if (original is IHasDuration objectEnd)
                 yield return createHitObject(original.Samples, objectEnd.EndTime);
         }
@@ -36,17 +47,9 @@ namespace osu.Game.Rulesets.Typing.Beatmaps
         protected override Beatmap<TypingHitObject> CreateBeatmap() => new TypingBeatmap();
 
         /// <summary>
-        /// Returns a random key before the words provider is implemented, which will change how letters are picked.
+        /// Returns a random key (<see cref="TypingAction"/>).
         /// </summary>
-        /// <param name="includeSpace">This will eventually be implemented to the callers, but for now ignore the fact that Space exists</param>
-        private TypingAction randomTypingAction(bool includeSpace = false)
-        {
-            var values = includeSpace
-                ? allActions
-                : allActionsWithoutSpace;
-
-            return values[Random.Shared.Next(values.Length)];
-        }
+        private TypingAction randomTypingAction() => allActions[beatmapSeededRng.Next(allActions.Length)];
 
         private TypingHitObject createHitObject(IList<HitSampleInfo> samples, double startTime)
         {
