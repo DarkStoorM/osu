@@ -2,7 +2,11 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using osu.Framework.Platform;
+using osu.Game.Rulesets.Replays;
 using osu.Game.Scoring;
 
 namespace osu.Game.Rulesets.Typing.Replays
@@ -21,7 +25,7 @@ namespace osu.Game.Rulesets.Typing.Replays
         /// <para/>This is only for completeness. May not really be necessary, because this assumes the replays may change in the future,
         /// but there is really nothing to change.
         /// </summary>
-        private const byte version = 1;
+        private const byte replay_version = 1;
 
         /// <summary>
         /// Frame Time and an integer, which is a mask containing <see cref="TypingAction"/> as bits flipped where action happened.
@@ -36,25 +40,120 @@ namespace osu.Game.Rulesets.Typing.Replays
         /// </summary>
         private const byte supported_key_count = 27;
 
-        private Storage replayStorage;
+        /// <summary>
+        /// Storage retrieved for <see cref="replay_storage_directory"/>.
+        /// </summary>
+        private readonly Storage replayStorage;
 
         public TypingReplaySerialiser(Storage storage)
         {
             replayStorage = storage.GetStorageForDirectory(replay_storage_directory);
         }
 
-        // Delete-me-note: encode the replay data for the key presses on a mask, where TypingAction flips a bit, e.g.
-        // the mask changes from [...]0000 to [...]0001 if a key was pressed whose value in the enum was 1
-        public void Write(Score score) { }
+        /// <summary>
+        /// Encodes and writes all replay frames to a file with the same id as the passed in score.
+        /// </summary>
+        public void WriteReplayFramesFromScore(Score score)
+        {
+            var replayFrames = score.Replay.Frames.OfType<TypingReplayFrame>().ToList();
 
-        // Delete-me-note: decode replay in the same manner, reading the bits from a mask and converting them into
-        // TypingAction, then creating a relay frame with them.
-        // Self note: I still don't know if it's necessary to add guards for e.g. max allowed replay frames, because some maps
-        // are 20 minutes long, which is just an edge case anyway (gonna ignore the 1h one...)
-        public void Read(Score score) { }
+            // Note: guard against maximum amount of frames when the replay gets ridiculously large, e.g. more than 3mb (?)
+            if (replayFrames.Count == 0)
+                return;
 
-        public static string AddScoreHash(Score score) => score.ScoreInfo.Hash = $"typing-replay-{score.ScoreInfo.ID:N}";
+            using Stream stream = replayStorage.GetStream(createReplayFileName(score.ScoreInfo.ID), FileAccess.Write, FileMode.Create);
+            using BinaryWriter binaryWriter = new BinaryWriter(stream);
 
-        private static string createReplayFileName(Guid scoreId) => $"{scoreId:N}.otr";
+            binaryWriter.Write(replay_header);
+            binaryWriter.Write(replay_version);
+
+            foreach (TypingReplayFrame replayFrame in replayFrames)
+            {
+                int maskedKeyPresses = 0;
+
+                // Flip a specific bit for each TypingAction in the replay frame, resulting in writing a value such as
+                // [...]0000 -> [...]0001 if only Q was pressed. It would become [...]0111 if Q/W/E was pressed at once
+                // in a frame, assuming that is the order the letters are defined in the enum
+                foreach (TypingAction keyPressed in replayFrame.Actions)
+                    maskedKeyPresses |= 1 << (int)keyPressed;
+
+                binaryWriter.Write(replayFrame.Time);
+                binaryWriter.Write(maskedKeyPresses);
+            }
+        }
+
+        /// <summary>
+        /// Decodes the replay file that is associated with this score if it exists under the passed in score id.
+        /// </summary>
+        public void ReadAndAddReplayToScore(Score score)
+        {
+            // There is a replay already, no need to do decode it from the file again
+            if (score.Replay.Frames.Count > 0)
+                return;
+
+            string replayFileName = createReplayFileName(score.ScoreInfo.ID);
+
+            if (!replayStorage.Exists(replayFileName))
+                return;
+
+            using Stream stream = replayStorage.GetStream(replayFileName, FileAccess.Read, FileMode.Open);
+            using BinaryReader binaryReader = new BinaryReader(stream);
+
+            // The replay file was probably empty, which should not happen, but maybe it should be investigated instead
+            // since there could be a serialisation issue while writing the replay to the file
+            if (stream.Length < sizeof(int))
+                return;
+
+            int header = binaryReader.ReadInt32();
+            int version = binaryReader.ReadInt32();
+
+            // In general, if the header is only used to guard against trying to open a replay from another ruleset,
+            // it's most likely unnecessary since nobody cares what is happening in custom rulesets, so, this could
+            // check could be removed.
+            // Pretty much the same with the replay version, they probably don't even have to exist at all
+            if (header != replay_header || version != replay_version)
+                return;
+
+            long replayLength = stream.Length - stream.Position;
+            long frameCount = replayLength / frame_size;
+
+            // The same situation as in the beginning of the file, but if header/version data was present, but no frames,
+            // something must have gone completely wrong. Might as well limit the frame count, but should not be necessary
+            if (frameCount == 0)
+                return;
+
+            List<ReplayFrame> replayFrames = new List<ReplayFrame>();
+
+            // It's probably unnecessary to account for the lead-in time, since keypresses before the play even starts
+            // are not even useful here, but whatever
+            double previousFrameTime = double.NegativeInfinity;
+
+            for (int i = 0; i < frameCount; i++)
+            {
+                double time = binaryReader.ReadDouble();
+                int maskedKeyPresses = binaryReader.ReadInt32();
+                TypingReplayFrame replayFrame = new TypingReplayFrame(time);
+
+                // The remaining bits from 32 are unused, because in reality, we only use letters + space, so only those will be read.
+                // Keep converting the present bits to TypingAction so we get the correct key presses back as actions performed in that frame
+                for (int bit = 0; bit < supported_key_count; bit++)
+                {
+                    if (((maskedKeyPresses >> bit) & 1) != 0)
+                        replayFrame.Actions.Add((TypingAction)bit);
+                }
+
+                // This could only mean that frames were unordered during the write for some reason (?)
+                if (replayFrame.Time < previousFrameTime)
+                    return;
+
+                previousFrameTime = replayFrame.Time;
+                replayFrames.Add(replayFrame);
+            }
+
+            score.Replay.Frames = replayFrames;
+            score.Replay.HasReceivedAllFrames = true;
+        }
+
+        private static string createReplayFileName(Guid scoreId) => $"{scoreId:N}.osr";
     }
 }

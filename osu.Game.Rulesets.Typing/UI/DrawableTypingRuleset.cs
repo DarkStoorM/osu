@@ -43,7 +43,7 @@ namespace osu.Game.Rulesets.Typing.UI
         }
 
         [Resolved]
-        private RealmAccess realmAccess { get; } = null!;
+        private RealmAccess realmAccess { get; set; } = null!;
 
         private TypingReplaySerialiser replaySerialiser { get; set; } = null!;
 
@@ -104,7 +104,7 @@ namespace osu.Game.Rulesets.Typing.UI
 
         public override void SetReplayScore(Score replayScore)
         {
-            replaySerialiser.Read(replayScore);
+            replaySerialiser.ReadAndAddReplayToScore(replayScore);
 
             base.SetReplayScore(replayScore);
         }
