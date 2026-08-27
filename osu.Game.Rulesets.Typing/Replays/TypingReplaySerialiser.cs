@@ -55,11 +55,18 @@ namespace osu.Game.Rulesets.Typing.Replays
         /// </summary>
         public void WriteReplayFramesFromScore(Score score)
         {
+            SetScoreHash(score);
+
             var replayFrames = score.Replay.Frames.OfType<TypingReplayFrame>().ToList();
 
             // Note: guard against maximum amount of frames when the replay gets ridiculously large, e.g. more than 3mb (?)
             if (replayFrames.Count == 0)
                 return;
+
+            // While this is not an issue on legacy rulesets, frames may be unordered on failed replays, which happens right
+            // after the drain time. A couple frames are inserted in reversed time for some reason, and with a tiny
+            // difference of 0.005-0.008~Ms. While those frames are insignificant, they should still be ordered anyway
+            replayFrames = replayFrames.OrderBy(f => f.Time).ToList();
 
             using Stream stream = replayStorage.GetStream(createReplayFileName(score.ScoreInfo.ID), FileAccess.Write, FileMode.Create);
             using BinaryWriter binaryWriter = new BinaryWriter(stream);
@@ -105,7 +112,7 @@ namespace osu.Game.Rulesets.Typing.Replays
                 return;
 
             int header = binaryReader.ReadInt32();
-            int version = binaryReader.ReadInt32();
+            int version = binaryReader.ReadByte();
 
             // In general, if the header is only used to guard against trying to open a replay from another ruleset,
             // it's most likely unnecessary since nobody cares what is happening in custom rulesets, so, this could
@@ -124,10 +131,6 @@ namespace osu.Game.Rulesets.Typing.Replays
 
             List<ReplayFrame> replayFrames = new List<ReplayFrame>();
 
-            // It's probably unnecessary to account for the lead-in time, since keypresses before the play even starts
-            // are not even useful here, but whatever
-            double previousFrameTime = double.NegativeInfinity;
-
             for (int i = 0; i < frameCount; i++)
             {
                 double time = binaryReader.ReadDouble();
@@ -142,17 +145,14 @@ namespace osu.Game.Rulesets.Typing.Replays
                         replayFrame.Actions.Add((TypingAction)bit);
                 }
 
-                // This could only mean that frames were unordered during the write for some reason (?)
-                if (replayFrame.Time < previousFrameTime)
-                    return;
-
-                previousFrameTime = replayFrame.Time;
                 replayFrames.Add(replayFrame);
             }
 
             score.Replay.Frames = replayFrames;
             score.Replay.HasReceivedAllFrames = true;
         }
+
+        public static void SetScoreHash(Score score) => score.ScoreInfo.Hash = $"typing-replay-{score.ScoreInfo.ID:N}";
 
         private static string createReplayFileName(Guid scoreId) => $"{scoreId:N}.osr";
     }
