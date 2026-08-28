@@ -29,8 +29,7 @@ namespace osu.Game.Rulesets.Scoring
         /// A non-null <see langword="double"/> value if unstable rate could be calculated,
         /// and <see langword="null"/> if unstable rate cannot be calculated due to <paramref name="hitEvents"/> being empty.
         /// </returns>
-        public static UnstableRateCalculationResult? CalculateUnstableRate(this IReadOnlyList<HitEvent> hitEvents, UnstableRateCalculationResult? result = null,
-                                                                           DrumSection drumSection = DrumSection.Both)
+        public static UnstableRateCalculationResult? CalculateUnstableRate(this IReadOnlyList<HitEvent> hitEvents, UnstableRateCalculationResult? result = null, DrumSection drumSection = DrumSection.Both)
         {
             Debug.Assert(hitEvents.All(ev => ev.GameplayRate != null));
 
@@ -120,7 +119,6 @@ namespace osu.Game.Rulesets.Scoring
         }
 
         public static bool AffectsUnstableRate(HitEvent e) => AffectsUnstableRate(e.HitObject, e.Result);
-
         public static bool AffectsUnstableRate(HitObject hitObject, HitResult result) => hitObject.HitWindows != HitWindows.Empty && result.IsHit();
 
         public static double? CalculateAverageHitErrorForDrumCentre(this IEnumerable<HitEvent> hitEvents) => CalculateMedianHitError(hitEvents.Where(e => e.isDrumCentre()));

@@ -22,12 +22,11 @@ namespace osu.Game.Screens.Play.HUD
         }
 
         [SettingSource("Unstable rate")]
-        public Bindable<UnstableRateSettingType> UnstableRateType { get; set; } =
-            new Bindable<UnstableRateSettingType>(UnstableRateSettingType.Global);
+        public Bindable<UnstableRateSettingType> UnstableRateType { get; set; } = new Bindable<UnstableRateSettingType>();
 
         public bool UsesFixedAnchor { get; set; }
 
-        protected override double RollingDuration => 0;
+        protected override double RollingDuration => 375;
 
         private HitEventExtensions.UnstableRateCalculationResult? unstableRateResult;
 
