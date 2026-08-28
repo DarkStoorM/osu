@@ -29,11 +29,8 @@ namespace osu.Game.Rulesets.Scoring
         /// A non-null <see langword="double"/> value if unstable rate could be calculated,
         /// and <see langword="null"/> if unstable rate cannot be calculated due to <paramref name="hitEvents"/> being empty.
         /// </returns>
-        public static UnstableRateCalculationResult? CalculateUnstableRate(
-            this IReadOnlyList<HitEvent> hitEvents,
-            UnstableRateCalculationResult? result = null,
-            DrumSection drumSection = DrumSection.Both
-        )
+        public static UnstableRateCalculationResult? CalculateUnstableRate(this IReadOnlyList<HitEvent> hitEvents, UnstableRateCalculationResult? result = null,
+                                                                           DrumSection drumSection = DrumSection.Both)
         {
             Debug.Assert(hitEvents.All(ev => ev.GameplayRate != null));
 
@@ -73,32 +70,17 @@ namespace osu.Game.Rulesets.Scoring
             return result;
         }
 
-        public static UnstableRateCalculationResult? CalculateUnstableRateForDrumCentre(
-            this IReadOnlyList<HitEvent> hitEvents,
-            UnstableRateCalculationResult? result = null
-        )
-        {
-            return CalculateUnstableRate(hitEvents, result, DrumSection.Centre);
-        }
+        public static UnstableRateCalculationResult? CalculateUnstableRateForDrumCentre(this IReadOnlyList<HitEvent> hitEvents, UnstableRateCalculationResult? result = null)
+            => CalculateUnstableRate(hitEvents, result, DrumSection.Centre);
 
-        public static UnstableRateCalculationResult? CalculateUnstableRateForDrumRim(
-            this IReadOnlyList<HitEvent> hitEvents,
-            UnstableRateCalculationResult? result = null
-        )
-        {
-            return CalculateUnstableRate(hitEvents, result, DrumSection.Rim);
-        }
+        public static UnstableRateCalculationResult? CalculateUnstableRateForDrumRim(this IReadOnlyList<HitEvent> hitEvents, UnstableRateCalculationResult? result = null)
+            => CalculateUnstableRate(hitEvents, result, DrumSection.Rim);
 
         private static bool isDrumRim(this HitEvent e) => eventIsDrumRim(e);
 
         private static bool isDrumCentre(this HitEvent e) => !eventIsDrumRim(e);
 
-        private static bool eventIsDrumRim(this HitEvent e)
-        {
-            return e.HitObject.Samples.Any(s =>
-                s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE
-            );
-        }
+        private static bool eventIsDrumRim(this HitEvent e) => e.HitObject.Samples.Any(s => s.Name is HitSampleInfo.HIT_CLAP or HitSampleInfo.HIT_WHISTLE);
 
         /// <summary>
         /// Calculates the average hit offset/error for a sequence of <see cref="HitEvent"/>s, where negative numbers mean the user hit too early on average.
@@ -109,10 +91,7 @@ namespace osu.Game.Rulesets.Scoring
         /// </returns>
         public static double? CalculateAverageHitError(this IEnumerable<HitEvent> hitEvents)
         {
-            double[] timeOffsets = hitEvents
-                .Where(AffectsUnstableRate)
-                .Select(ev => ev.TimeOffset)
-                .ToArray();
+            double[] timeOffsets = hitEvents.Where(AffectsUnstableRate).Select(ev => ev.TimeOffset).ToArray();
 
             if (timeOffsets.Length == 0)
                 return null;
@@ -129,11 +108,7 @@ namespace osu.Game.Rulesets.Scoring
         /// </returns>
         public static double? CalculateMedianHitError(this IEnumerable<HitEvent> hitEvents)
         {
-            double[] timeOffsets = hitEvents
-                .Where(AffectsUnstableRate)
-                .Select(ev => ev.TimeOffset)
-                .OrderBy(x => x)
-                .ToArray();
+            double[] timeOffsets = hitEvents.Where(AffectsUnstableRate).Select(ev => ev.TimeOffset).OrderBy(x => x).ToArray();
 
             if (timeOffsets.Length == 0)
                 return null;
@@ -141,30 +116,22 @@ namespace osu.Game.Rulesets.Scoring
             int center = timeOffsets.Length / 2;
 
             // Use average of the 2 central values if length is even
-            return timeOffsets.Length % 2 == 0
-                ? (timeOffsets[center - 1] + timeOffsets[center]) / 2
-                : timeOffsets[center];
+            return timeOffsets.Length % 2 == 0 ? (timeOffsets[center - 1] + timeOffsets[center]) / 2 : timeOffsets[center];
         }
 
-        public static double? CalculateAverageHitErrorForDrumCentre(
-            this IEnumerable<HitEvent> hitEvents
-        ) => CalculateMedianHitError(hitEvents.Where(e => e.isDrumCentre()));
+        public static bool AffectsUnstableRate(HitEvent e) => AffectsUnstableRate(e.HitObject, e.Result);
 
-        public static double? CalculateAverageHitErrorForDrumRim(
-            this IEnumerable<HitEvent> hitEvents
-        ) => CalculateMedianHitError(hitEvents.Where(e => e.isDrumRim()));
+        public static bool AffectsUnstableRate(HitObject hitObject, HitResult result) => hitObject.HitWindows != HitWindows.Empty && result.IsHit();
 
-        public static bool AffectsUnstableRate(HitEvent e) =>
-            AffectsUnstableRate(e.HitObject, e.Result);
+        public static double? CalculateAverageHitErrorForDrumCentre(this IEnumerable<HitEvent> hitEvents) => CalculateMedianHitError(hitEvents.Where(e => e.isDrumCentre()));
 
-        public static bool AffectsUnstableRate(HitObject hitObject, HitResult result) =>
-            hitObject.HitWindows != HitWindows.Empty && result.IsHit();
+        public static double? CalculateAverageHitErrorForDrumRim(this IEnumerable<HitEvent> hitEvents) => CalculateMedianHitError(hitEvents.Where(e => e.isDrumRim()));
 
         /// <summary>
-        /// Data type returned by <see cref="CalculateUnstableRate"/> which allows efficient incremental processing.
+        /// Data type returned by <see cref="HitEventExtensions.CalculateUnstableRate"/> which allows efficient incremental processing.
         /// </summary>
         /// <remarks>
-        /// This should be passed back into future <see cref="CalculateUnstableRate"/> calls as a parameter.
+        /// This should be passed back into future <see cref="HitEventExtensions.CalculateUnstableRate"/> calls as a parameter.
         ///
         /// The optimisations used here rely on hit events being a consecutive sequence from a single gameplay session.
         /// When a new gameplay session is started, any existing results should be disposed.
@@ -194,8 +161,7 @@ namespace osu.Game.Rulesets.Scoring
             /// <summary>
             /// The unstable rate.
             /// </summary>
-            public double Result =>
-                EventCount == 0 ? 0 : 10.0 * Math.Sqrt(SumOfSquares / EventCount);
+            public double Result => EventCount == 0 ? 0 : 10.0 * Math.Sqrt(SumOfSquares / EventCount);
         }
     }
 }
