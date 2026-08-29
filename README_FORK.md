@@ -541,6 +541,9 @@ But, since apparently, the replays are locked to the legacy rulesets, custom rul
 
 I still don't know how to use osu! Realm, so it will eventually break.
 
+> [!Important]
+> Replay importing is not possible for now, I don't think I care enough to look into that.
+
 ### Missing Features
 
 Some stuff I _might_ add/do if I won't get lazy:
