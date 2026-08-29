@@ -28,7 +28,8 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Custom Mod Requirement](#custom-mod-requirement)
     - [Finger Guide](#finger-guide)
     - [About the Custom Mod](#about-the-custom-mod)
-      - [Snapping Words to Downbeats](#snapping-words-to-downbeats)
+      - [Snapping Words to 1/1](#snapping-words-to-11)
+        - [Unintentional Bonus Mode](#unintentional-bonus-mode)
       - [Banned Consonants](#banned-consonants)
       - [Forced Cross-Hand on New Words](#forced-cross-hand-on-new-words)
         - [Important Note on Cross-Hand Play](#important-note-on-cross-hand-play)
@@ -298,7 +299,7 @@ But, in short, `60 WPM` with this customisation can be set on things like:
 
 - 240 BPM + DT -> 300 BPM
 
-#### Snapping Words to Downbeats
+#### Snapping Words to 1/1
 
 There is also a setting to increase the spacing between words, because why not?
 
@@ -307,6 +308,42 @@ This, instead of inserting a one letter break, it inserts at least a full 1/1 br
 That comes with a cost of lowered difficulty and score, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat, but it's still jank).
 
 This has been changed from the initial double spacing, which created uncomfortable and variable off-beats.
+
+To visualise how this looks, here's an example for all 1/3/5/7 letters long words (above this it wraps around, conveniently):
+
+```plaintext
+X marks where the next word starts
+
+   |-full beat
+   | . |-half beat
+   | . . . | . . . | . . . | . . . |
+1  I . . . X . . . | . . . | . . . |
+3  H E R . | . . . X . . . | . . . |
+5  P L A Y S . . . X . . . | . . . |
+7  W I T H O U T . | . . . X . . . |
+// Wrap around after 8 letters: 1 -> 3 -> 5 -> 7
+9  M E L B O U R N E . . . X . . . |
+11 I N D I V I D U A L S . | . . . X
+```
+
+To explain the spacing choice:
+
+- Words 1/5 letters long actually **end** on full beat, they use the same `one beat` spacing
+- Words 3/7 letters long **end** on `half beat`, so the spacing has to be `half beat + whole beat`
+
+The reason why 3/7 letters long have wider spacing is because the next word would appear too quick and it would not feel much different than the default mode without the extra spacing.
+
+Also, the spacing is different between the two pairs, because I didn't want the words to end on `half beat` if I always used the same spacing. It would kind of feel awkward to play.
+
+Technically, there is still a tiny detail about the rhythm, when starting the word on an `even beat` (every other 1/1), but i don't want to get too deep on this.
+
+There is a small exception to this rule when the words have small spacing (I think), you sort of start ignoring the "off half beat" if patterns are quite dense.
+
+##### Unintentional Bonus Mode
+
+_Surprisingly_, the word snapping customisation kind of works really well on higher BPMs + `Narrow Letter Spacing` for more "burst-oriented" gameplay. Even `Bonus Spaces` are somewhat playable with this.
+
+For example, if you can burst 160WPM, you can play a 200BPM beatmap with `Narrow Letter Spacing` and the word snap.
 
 #### Banned Consonants
 
@@ -389,7 +426,7 @@ If I were to make the `Space` hit window very narrow, which would make it harshe
 
 #### Customisation
 
-![alt](https://i.imgur.com/0oISwrM.png)
+![alt](https://i.imgur.com/B5zYJU4.png)
 
 ### Scoring Changes
 
