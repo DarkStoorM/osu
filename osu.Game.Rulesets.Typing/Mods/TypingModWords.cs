@@ -76,8 +76,8 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Dictionary Size", "\"Curated\" dictionary contains a custom, scored and curated words list from Extended dictionary (OANC). Basic/Advanced/Extended - 300/1250/~2500")]
         public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
 
-        [SettingSource("Snap words to downbeats", "Snaps words to Beat 1 for easier reading with spacing between them.")]
-        public BindableBool SnapWordsToDownbeat { get; } = new BindableBool();
+        [SettingSource("Snap words to full beat", "Snaps words to next beat with at least one 1/1 break between them for easier reading.")]
+        public BindableBool SnapWordsToFullBeat { get; } = new BindableBool();
 
         [SettingSource("Force cross-hand on new word", "First character in next word starts on the opposite hand. Disable for regular word generation.")]
         public BindableBool ForceCrossHandOnNewWord { get; } = new BindableBool(true);
@@ -124,9 +124,9 @@ namespace osu.Game.Rulesets.Typing.Mods
         private double endGenerationAt;
 
         /// <summary>
-        /// Base beat division (a Quarter note) for the current timing point. This length may be adjusted by <see cref="LetterSpacing"/>.
+        /// Base beat division (1/1) for the current timing point. This length may be adjusted by <see cref="LetterSpacing"/>.
         /// </summary>
-        private double quarterBeat => currentTimingControlPoint.BeatLength * LetterSpacing.Value switch
+        private double fullBeat => currentTimingControlPoint.BeatLength * LetterSpacing.Value switch
         {
             Mods.LetterSpacing.Narrow => 0.5,
             Mods.LetterSpacing.Default => 1,
@@ -134,10 +134,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             _ => 1
         };
 
-        /// <summary>
-        /// Half of the beatmap's beat length representing a quarter note.
-        /// </summary>
-        private double quarterHalfBeat => quarterBeat / 2;
+        private double halfBeat => fullBeat / 2;
 
         private bool isStillWithinPlayingBounds => currentTime <= endGenerationAt;
 
@@ -232,7 +229,7 @@ namespace osu.Game.Rulesets.Typing.Mods
                     if (hasTimingPointChanged)
                     {
                         // The new word can be too close, this will force the removal of the last inserted word
-                        if (index == 1 && lastHitObject != null && hit.StartTime - lastHitObject.StartTime < quarterHalfBeat)
+                        if (index == 1 && lastHitObject != null && hit.StartTime - lastHitObject.StartTime < halfBeat)
                             shouldRemoveLastUsedWord = true;
 
                         // Skip this word and abort, which will start placing a new word at this point in time
@@ -245,7 +242,7 @@ namespace osu.Game.Rulesets.Typing.Mods
                     hitObjectsInWord.Add(hit);
                     lastHitObject = hit;
 
-                    advanceTime(quarterHalfBeat);
+                    advanceTime(halfBeat);
                 }
 
                 // This will only happen if the timing point has changed and new word was too close
@@ -273,7 +270,7 @@ namespace osu.Game.Rulesets.Typing.Mods
                     lastInsertedWord.Clear();
                     lastInsertedWord.AddRange(hitObjectsInWord);
 
-                    if (SnapWordsToDownbeat.Value)
+                    if (SnapWordsToFullBeat.Value)
                     {
                         // We can't count the space as the part of the pattern
                         if (AddBonusSpaceHitObjects.Value)
@@ -283,19 +280,19 @@ namespace osu.Game.Rulesets.Typing.Mods
                         double beatsToInsertAsGap = spacing_beat_counts[gapIndex % 4];
 
                         // Note: this is calculated rather than snapped from timing point, because it may return a wrong snapped time (way forward)...
-                        // Small explanation: the whole purpose of this customisation is to "snap" the start of the next word to the Downbeat
+                        // Small explanation: the whole purpose of this customisation is to "snap" the start of the next word to the closest 1/1 beat
                         // to somewhat maintain the rhythm on the strong beats. I don't know what's the correct terminology here, but in short,
                         // it's more comfortable to start the patterns like this.
                         // Each word length has its own "filler" defined as a group of beats forming a big spacing so they don't start on
-                        // Beat 2 or Beat 4. Beat 3 also didn't feel quite right. This was manually selected as a personal preference
-                        double nextSnapTime = beatsToInsertAsGap * quarterHalfBeat;
+                        // anywhere between the 1/1. This was manually selected as a personal preference
+                        double nextSnapTime = beatsToInsertAsGap * halfBeat;
 
                         advanceTime(nextSnapTime);
                     }
                     else
                     {
-                        // The last spacing is required after the word to "close the beat" (to not land on upbeat ticks)
-                        advanceTime(quarterHalfBeat);
+                        // The last spacing is required after the word to "close the beat" (to not land off-beat)
+                        advanceTime(halfBeat);
                     }
 
                     lastHandUsed = getKeyFromCharacter(currentWord[^1]).physicalKey.Hand;
