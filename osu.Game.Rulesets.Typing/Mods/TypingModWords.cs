@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         /// <para/>Meant for word lengths: 1, 3, 5, 7 respectively. This small lookup defines the filling space to
         /// the next calculated beat snap.
         /// </summary>
-        private static readonly List<double> spacing_beat_counts = new List<double> { 7, 5, 3, 9 };
+        private static readonly List<double> spacing_beat_counts = new List<double> { 3, 5, 3, 9 };
 
         private const int max_banned_consonants_length = 8;
 
