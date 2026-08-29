@@ -56,13 +56,13 @@ namespace osu.Game.Rulesets.Typing.Scoring
                 _ => 1
             };
 
-            // The Downbeat Snap customisation creates a gap between the words so big that continuous typing is less straining
+            // The 1/1 Snap customisation creates a gap between the words so big that continuous typing is less straining
             // and this is reason why this value is so low. It also reduces the object count by around 60-65%, but that's not
             // directly relevant. What's important here is that normally, the recovery time between the words is exactly one letter,
             // and with this setting it can be maximum 9 letters long. Words too long to fit in a whole beat will extend the snap
-            // to the next downbeat
-            if (modWords.SnapWordsToDownbeat.Value)
-                multiplier *= modWords.SnapWordsToDownbeat.Value ? 0.35 : 1;
+            // to the next 1/1
+            if (modWords.SnapWordsToFullBeat.Value)
+                multiplier *= modWords.SnapWordsToFullBeat.Value ? 0.5 : 1;
 
             return multiplier;
         }
