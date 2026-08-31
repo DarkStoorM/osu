@@ -3,45 +3,77 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace osu.Game.Rulesets.Typing
 {
     public sealed class WeightedRandomWordGenerator
     {
-        private readonly string[] words;
-        private readonly double[] cumulative;
-
-        public WeightedRandomWordGenerator(IReadOnlyList<string> rankedWords, double s = 0.4)
+        /// <summary>
+        /// Defines arbitrarily chosen weights for each word length.
+        /// <para/>Those numbers were chosen to roughly say: "How many times certain length is chosen per 100 rolls".
+        /// <para/>DO NOT CHANGE __after__ release as this will affect existing replays.
+        /// </summary>
+        private readonly Dictionary<int, int> wordWeightsByLength = new Dictionary<int, int>
         {
-            words = rankedWords.ToArray();
-            cumulative = new double[words.Length];
+            { 1, 25 },
+            { 3, 25 },
+            { 5, 35 },
+            { 7, 20 },
+            { 9, 13 },
+            { 11, 7 },
+            { 13, 4 },
+            { 15, 2 },
+            { 17, 1 },
+            { 19, 1 },
+        };
 
-            double total = 0;
+        private readonly Dictionary<int, List<string>> wordsListByLength = new Dictionary<int, List<string>>();
 
-            for (int i = 0; i < words.Length; i++)
+        private readonly int totalWeight;
+
+        public WeightedRandomWordGenerator(IReadOnlyList<string> words)
+        {
+            // Prepare the secondary dictionary by separating the provided list into word groups by length
+            // so that we don't have to iterate through the entire dictionary again
+            for (int i = 0; i < words.Count; i++)
             {
-                double rank = i + 1;
-                double weight = 1.0 / Math.Pow(rank, s);
+                string word = words[i];
 
-                total += weight;
-                cumulative[i] = total;
+                // We could deliberately drop words with even length, but that would be a false assumption that dictionary is valid
+                Debug.Assert(word.Length % 2 != 0);
+
+                if (wordsListByLength.TryGetValue(word.Length, out List<string>? wordsList))
+                    wordsList.Add(word);
+                else
+                    wordsListByLength.Add(word.Length, new List<string> { word });
             }
 
-            for (int i = 0; i < cumulative.Length; i++)
-                cumulative[i] /= total;
+            totalWeight = wordWeightsByLength.Values.Sum();
         }
 
         public string NextWord(Random random)
         {
-            double roll = random.NextDouble();
+            int wordLength = getWeightedWordLength(random);
+            var wordsList = wordsListByLength[wordLength];
 
-            int index = Array.BinarySearch(cumulative, roll);
+            return wordsList[random.Next(wordsList.Count)];
+        }
 
-            if (index < 0)
-                index = ~index;
+        private int getWeightedWordLength(Random random)
+        {
+            int threshold = random.Next(totalWeight);
 
-            return words[Math.Clamp(index, 0, words.Length - 1)];
+            foreach ((int length, int weight) in wordWeightsByLength)
+            {
+                if (threshold < weight)
+                    return length;
+
+                threshold -= weight;
+            }
+
+            throw new InvalidOperationException("Failed to select a weighted word length.");
         }
     }
 }
