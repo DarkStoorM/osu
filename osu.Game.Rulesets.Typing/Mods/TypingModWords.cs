@@ -43,11 +43,15 @@ namespace osu.Game.Rulesets.Typing.Mods
                 string info = DictionarySize.Value switch
                 {
                     Mods.DictionarySize.Curated => "C",
+                    Mods.DictionarySize.CuratedExtended => "CX",
                     Mods.DictionarySize.Basic => "B",
                     Mods.DictionarySize.Advanced => "A",
                     Mods.DictionarySize.Extended => "X",
                     _ => throw new ArgumentOutOfRangeException()
                 };
+
+                if (SnapWordsToFullBeat.Value)
+                    info += "/";
 
                 if (AddBonusSpaceHitObjects.Value)
                     info += "_";
@@ -428,6 +432,7 @@ namespace osu.Game.Rulesets.Typing.Mods
     public enum DictionarySize
     {
         Curated,
+        CuratedExtended,
         Basic,
         Advanced,
         Extended
