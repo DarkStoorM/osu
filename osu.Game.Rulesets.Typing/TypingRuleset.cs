@@ -52,17 +52,17 @@ namespace osu.Game.Rulesets.Typing
 
         public override ScoreMultiplierCalculator CreateScoreMultiplierCalculator(ScoreMultiplierContext context) => new TypingScoreMultiplierCalculator(context);
 
-        public static Dictionary<DictionarySize, RankedWordGenerator> RankedDictionaries { get; private set; } = new Dictionary<DictionarySize, RankedWordGenerator>();
+        public static Dictionary<DictionarySize, WeightedRandomWordGenerator> WordDictionaries { get; private set; } = new Dictionary<DictionarySize, WeightedRandomWordGenerator>();
 
         public TypingRuleset()
         {
             // Note: ruleset seems to be instantiated every time a beatmapset is selected, so the dictionaries should only be created once
-            if (RankedDictionaries.Count != 0)
+            if (WordDictionaries.Count != 0)
                 return;
 
             var resources = new ResourceStore<byte[]>(new DllResourceStore(typeof(TypingRuleset).Assembly));
 
-            RankedDictionaries = WordDictionary.CreateDictionaries(resources);
+            WordDictionaries = WordDictionary.CreateDictionaries(resources);
         }
 
         public override IResourceStore<byte[]> CreateResourceStore() => new DllResourceStore(typeof(TypingRuleset).Assembly);

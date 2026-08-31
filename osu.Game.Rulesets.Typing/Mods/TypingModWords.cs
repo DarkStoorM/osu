@@ -163,7 +163,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
             typingBeatmap.HitObjects.Clear();
 
-            RankedWordGenerator wordGenerator = TypingRuleset.RankedDictionaries[DictionarySize.Value];
+            WeightedRandomWordGenerator wordGenerator = TypingRuleset.WordDictionaries[DictionarySize.Value];
             WordSamplingContext samplingContext = new WordSamplingContext();
 
             string currentWord = generateWord(wordGenerator, samplingContext);
@@ -319,7 +319,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             lastUsedTimingControlPoint = currentTimingControlPoint;
         }
 
-        private string generateWord(RankedWordGenerator generator, WordSamplingContext context)
+        private string generateWord(WeightedRandomWordGenerator generator, WordSamplingContext context)
         {
             while (true)
             {

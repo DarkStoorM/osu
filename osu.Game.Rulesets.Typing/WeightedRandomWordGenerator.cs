@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Typing
 {
-    public sealed class RankedWordGenerator
+    public sealed class WeightedRandomWordGenerator
     {
         private readonly string[] words;
         private readonly double[] cumulative;
 
-        public RankedWordGenerator(IReadOnlyList<string> rankedWords, double s = 0.4)
+        public WeightedRandomWordGenerator(IReadOnlyList<string> rankedWords, double s = 0.4)
         {
             words = rankedWords.ToArray();
             cumulative = new double[words.Length];
