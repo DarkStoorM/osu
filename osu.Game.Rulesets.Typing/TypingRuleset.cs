@@ -62,7 +62,7 @@ namespace osu.Game.Rulesets.Typing
 
             var resources = new ResourceStore<byte[]>(new DllResourceStore(typeof(TypingRuleset).Assembly));
 
-            WordDictionaries = WordDictionary.CreateDictionaries(resources);
+            WordDictionaries = WordDictionaryProvider.CreateDictionaries(resources);
         }
 
         public override IResourceStore<byte[]> CreateResourceStore() => new DllResourceStore(typeof(TypingRuleset).Assembly);

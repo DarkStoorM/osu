@@ -10,7 +10,7 @@ using osu.Game.Rulesets.Typing.Mods;
 
 namespace osu.Game.Rulesets.Typing
 {
-    public static class WordDictionary
+    public static class WordDictionaryProvider
     {
         private const string resources_path = "Resources/Dictionaries/";
 
