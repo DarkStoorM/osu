@@ -43,7 +43,7 @@ namespace osu.Game.Rulesets.Typing.Mods
                 string info = DictionarySize.Value switch
                 {
                     Mods.DictionarySize.Curated => "C",
-                    Mods.DictionarySize.CuratedExtended => "CX",
+                    Mods.DictionarySize.CuratedFullAlt => "CX",
                     Mods.DictionarySize.Basic => "B",
                     Mods.DictionarySize.Advanced => "A",
                     Mods.DictionarySize.Extended => "X",
@@ -77,7 +77,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Letter Spacing", "Halves or Doubles the existing beat length to make letters appear more or less frequent.")]
         public Bindable<LetterSpacing> LetterSpacing { get; } = new Bindable<LetterSpacing>(Mods.LetterSpacing.Default);
 
-        [SettingSource("Dictionary Size", "\"Curated\" dictionary contains a custom, scored and curated words list from Extended dictionary (OANC). Basic/Advanced/Extended - 300/1250/~2500")]
+        [SettingSource("Dictionary Size", "\"Curated\" dictionary contains a custom, scored and curated words list from Extended dictionary (OANC). Basic/Advanced/Extended - 300/1250/~2500 words.")]
         public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
 
         [SettingSource("Snap words to full beat", "Snaps words to next beat with at least one 1/1 break between them for easier reading.")]
@@ -432,7 +432,7 @@ namespace osu.Game.Rulesets.Typing.Mods
     public enum DictionarySize
     {
         Curated,
-        CuratedExtended,
+        CuratedFullAlt,
         Basic,
         Advanced,
         Extended
