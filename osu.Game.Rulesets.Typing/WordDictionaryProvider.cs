@@ -10,13 +10,13 @@ using osu.Game.Rulesets.Typing.Mods;
 
 namespace osu.Game.Rulesets.Typing
 {
-    public static class WordDictionary
+    public static class WordDictionaryProvider
     {
         private const string resources_path = "Resources/Dictionaries/";
 
-        public static Dictionary<DictionarySize, RankedWordGenerator> CreateDictionaries(ResourceStore<byte[]> resources)
+        public static Dictionary<DictionarySize, WeightedRandomWordGenerator> CreateDictionaries(ResourceStore<byte[]> resources)
         {
-            var wordDictionaries = new Dictionary<DictionarySize, RankedWordGenerator>();
+            var wordDictionaries = new Dictionary<DictionarySize, WeightedRandomWordGenerator>();
 
             foreach (var dictionarySize in Enum.GetValues<DictionarySize>())
             {
@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.Typing
                 string json = reader.ReadToEnd();
                 string[] words = JsonSerializer.Deserialize<string[]>(json) ?? throw new InvalidOperationException($"Failed to deserialize {dictionarySize} dictionary.");
 
-                wordDictionaries[dictionarySize] = new RankedWordGenerator(words);
+                wordDictionaries[dictionarySize] = new WeightedRandomWordGenerator(words);
             }
 
             return wordDictionaries;

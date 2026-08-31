@@ -24,6 +24,10 @@ namespace osu.Game.Rulesets.Typing.Replays
         /// Written after the header.
         /// <para/>This is only for completeness. May not really be necessary, because this assumes the replays may change in the future,
         /// but there is really nothing to change.
+        /// <para/>This version should be directly tied to the weights defined in <see cref="WeightedRandomWordGenerator"/>.
+        /// <list type="bullet">
+        /// <item><description>1: Initial version.</description></item>
+        /// </list>
         /// </summary>
         private const byte replay_version = 1;
 
@@ -116,8 +120,7 @@ namespace osu.Game.Rulesets.Typing.Replays
 
             // In general, if the header is only used to guard against trying to open a replay from another ruleset,
             // it's most likely unnecessary since nobody cares what is happening in custom rulesets, so, this could
-            // check could be removed.
-            // Pretty much the same with the replay version, they probably don't even have to exist at all
+            // check could be removed
             if (header != replay_header || version != replay_version)
                 return;
 
