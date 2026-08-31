@@ -13,50 +13,66 @@ namespace osu.Game.Rulesets.Typing
         /// <summary>
         /// Defines arbitrarily chosen weights for each word length.
         /// <para/>Those numbers were chosen to roughly say: "How many times certain length is chosen per 100 rolls".
-        /// <para/>DO NOT CHANGE __after__ release as this will affect existing replays.
+        /// <para/>DO NOT CHANGE __after__ release as this will affect existing replays. Tweak this once and leave it alone.
         /// </summary>
         private readonly Dictionary<int, int> wordWeightsByLength = new Dictionary<int, int>
         {
-            { 1, 25 },
-            { 3, 25 },
-            { 5, 35 },
-            { 7, 20 },
-            { 9, 13 },
-            { 11, 7 },
+            { 1, 20 },
+            { 3, 35 },
+            { 5, 45 },
+            { 7, 25 },
+            { 9, 15 },
+            { 11, 8 },
             { 13, 4 },
             { 15, 2 },
-            { 17, 1 },
-            { 19, 1 },
+            { 17, 2 },
+            { 19, 2 },
         };
 
-        private readonly Dictionary<int, List<string>> wordsListByLength = new Dictionary<int, List<string>>();
+        /// <summary>
+        /// Defines only those word weights that were present during the dictionary processing.
+        /// <para/>Used for weighted random access and word generation.
+        /// </summary>
+        private readonly Dictionary<int, int> availableWordWeights = new Dictionary<int, int>();
+
+        private readonly Dictionary<int, List<string>> wordListsByLength = new Dictionary<int, List<string>>();
 
         private readonly int totalWeight;
 
         public WeightedRandomWordGenerator(IReadOnlyList<string> words)
         {
+            // The sort is not really necessary here since only the length is picked at weighted random and individual words are
+            // uniformly distributed
+            string[] sortedWords = words.OrderBy(word => word.Length)
+                                        .ThenBy(word => word)
+                                        .ToArray();
+
             // Prepare the secondary dictionary by separating the provided list into word groups by length
             // so that we don't have to iterate through the entire dictionary again
-            for (int i = 0; i < words.Count; i++)
+            for (int i = 0; i < sortedWords.Length; i++)
             {
                 string word = words[i];
 
                 // We could deliberately drop words with even length, but that would be a false assumption that dictionary is valid
                 Debug.Assert(word.Length % 2 != 0);
 
-                if (wordsListByLength.TryGetValue(word.Length, out List<string>? wordsList))
+                if (wordListsByLength.TryGetValue(word.Length, out List<string>? wordsList))
                     wordsList.Add(word);
                 else
-                    wordsListByLength.Add(word.Length, new List<string> { word });
+                    wordListsByLength.Add(word.Length, new List<string> { word });
             }
 
-            totalWeight = wordWeightsByLength.Values.Sum();
+            // Only store the weights that are actually used by the processed dictionary
+            foreach ((int key, _) in wordListsByLength)
+                availableWordWeights.Add(key, wordWeightsByLength[key]);
+
+            totalWeight = availableWordWeights.Values.Sum();
         }
 
         public string NextWord(Random random)
         {
             int wordLength = getWeightedWordLength(random);
-            var wordsList = wordsListByLength[wordLength];
+            var wordsList = wordListsByLength[wordLength];
 
             return wordsList[random.Next(wordsList.Count)];
         }
@@ -65,7 +81,7 @@ namespace osu.Game.Rulesets.Typing
         {
             int threshold = random.Next(totalWeight);
 
-            foreach ((int length, int weight) in wordWeightsByLength)
+            foreach ((int length, int weight) in availableWordWeights)
             {
                 if (threshold < weight)
                     return length;
