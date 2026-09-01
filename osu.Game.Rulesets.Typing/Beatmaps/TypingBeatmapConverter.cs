@@ -16,6 +16,9 @@ namespace osu.Game.Rulesets.Typing.Beatmaps
     {
         private readonly TypingAction[] allActions = Enum.GetValues<TypingAction>();
 
+        /// <summary>
+        /// Used for deterministic beatmap conversion. It's required to not break replays in the default no-mod gameplay.
+        /// </summary>
         private readonly Random beatmapSeededRng;
 
         public TypingBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
@@ -37,7 +40,7 @@ namespace osu.Game.Rulesets.Typing.Beatmaps
         {
             yield return createHitObject(original.Samples, original.StartTime);
 
-            // For conversion of beatmaps with sliders/etc, it might be good to have an extra object for the tail
+            // For conversion of beatmaps with sliders/etc, it might be good to have an extra object for the tail.
             // There might be an issue with some beatmaps that have a very long slider/spinner at the end of the map,
             // but I'd consider that an edge case
             if (original is IHasDuration objectEnd)
@@ -46,18 +49,13 @@ namespace osu.Game.Rulesets.Typing.Beatmaps
 
         protected override Beatmap<TypingHitObject> CreateBeatmap() => new TypingBeatmap();
 
-        /// <summary>
-        /// Returns a random key (<see cref="TypingAction"/>).
-        /// </summary>
-        private TypingAction randomTypingAction() => allActions[beatmapSeededRng.Next(allActions.Length)];
-
         private TypingHitObject createHitObject(IList<HitSampleInfo> samples, double startTime)
         {
             return new TypingHitObject
             {
                 Samples = samples,
                 StartTime = startTime,
-                Letter = randomTypingAction(),
+                Letter = allActions[beatmapSeededRng.Next(allActions.Length)],
             };
         }
     }
