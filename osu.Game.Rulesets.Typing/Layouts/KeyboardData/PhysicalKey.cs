@@ -26,6 +26,10 @@ namespace osu.Game.Rulesets.Typing.Layouts.KeyboardData
         Bottom
     }
 
+    /// <summary>
+    /// Represents a data structure describing a key on the keyboard (not literally), for calculation and
+    /// comparison purposes.
+    /// </summary>
     public readonly record struct PhysicalKey
     {
         public required TypingAction Character { get; init; }
