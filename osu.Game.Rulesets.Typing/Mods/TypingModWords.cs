@@ -19,7 +19,9 @@ using static osu.Game.Rulesets.Typing.Layouts.KeyboardData.KeyboardLayout;
 
 namespace osu.Game.Rulesets.Typing.Mods
 {
-    // Note: This class contains code copy-pasted from TaikoModFullRandom, because I'm lazy
+    // Note: This class contains some copy-pasted code from TaikoModFullRandom, because I'm lazy
+    // Note 2: While this mod "technically" works as intended, the code could definitely look better, but a complete
+    // refactor would be painful with zero tests in place
     public class TypingModWords : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter
     {
         /// <summary>
@@ -32,6 +34,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         private const int max_banned_consonants_length = 8;
 
         public override ModType Type => ModType.Conversion;
+
         public override LocalisableString Description => "Generates random words from dictionary";
 
         public override string Acronym => "W";
@@ -72,6 +75,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         }
 
         public override string Name => "Words";
+
         public override bool Ranked => false;
 
         [SettingSource("Letter Spacing", "Halves or Doubles the existing beat length to make letters appear more or less frequent.")]
@@ -98,23 +102,13 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         public KeyboardLayout SelectedKeyboardLayout { get; private set; } = KEYBOARD_LAYOUTS[KeyboardLayoutType.QwertyStaggered];
 
+        private WeightedRandomWordGenerator wordGenerator = null!;
+        private readonly RecentlyUsedWords recentlyUsedWords = new RecentlyUsedWords();
+
         public TypingModWords()
         {
             BannedConsonants.BindValueChanged(OnBannedLettersChanged);
             KeyboardLayout.BindValueChanged(OnKeyboardLayoutChange);
-        }
-
-        private void OnKeyboardLayoutChange(ValueChangedEvent<KeyboardLayoutType> e) => SelectedKeyboardLayout = KEYBOARD_LAYOUTS[e.NewValue];
-
-        private void OnBannedLettersChanged(ValueChangedEvent<string> e)
-        {
-            string value = e.NewValue.ToLowerInvariant();
-            char[] letters = new HashSet<char>(value.Where(c => char.IsLetter(c) && !"aeiouy".Contains(c))).ToArray();
-            string filtered = new string(letters);
-
-            BannedConsonants.Value = filtered.Length > max_banned_consonants_length
-                ? filtered[..max_banned_consonants_length]
-                : filtered;
         }
 
         private TypingBeatmap typingBeatmap = null!;
@@ -148,6 +142,9 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         private bool hasTimingPointChanged => !currentTimingControlPoint.Equals(lastUsedTimingControlPoint);
 
+        /// <summary>
+        /// Used by <see cref="ForceCrossHandOnNewWord"/> to skip the next word if it starts on the same hand.
+        /// </summary>
         private Hand? lastHandUsed;
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
@@ -167,10 +164,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
             typingBeatmap.HitObjects.Clear();
 
-            WeightedRandomWordGenerator wordGenerator = TypingRuleset.WordDictionaries[DictionarySize.Value];
-            WordSamplingContext samplingContext = new WordSamplingContext();
-
-            string currentWord = generateWord(wordGenerator, samplingContext);
+            string currentWord = generateWord();
             bool isGeneratingFirstWord = true;
 
             // Since hit objects are not aware of being a part of a word, which form a pattern, we have to keep track of
@@ -302,7 +296,7 @@ namespace osu.Game.Rulesets.Typing.Mods
                     lastHandUsed = getKeyFromCharacter(currentWord[^1]).physicalKey.Hand;
                 }
 
-                currentWord = generateWord(wordGenerator, samplingContext);
+                currentWord = generateWord();
             }
 
             typingBeatmap = null!;
@@ -310,6 +304,7 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         private void initialiseSettings()
         {
+            wordGenerator = TypingRuleset.WordDictionaries[DictionarySize.Value];
             WordsRNG = new Random(Seed.Value ??= RNG.Next());
 
             startGenerationAt = typingBeatmap.HitObjects.First().StartTime;
@@ -323,27 +318,25 @@ namespace osu.Game.Rulesets.Typing.Mods
             lastUsedTimingControlPoint = currentTimingControlPoint;
         }
 
-        private string generateWord(WeightedRandomWordGenerator generator, WordSamplingContext context)
+        private string generateWord()
         {
+            // It'd be stupid to assume that it's guaranteed to never cause an infinite loop,
+            // but in case someone adds a custom dictionary with a tiny amount of words, and it hangs, that's on them
             while (true)
             {
-                string word = generator.NextWord(WordsRNG);
+                string word = wordGenerator.NextWord(WordsRNG);
 
-                if (context.WasRecentlyUsed(word))
+                if (recentlyUsedWords.WasRecentlyUsed(word))
                     continue;
 
-                // Words that match the customisation settings causing to skip them, can't be kept in the word sampling context,
-                // because they are not actually being used and would inflate the recent context window
                 // Self note: `if (word.Any(BannedConsonants.Value.Contains))` allocates every word
-                if (word.AsSpan().IndexOfAny(BannedConsonants.Value) >= 0 ||
-                    (ForceCrossHandOnNewWord.Value && getKeyFromCharacter(word[0]).physicalKey.Hand == lastHandUsed))
-                {
-                    context.RemoveQueuedWord(word);
-
+                if (word.AsSpan().IndexOfAny(BannedConsonants.Value) >= 0)
                     continue;
-                }
 
-                context.Push(word);
+                if (ForceCrossHandOnNewWord.Value && getKeyFromCharacter(word[0]).physicalKey.Hand == lastHandUsed)
+                    continue;
+
+                recentlyUsedWords.Add(word);
 
                 return word;
             }
@@ -386,33 +379,36 @@ namespace osu.Game.Rulesets.Typing.Mods
             return (action, physicalKey);
         }
 
-        private sealed class WordSamplingContext
+        private void OnKeyboardLayoutChange(ValueChangedEvent<KeyboardLayoutType> e) => SelectedKeyboardLayout = KEYBOARD_LAYOUTS[e.NewValue];
+
+        private void OnBannedLettersChanged(ValueChangedEvent<string> e)
         {
+            string value = e.NewValue.ToLowerInvariant();
+            char[] letters = new HashSet<char>(value.Where(c => char.IsLetter(c) && !"aeiouy".Contains(c))).ToArray();
+            string filtered = new string(letters);
+
+            BannedConsonants.Value = filtered.Length > max_banned_consonants_length
+                ? filtered[..max_banned_consonants_length]
+                : filtered;
+        }
+
+        /// <summary>
+        /// Used to prevent duplicate words being generated within <see cref="maximum_words_queued"/> window.
+        /// </summary>
+        private sealed class RecentlyUsedWords
+        {
+            private const int maximum_words_queued = 8;
+
             private readonly Queue<string> recentWords = new Queue<string>();
-            private const int recent_window = 8;
 
-            public bool WasRecentlyUsed(string word)
-                => recentWords.Contains(word);
+            public bool WasRecentlyUsed(string word) => recentWords.Contains(word);
 
-            public void Push(string word)
+            public void Add(string word)
             {
                 recentWords.Enqueue(word);
 
-                while (recentWords.Count > recent_window)
+                if (recentWords.Count > maximum_words_queued)
                     recentWords.Dequeue();
-            }
-
-            public void RemoveQueuedWord(string word)
-            {
-                int count = recentWords.Count;
-
-                for (int i = 0; i < count; i++)
-                {
-                    string item = recentWords.Dequeue();
-
-                    if (item != word)
-                        recentWords.Enqueue(item);
-                }
             }
         }
     }
