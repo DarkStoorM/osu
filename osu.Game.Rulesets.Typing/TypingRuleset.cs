@@ -109,7 +109,6 @@ namespace osu.Game.Rulesets.Typing
                     {
                         new TypingModNoFail(),
                         new TypingModHalfTime(),
-                        new TypingModFingerGuide(),
                     };
 
                 case ModType.DifficultyIncrease:
@@ -125,6 +124,12 @@ namespace osu.Game.Rulesets.Typing
                         // The reason for CS to exist here is to remove all speed changes from control points
                         new TypingModConstantSpeed(),
                         new TypingModWords(),
+                    };
+
+                case ModType.System:
+                    return new Mod[]
+                    {
+                        new TypingModFingerGuide(),
                     };
 
                 default:
