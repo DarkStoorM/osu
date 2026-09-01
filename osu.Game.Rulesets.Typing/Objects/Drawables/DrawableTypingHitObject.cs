@@ -47,7 +47,9 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
             : this(null) { }
 
         public DrawableTypingHitObject(TypingHitObject? hitObject)
-            : base(hitObject) { }
+            // Note: this is a naive null suppression to silence a warning, and this exists here because of the
+            // Pool registration from TypingPlayfield
+            : base(hitObject!) { }
 
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
