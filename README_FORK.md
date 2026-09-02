@@ -1,5 +1,14 @@
 # Custom osu! fork
 
+> [!Note]
+> `[Sep 2nd, 2026]` This README is temporary and will soon be moved to a standalone repository. Please refrain from building the source from this fork as it doesn't provide anything worth spending time on.
+>
+> `Typing` ruleset will be a separate repository and `osu!taiko` components will be published as `GitHub Gists`.
+>
+> I'm only keeping this fork, because I play _unranked_ anyway.
+>
+> Currently, waiting for `.NET 10.0` upgrade and `ppy.osu.Game` package update.
+
 TL;DR
 
 This is not a technical README, but more of a thing that kind of reads like a blog post, so, a heads-up, if you hate reading, close this document. Also, this is not some AI auto-generated crap.
@@ -607,10 +616,10 @@ Might be a bit too distracting, though...
 
 I initially rejected the idea of having replays due to some technical issues (skill issues), but after another swing at it, I attempted to make the replays work, which I thought would work with everything that is provided by osu! out of the box.
 
-But, since apparently, the replays are locked to the legacy rulesets, custom rulesets have to store the replays through their own internals, I took some time to look into it again. In general, and after some playtests, the replays should work for regular gameplay and failed scores (*).
+But, since apparently, the replays are locked to the legacy rulesets, custom rulesets have to store the replays through their own internals, I took some time to look into it again. In general, and after some playtests, the replays should work for regular gameplay and failed scores (\*).
 
 > [!Note]
-> (*) There was some jank happening with failed scores where replay frames were generated with time going in reverse.
+> (\*) There was some jank happening with failed scores where replay frames were generated with time going in reverse.
 
 I still don't know how to use osu! Realm, so it will eventually break.
 
