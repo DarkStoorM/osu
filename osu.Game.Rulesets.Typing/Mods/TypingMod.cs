@@ -73,7 +73,8 @@ namespace osu.Game.Rulesets.Typing.Mods
 
                 case 'm': return TypingAction.M;
 
-                // This should catch some jank in the dictionaries
+                // This should catch some jank in the dictionaries, although... this should already be handles at the
+                // ruleset creation level where the files are loaded, not when the mod is selected
                 default: throw new ArgumentOutOfRangeException(nameof(c), c, null);
             }
         }

@@ -27,12 +27,15 @@ namespace osu.Game.Rulesets.Typing.UI
     public partial class DrawableTypingRuleset : DrawableScrollingRuleset<TypingHitObject>
     {
         public const double DEFAULT_SCROLL_TIME = 3500.0;
-        public const double SCROLL_TIME_STEP = 100.0;
+        public const double SCROLL_TIME_STEP_IN_MILLISECONDS = 100.0;
 
         public const double MIN_SCROLL_TIME = 1000.0;
         public const double MAX_SCROLL_TIME = 11000.0;
 
-        public const double MAX_SCROLL_ADJUSTMENT_AMOUNT = 100.0;
+        /// <summary>
+        /// Maximum possible units of scroll adjustment to apply.
+        /// </summary>
+        public const int MAX_SCROLL_ADJUSTMENT_AMOUNT = 100;
 
         private double timeLengthInMs = DEFAULT_SCROLL_TIME;
 
@@ -77,7 +80,7 @@ namespace osu.Game.Rulesets.Typing.UI
                 return;
 
             double oldVal = configScrollTime.Value;
-            double newVal = Math.Clamp(configScrollTime.Value - amount * SCROLL_TIME_STEP, MIN_SCROLL_TIME, MAX_SCROLL_TIME);
+            double newVal = Math.Clamp(configScrollTime.Value - amount * SCROLL_TIME_STEP_IN_MILLISECONDS, MIN_SCROLL_TIME, MAX_SCROLL_TIME);
 
             configScrollTime.Value = newVal;
 
@@ -95,6 +98,7 @@ namespace osu.Game.Rulesets.Typing.UI
                 ? Beatmap.BeatmapInfo.BPM * Beatmap.Difficulty.SliderMultiplier / 60
                 : 1;
 
+            // Store this instead if it ever causes a problem with TriggerChange on every update
             TimeRange.Value = timeLengthInMs / multiplier;
         }
 

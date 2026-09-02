@@ -11,10 +11,12 @@ using osu.Game.Rulesets.Typing.Objects;
 
 namespace osu.Game.Rulesets.Typing.Scoring
 {
+    /// <summary>
+    /// This is a copy of <see cref="HitEventExtensions"/>, with adjustments for <see cref="TypingAction"/>.
+    /// </summary>
     public static class TypingHitEventExtensions
     {
-        public static UnstableRateCalculationResult? CalculateKeyUnstableRate(this IReadOnlyList<HitEvent> hitEvents, TypingAction key, UnstableRateCalculationResult? result = null
-        )
+        public static UnstableRateCalculationResult? CalculateKeyUnstableRate(this IReadOnlyList<HitEvent> hitEvents, TypingAction key, UnstableRateCalculationResult? result = null)
         {
             Debug.Assert(hitEvents.All(ev => ev.GameplayRate != null));
 
@@ -46,7 +48,9 @@ namespace osu.Game.Rulesets.Typing.Scoring
             return result.EventCount == 0 ? null : result;
         }
 
-        // Note: this is unused, because I still have to find a place for this...
+        // Note: this is unused, because I still have to find a place for this... the keys on the key timing distribution
+        // are pretty small. Either way, the hit error might not be necessary after all, since being far away from `0` just
+        // means there was a beatmap timing or an offset issue
         public static double? CalculateAverageKeyHitError(this List<HitEvent> hitEvents, TypingAction typingAction)
         {
             int count = 0;
@@ -64,9 +68,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
             return count == 0 ? null : sum / count;
         }
 
-        public static bool AffectsUnstableRate(HitEvent e) => AffectsUnstableRate(e.HitObject, e.Result);
-
-        public static bool AffectsUnstableRate(HitObject hitObject, HitResult result) => hitObject.HitWindows != HitWindows.Empty && result.IsHit();
+        public static bool AffectsUnstableRate(HitEvent e) => affectsUnstableRate(e.HitObject, e.Result);
 
         public class UnstableRateCalculationResult
         {
@@ -77,5 +79,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
 
             public double Result => EventCount == 0 ? 0 : 10.0 * Math.Sqrt(SumOfSquares / EventCount);
         }
+
+        private static bool affectsUnstableRate(HitObject hitObject, HitResult result) => hitObject.HitWindows != HitWindows.Empty && result.IsHit();
     }
 }

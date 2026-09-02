@@ -11,6 +11,10 @@ using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Typing.Skinning
 {
+    // Note: this component used the live data that comes from the score processor, reading the hit events and updating
+    // the key timing distribution. This component is not really useful, and can sometimes be more distracting than helpful,
+    // but it will remain here until a new solution is implemented or just deleted. This is the same exact component used
+    // on the result screen, just updated during the gameplay for whatever purpose
     public partial class TypingKeyDistribution : Container, ISerialisableDrawable
     {
         private KeyTimingDistribution keyTimingDistribution = null!;

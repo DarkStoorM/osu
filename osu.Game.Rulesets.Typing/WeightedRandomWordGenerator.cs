@@ -19,12 +19,12 @@ namespace osu.Game.Rulesets.Typing
         /// </summary>
         private readonly Dictionary<int, int> wordWeightsByLength = new Dictionary<int, int>
         {
-            { 1, 20 },
+            { 1, 15 },
             { 3, 35 },
             { 5, 45 },
-            { 7, 25 },
-            { 9, 15 },
-            { 11, 8 },
+            { 7, 15 },
+            { 9, 8 },
+            { 11, 6 },
             { 13, 4 },
             { 15, 2 },
             { 17, 2 },

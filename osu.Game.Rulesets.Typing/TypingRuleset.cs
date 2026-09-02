@@ -36,6 +36,7 @@ namespace osu.Game.Rulesets.Typing
         public const string SHORT_NAME = "typing";
 
         public override string Description => $"osu!{SHORT_NAME}";
+
         public override string ShortName => SHORT_NAME;
 
         public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new TypingRulesetConfigManager(settings, RulesetInfo);
@@ -109,7 +110,6 @@ namespace osu.Game.Rulesets.Typing
                     {
                         new TypingModNoFail(),
                         new TypingModHalfTime(),
-                        new TypingModFingerGuide(),
                     };
 
                 case ModType.DifficultyIncrease:
@@ -125,6 +125,12 @@ namespace osu.Game.Rulesets.Typing
                         // The reason for CS to exist here is to remove all speed changes from control points
                         new TypingModConstantSpeed(),
                         new TypingModWords(),
+                    };
+
+                case ModType.System:
+                    return new Mod[]
+                    {
+                        new TypingModFingerGuide(),
                     };
 
                 default:
@@ -214,7 +220,7 @@ namespace osu.Game.Rulesets.Typing
 
             // Mod multiplier also affects bonus score, because the total consists of regular results + bonus results
             double bonusSpacesScore = typingModWords.AddBonusSpaceHitObjects.Value
-                ? max_score * TypingScoreProcessor.BONUS_SPACE_SCORE_FRACTION * scoreMultiplier
+                ? max_score * TypingScoreProcessor.BONUS_SPACE_TOTAL_SCORE_FRACTION * scoreMultiplier
                 : 0;
 
             double scoreWithModMultiplier = max_score * scoreMultiplier;

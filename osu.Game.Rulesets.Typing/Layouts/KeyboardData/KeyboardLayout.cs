@@ -24,28 +24,20 @@ namespace osu.Game.Rulesets.Typing.Layouts.KeyboardData
 
         private readonly Dictionary<TypingAction, PhysicalKey> keys;
 
-        protected KeyboardLayout()
-        {
-            keys = CreateLayout()
-                .ToDictionary(
-                    key => key.Character,
-                    createPhysicalKey);
-        }
+        protected KeyboardLayout() => keys = CreateLayout().ToDictionary(key => key.Character, createPhysicalKey);
 
         public IReadOnlyDictionary<TypingAction, PhysicalKey> Keys => keys;
 
-        public bool TryGetKey(TypingAction c, out PhysicalKey key)
-            => keys.TryGetValue(c, out key);
+        public bool TryGetKey(TypingAction c, out PhysicalKey key) => keys.TryGetValue(c, out key);
 
         protected abstract IEnumerable<LayoutKeyDefinition> CreateLayout();
 
-        protected static LayoutKeyDefinition Key(
-            TypingAction character,
-            float x,
-            float y,
-            Hand hand,
-            Finger finger,
-            KeyboardRow row)
+        protected static LayoutKeyDefinition Key(TypingAction character,
+                                                 float x,
+                                                 float y,
+                                                 Hand hand,
+                                                 Finger finger,
+                                                 KeyboardRow row)
         {
             return new LayoutKeyDefinition
             {

@@ -11,6 +11,9 @@ using osu.Game.Rulesets.Typing.Mods;
 
 namespace osu.Game.Tools.Typing.DifficultyCalculator
 {
+    // Note: this was written by AI, please ignore this file.
+    // The only purpose of this was to display a quick table of averaged values for Star Rating and Skills separately.
+    // This is not needed anymore as the Difficulty Calculator is extremely inaccurate
     internal class Program
     {
         private const bool include_double_time = false;

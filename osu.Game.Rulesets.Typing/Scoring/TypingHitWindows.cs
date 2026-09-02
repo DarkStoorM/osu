@@ -8,10 +8,14 @@ using osu.Game.Rulesets.Scoring;
 namespace osu.Game.Rulesets.Typing.Scoring
 {
     /// <summary>
-    /// Typing HitWindows based on osu!mania
+    /// HitWindows based on osu!mania.
     /// </summary>
     public class TypingHitWindows : HitWindows
     {
+        // Note: It might seem unnecessary to include so many hit windows for something like typing, because all that's really
+        // needed is basically a set of windows used by osu!taiko: 300/100/Miss, so, it might be confusing why all these are
+        // even displayed to the user. In reality, OK and MEH are not really needed, but since typing can be quite unstable,
+        // might just as well include other windows to see the judgement distribution
         public static readonly DifficultyRange PERFECT_WINDOW_RANGE = new DifficultyRange(40, 26, 19);
         public static readonly DifficultyRange GREAT_WINDOW_RANGE = new DifficultyRange(80, 52, 33);
         public static readonly DifficultyRange GOOD_WINDOW_RANGE = new DifficultyRange(115, 82, 48);

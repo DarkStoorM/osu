@@ -12,16 +12,17 @@ namespace osu.Game.Rulesets.Typing.Scoring
 {
     public partial class TypingScoreProcessor : ScoreProcessor
     {
-        public const double BONUS_SPACE_SCORE_FRACTION = 0.25;
-
-        private const double bonus_space_score_budget = MAX_SCORE * BONUS_SPACE_SCORE_FRACTION;
+        public const double BONUS_SPACE_TOTAL_SCORE_FRACTION = 0.25;
 
         /// <summary>
-        /// Overall Difficulty (or Accuracy) where the score multiplier is 1. Below this value, multiplier is negative, positive above it.
+        /// Value of Overall Difficulty (Accuracy) where the score multiplier is 1.
         /// </summary>
-        private const float overall_difficulty_mid_point = 5;
+        private const float od_neutral_point = 5f;
 
-        private const float overall_difficulty_multiplier = 0.25f;
+        /// <summary>
+        /// Maximum score multiplier applied by Overall Difficulty at OD 10.
+        /// </summary>
+        private const float od_max_multiplier = 0.25f;
 
         private double perSpaceBonus;
         private double overallDifficultyMultiplier;
@@ -48,7 +49,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
                                     .OfType<SpaceHitObject>()
                                     .Count();
 
-            perSpaceBonus = spaceCount > 0 ? bonus_space_score_budget / spaceCount : 0;
+            perSpaceBonus = spaceCount > 0 ? MAX_SCORE * BONUS_SPACE_TOTAL_SCORE_FRACTION / spaceCount : 0;
             overallDifficultyMultiplier = CalculateOverallDifficultyMultiplier(beatmap.Difficulty.OverallDifficulty);
         }
 
@@ -67,7 +68,8 @@ namespace osu.Game.Rulesets.Typing.Scoring
         }
 
         /// <summary>
-        /// Returns the multiplier to be applied to the total score, which at most can be <see cref="overall_difficulty_multiplier"/>.
+        /// Returns the multiplier to be applied to the total score, which at most can be <see cref="od_max_multiplier"/>, with
+        /// an exception to the Extended Limit being applied with the Difficulty Adjustment, where OD can go above the maximum.
         /// <para/>This creates a range of score multipliers from <c>-multiplier to +multiplier</c>, resulting in an example
         /// total score of <c>750000 up to 1250000</c>.
         /// <para/>This is purely for balance purposes, because zero OD SS play could grant 1000000 score if played perfectly,
@@ -79,7 +81,21 @@ namespace osu.Game.Rulesets.Typing.Scoring
             if (overallDifficulty == null)
                 return 1;
 
-            return 1.0 + ((float)overallDifficulty - overall_difficulty_mid_point) / overall_difficulty_mid_point * overall_difficulty_multiplier;
+            // Round to nearest 0.5
+            double od = (int)(overallDifficulty * 2) / 2.0;
+
+            // Warning: currently, this piecewise Lerp will equally distribute the multiplier both ways, because neutral OD is set to 5.
+            // The formula will automatically change how the multiplier is distributed if the neutral point gets adjusted.
+            // E.g., if 7 is used, adjusting to the right will increment the multiplier more since there are fewer steps to 10.
+            // While the maximum is already set, the Extended OD Limit can still bring this up a little.
+            // The formula is already in place "just in case" the neutral point is changed
+            return od <= od_neutral_point
+                ? 1.0
+                  - od_max_multiplier
+                  + od / od_neutral_point * od_max_multiplier
+                : 1.0
+                  + (od - od_neutral_point) / (10f - od_neutral_point)
+                  * od_max_multiplier;
         }
 
         protected override double GetBonusScoreChange(JudgementResult result) => perSpaceBonus;

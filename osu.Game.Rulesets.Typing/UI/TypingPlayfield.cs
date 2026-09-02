@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Typing.UI
     [Cached]
     public partial class TypingPlayfield : ScrollingPlayfield
     {
-        public static readonly Colour4 LANE_FILL_COLOR = Color4Extensions.FromHex("#1E1E2E");
+        private static readonly Colour4 lane_fill_colour = Color4Extensions.FromHex("#1E1E2E");
 
         private const float fade_height = 100;
         private const float judgment_box_width = 70;
@@ -97,7 +97,7 @@ namespace osu.Game.Rulesets.Typing.UI
                                 Height = fade_height,
                                 Anchor = Anchor.TopLeft,
                                 Origin = Anchor.TopLeft,
-                                Colour = ColourInfo.GradientVertical(LANE_FILL_COLOR.Opacity(0), LANE_FILL_COLOR),
+                                Colour = ColourInfo.GradientVertical(lane_fill_colour.Opacity(0), lane_fill_colour),
                             },
                         },
                     },
@@ -118,7 +118,7 @@ namespace osu.Game.Rulesets.Typing.UI
                                 Height = fade_height,
                                 Anchor = Anchor.BottomLeft,
                                 Origin = Anchor.BottomLeft,
-                                Colour = ColourInfo.GradientVertical(LANE_FILL_COLOR, LANE_FILL_COLOR.Opacity(0)),
+                                Colour = ColourInfo.GradientVertical(lane_fill_colour, lane_fill_colour.Opacity(0)),
                             },
                         },
                     },
@@ -148,7 +148,7 @@ namespace osu.Game.Rulesets.Typing.UI
                     {
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
-                        Colour = LANE_FILL_COLOR,
+                        Colour = lane_fill_colour,
                         Direction = FillDirection.Vertical,
                     },
                     content,

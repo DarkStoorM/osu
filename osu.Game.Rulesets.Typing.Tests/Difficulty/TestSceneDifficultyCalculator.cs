@@ -20,6 +20,9 @@ using MarginPadding = osu.Framework.Graphics.MarginPadding;
 
 namespace osu.Game.Rulesets.Typing.Tests.Difficulty
 {
+    // Note: this and contents of /Components/ were written by AI, please ignore these files.
+    // This was only added to quickly display the graphs for Skills values
+    // This is not needed anymore as the Difficulty Calculator is extremely inaccurate
     public partial class TestSceneDifficultyCalculator : OsuTestScene
     {
         private const double bpm = 140;

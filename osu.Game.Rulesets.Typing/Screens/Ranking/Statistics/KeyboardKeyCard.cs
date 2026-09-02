@@ -12,6 +12,11 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 {
+    // Note: the key card had a hard-coded size for now until a proper solution is in place for automatic scaling, which I probably
+    // won't implement, because I hastily added this to have something on the result screen
+    /// <summary>
+    /// A "Card" representing a keyboard key, which shows the unstable rate in top row, a count of successful hits + missed in bottom row.
+    /// </summary>
     public partial class KeyboardKeyCard : Container
     {
         private const float card_size = 55;
