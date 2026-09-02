@@ -219,7 +219,7 @@ namespace osu.Game.Rulesets.Typing
 
             // Mod multiplier also affects bonus score, because the total consists of regular results + bonus results
             double bonusSpacesScore = typingModWords.AddBonusSpaceHitObjects.Value
-                ? max_score * TypingScoreProcessor.BONUS_SPACE_SCORE_FRACTION * scoreMultiplier
+                ? max_score * TypingScoreProcessor.BONUS_SPACE_TOTAL_SCORE_FRACTION * scoreMultiplier
                 : 0;
 
             double scoreWithModMultiplier = max_score * scoreMultiplier;
