@@ -3,7 +3,6 @@
 
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Typing.Judgements;
-using osu.Game.Rulesets.Typing.Scoring;
 
 namespace osu.Game.Rulesets.Typing.Objects
 {
@@ -11,7 +10,6 @@ namespace osu.Game.Rulesets.Typing.Objects
     /// HitObject that ONLY awards bonus score and doesn't contribute towards combo. Can be missed, but can
     /// cause note-locks when its HitWindow is ignored on lower accuracy plays.
     /// <para/>Note: this object always awards a fixed portion of score as bonus, no matter the HitResult.
-    /// <para/>See: <see cref="TypingScoreProcessor.bonus_space_score_budget"/>
     /// </summary>
     public class SpaceHitObject : TypingHitObject
     {
