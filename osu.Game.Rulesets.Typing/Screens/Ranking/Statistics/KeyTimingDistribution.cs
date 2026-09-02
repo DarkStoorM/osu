@@ -43,6 +43,10 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
         /// </summary>
         public void UpdateKeyCard(JudgementResult currentJudgementResult, IReadOnlyList<HitEvent> allHitEvents) => keyDistributionContainer.UpdateKeyCard(currentJudgementResult, allHitEvents);
 
+        // Note: Visually, this creates a staggered layout with keys taken from the selected keyboard in the mod. Keyboard layouts
+        // themselves come in so many different shapes that I decided to ditch the whole idea of adding yet another customisation
+        // for changing them. Staggered, split, ortho, variable columns, etc... just display the staggered layout with offset
+        // rows like a traditional keyboard, only with the key matrix being different
         public partial class KeyDistributionContainer : FillFlowContainer
         {
             private readonly Dictionary<KeyboardRow, KeyboardRowContainer> keyboardRows = new Dictionary<KeyboardRow, KeyboardRowContainer>();
@@ -91,6 +95,10 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
                 keyCards[typingHitObject.CurrentKey.Character].UpdateKeyCard(keyCardData);
             }
 
+            /// <summary>
+            /// Constructs and adds the key cards for the given keyboard layout and row. Only returns the ones matching the
+            /// specific row: top/home/bottom.
+            /// </summary>
             private void createRowKeyCards(IReadOnlyList<HitEvent> hitEvents, KeyboardLayout keyboardLayout, KeyboardRow row)
             {
                 var keys = keyboardLayout.Keys
@@ -115,7 +123,10 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 
             // Hit events per key should be at least ten to deem the unstable rate valid for this key, so we have to force zero
             // it out if there were not enough keypresses. The reason for this is that the unstable rate will converge at higher
-            // amount of hits across the whole gameplay, so a very short beatmap should not yield valuable results
+            // amount of hits across the whole gameplay, so a very short beatmap should not yield valuable results.
+            // The whole reason for this is that there is just not enough information to calculate the Unstable Rate in a way that
+            // it's useful. Sometimes not even 10 keys are enough, but due to the nature of randomised words on every session,
+            // even a two-minutes beatmap can contain hit events below this value. Mostly for the uncommon keys, though.
             if (keyHitEvents.Count < 10)
                 unstableRate = 0;
 

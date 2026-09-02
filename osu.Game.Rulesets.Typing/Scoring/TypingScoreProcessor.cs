@@ -68,7 +68,8 @@ namespace osu.Game.Rulesets.Typing.Scoring
         }
 
         /// <summary>
-        /// Returns the multiplier to be applied to the total score, which at most can be <see cref="od_max_multiplier"/>.
+        /// Returns the multiplier to be applied to the total score, which at most can be <see cref="od_max_multiplier"/>, with
+        /// an exception to the Extended Limit being applied with the Difficulty Adjustment, where OD can go above the maximum.
         /// <para/>This creates a range of score multipliers from <c>-multiplier to +multiplier</c>, resulting in an example
         /// total score of <c>750000 up to 1250000</c>.
         /// <para/>This is purely for balance purposes, because zero OD SS play could grant 1000000 score if played perfectly,

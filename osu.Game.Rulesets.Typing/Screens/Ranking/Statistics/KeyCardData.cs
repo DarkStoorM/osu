@@ -9,7 +9,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
 {
-    // Note: This is a direct copy of the color information from OsuColour for Star Rating, with some minor tweaks
+    // Note: This is a direct copy of the colour information from OsuColour for Star Rating, with some minor tweaks
     // as it didn't need to reflect the values 1:1
     public readonly record struct KeyCardData
     {
@@ -49,6 +49,8 @@ namespace osu.Game.Rulesets.Typing.Screens.Ranking.Statistics
             (350f, Color4Extensions.FromHex("5755bd")),
         };
 
+        // Note: This contains the colour .Darken / .Lighten modulation, our of pure laziness. I could sample the result colours
+        // from the in-game and store them, but that changes absolutely nothing.
         public KeyCardData(int hitEventsCount, int missEventsCount, double unstableRate)
         {
             HitEventsCount = hitEventsCount;
