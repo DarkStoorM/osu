@@ -16,14 +16,15 @@ namespace osu.Game.Rulesets.Typing.Replays
         private const string replay_storage_directory = $"rulesets/{TypingRuleset.SHORT_NAME}/replays";
 
         /// <summary>
-        /// Header written to the replay file. Most likely unnecessary for custom rulesets, but maybe
+        /// Header written to the replay file. Most likely unnecessary for custom rulesets, but maybe, if osu! ever considers
+        /// rulesets outside Legacy ones, change this to represent the actual ruleset id as a proper header.
         /// </summary>
         private const int replay_header = 0x76857687;
 
         /// <summary>
         /// Written after the header.
         /// <para/>This is only for completeness. May not really be necessary, because this assumes the replays may change in the future,
-        /// but there is really nothing to change.
+        /// but there is really nothing to change, unless something is clearly broken.
         /// <para/>This version should be directly tied to the weights defined in <see cref="WeightedRandomWordGenerator"/>.
         /// <list type="bullet">
         /// <item><description>1: Initial version.</description></item>
@@ -94,7 +95,7 @@ namespace osu.Game.Rulesets.Typing.Replays
         }
 
         /// <summary>
-        /// Decodes the replay file that is associated with this score if it exists under the passed in score id.
+        /// Decodes the replay file that is associated with this score if it exists.
         /// </summary>
         public void ReadAndAddReplayToScore(Score score)
         {
