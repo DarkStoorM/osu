@@ -285,7 +285,7 @@ This ruleset will be in _work-in-progress_ state for a long time, because I don'
 
 Since the whole idea was to play with generated words, it's mandatory to have the `Words` mods enabled:
 
-![img](https://i.imgur.com/3O2Sfxr.png)
+![img](https://i.imgur.com/xSsa1Cz.png)
 
 It's still possible to play the actual beatmap with random letters, but I disabled the difficulty calculation for this and explicitly require `Words` mod to be present in order to calculate the star rating. It's not correct anyway, but I'm just experimenting. There is a better ruleset for this in the ruleset collection in the repository, ppy added a `Typer` ruleset, which I just now discovered, go play that for random letters and preserved beatmap objects.
 
