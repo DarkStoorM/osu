@@ -59,10 +59,14 @@ namespace osu.Game.Rulesets.Typing.Scoring
             // The 1/1 Snap customisation creates a gap between the words so big that continuous typing is less straining
             // and this is reason why this value is so low. It also reduces the object count by around 60-65%, but that's not
             // directly relevant. What's important here is that normally, the recovery time between the words is exactly one letter,
-            // and with this setting it can be maximum 9 letters long. Words too long to fit in a whole beat will extend the snap
-            // to the next 1/1
-            if (modWords.SnapWordsToFullBeat.Value)
-                multiplier *= modWords.SnapWordsToFullBeat.Value ? 0.5 : 1;
+            // and with this setting it can be maximum 9 beats long. Words too long to fit in a whole beat will extend the snap
+            // to the next 1/1. The exception being the 11 beats gap for EveryOtherFullBeat spacing
+            multiplier *= modWords.WordSpacing.Value switch
+            {
+                WordSpacing.FullBeat => 0.5,
+                WordSpacing.EveryOtherFullBeat => 0.35,
+                _ => 1
+            };
 
             return multiplier;
         }

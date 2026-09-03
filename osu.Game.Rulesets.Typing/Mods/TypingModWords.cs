@@ -25,11 +25,19 @@ namespace osu.Game.Rulesets.Typing.Mods
     public class TypingModWords : TypingMod, IApplicableToBeatmap, IApplicableToBeatmapConverter
     {
         /// <summary>
-        /// Amount of adjusted beats by <see cref="LetterSpacing"/> to the next spot where the word will be placed.
+        /// Stores the counts of adjusted beats by <see cref="LetterSpacing"/> to the next spot where the word will be placed.
         /// <para/>Meant for word lengths: 1, 3, 5, 7 respectively. This small lookup defines the filling space to
         /// the next calculated beat snap.
         /// </summary>
-        private static readonly List<double> spacing_beat_counts = new List<double> { 3, 5, 3, 5 };
+        private static readonly Dictionary<WordSpacing, List<double>> word_spacing_count_lookup = new Dictionary<WordSpacing, List<double>>
+        {
+            // Note: This exists only for easier lookup and by default there's always one extra half-beat spacing
+            { Mods.WordSpacing.Narrow, new List<double> { 1, 1, 1, 1 } },
+            // These values were chosen to always snap to nearest full beat, ensuring __at least__ one 1/1 break
+            { Mods.WordSpacing.FullBeat, new List<double> { 3, 5, 3, 5 } },
+            // These value were chosen to always snap to nearest Odd Full Beat, think of starting a word on "strong" beat (rhythmically)
+            { Mods.WordSpacing.EveryOtherFullBeat, new List<double> { 7, 5, 11, 9 } },
+        };
 
         private const int max_banned_consonants_length = 8;
 
@@ -53,8 +61,17 @@ namespace osu.Game.Rulesets.Typing.Mods
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
-                if (SnapWordsToFullBeat.Value)
-                    info += "/";
+                // Note: none of this is necessary, because there are no matching symbols for this customisation
+                switch (WordSpacing.Value)
+                {
+                    case Mods.WordSpacing.FullBeat:
+                        info += "/";
+                        break;
+
+                    case Mods.WordSpacing.EveryOtherFullBeat:
+                        info += "//";
+                        break;
+                }
 
                 if (AddBonusSpaceHitObjects.Value)
                     info += "_";
@@ -81,17 +98,17 @@ namespace osu.Game.Rulesets.Typing.Mods
         [SettingSource("Letter Spacing", "Halves or Doubles the existing beat length to make letters appear more or less frequent.")]
         public Bindable<LetterSpacing> LetterSpacing { get; } = new Bindable<LetterSpacing>(Mods.LetterSpacing.Default);
 
+        [SettingSource("Word spacing", "Allows adjusting the spacing between words by snapping them to next 1/1 or every other 1/1.")]
+        public Bindable<WordSpacing> WordSpacing { get; } = new Bindable<WordSpacing>();
+
         [SettingSource("Dictionary Size", "\"Curated\" dictionary contains a custom, scored and curated words list from Extended dictionary (OANC). Basic/Advanced/Extended - 300/1250/~2500 words.")]
         public Bindable<DictionarySize> DictionarySize { get; } = new Bindable<DictionarySize>();
-
-        [SettingSource("Snap words to full beat", "Snaps words to next beat with at least one 1/1 break between them for easier reading.")]
-        public BindableBool SnapWordsToFullBeat { get; } = new BindableBool();
 
         [SettingSource("Force cross-hand on new word", "First character in next word starts on the opposite hand. Disable for regular word generation.")]
         public BindableBool ForceCrossHandOnNewWord { get; } = new BindableBool(true);
 
-        [SettingSource("Add bonus Space key objects",
-            "Generates hit objects between words that act as Space in typing. They grant bonus score, but are not required to hit. Use with caution, because ignoring them can cause note-locks!")]
+        [SettingSource("Add bonus Space key objects", "Generates hit objects between words that act as Space in typing. They grant bonus score, but are not required to hit."
+                                                      + " Use with caution, because ignoring them can cause note-locks!")]
         public BindableBool AddBonusSpaceHitObjects { get; } = new BindableBool();
 
         [SettingSource("Banned consonants", "Skips words containing the set consonants. You can add up to 8 characters.")]
@@ -268,30 +285,22 @@ namespace osu.Game.Rulesets.Typing.Mods
                     lastInsertedWord.Clear();
                     lastInsertedWord.AddRange(hitObjectsInWord);
 
-                    if (SnapWordsToFullBeat.Value)
-                    {
-                        // We can't count the space as the part of the pattern
-                        if (AddBonusSpaceHitObjects.Value)
-                            hitObjectsInWord.RemoveAt(hitObjectsInWord.Count - 1);
+                    // For Word Spacing beat calculation we can't count the space as the part of the pattern,
+                    // because it would push the word one beat forward, so we have to act as if it never existed
+                    if (AddBonusSpaceHitObjects.Value)
+                        hitObjectsInWord.RemoveAt(hitObjectsInWord.Count - 1);
 
-                        int gapIndex = (hitObjectsInWord.Count - 1) / 2;
-                        double beatsToInsertAsGap = spacing_beat_counts[gapIndex % 4];
+                    int gapIndex = (hitObjectsInWord.Count - 1) / 2;
+                    double beatsToInsertAsGap = word_spacing_count_lookup[WordSpacing.Value][gapIndex % 4];
 
-                        // Note: this is calculated rather than snapped from timing point, because it may return a wrong snapped time (way forward)...
-                        // Small explanation: the whole purpose of this customisation is to "snap" the start of the next word to the closest 1/1 beat
-                        // to somewhat maintain the rhythm on the strong beats. I don't know what's the correct terminology here, but in short,
-                        // it's more comfortable to start the patterns like this.
-                        // Each word length has its own "filler" defined as a group of beats forming a big spacing so they don't start on
-                        // anywhere between the 1/1. This was manually selected as a personal preference
-                        double nextSnapTime = beatsToInsertAsGap * halfBeat;
+                    // Note: this is calculated rather than snapped from timing point, because it may return a wrong snapped time (way forward)...
+                    // Small explanation: the whole purpose of this customisation is to "snap" the start of the next word to the closest 1/1 beat,
+                    // depending on the selected spacing.
+                    // Each word length has its own "filler" defined as a group of beats forming a big spacing so they don't start on
+                    // anywhere between the 1/1. This was manually selected as a personal preference
+                    double nextSnapTime = beatsToInsertAsGap * halfBeat;
 
-                        advanceTime(nextSnapTime);
-                    }
-                    else
-                    {
-                        // The last spacing is required after the word to "close the beat" (to not land off-beat)
-                        advanceTime(halfBeat);
-                    }
+                    advanceTime(nextSnapTime);
 
                     lastHandUsed = getKeyFromCharacter(currentWord[^1]).physicalKey.Hand;
                 }
@@ -423,6 +432,13 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         // Twice the Default beat length. In short: half the BPM
         Wide,
+    }
+
+    public enum WordSpacing
+    {
+        Narrow,
+        FullBeat,
+        EveryOtherFullBeat,
     }
 
     public enum DictionarySize

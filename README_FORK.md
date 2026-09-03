@@ -40,7 +40,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Custom Mod Requirement](#custom-mod-requirement)
     - [Finger Guide](#finger-guide)
     - [About the Custom Mod](#about-the-custom-mod)
-      - [Snapping Words to 1/1](#snapping-words-to-11)
+      - [Adjusting Word Spacing](#adjusting-word-spacing)
         - [Unintentional Bonus Mode](#unintentional-bonus-mode)
       - [Banned Consonants](#banned-consonants)
       - [Forced Cross-Hand on New Words](#forced-cross-hand-on-new-words)
@@ -344,45 +344,46 @@ But, in short, `60 WPM` with this customisation can be set on things like:
 
 - 240 BPM + DT -> 300 BPM
 
-#### Snapping Words to 1/1
+#### Adjusting Word Spacing
 
 There is also a setting to increase the spacing between words, because why not?
 
 This, instead of inserting a one letter break, it inserts at least a full 1/1 break, which gives enough recovery time between the words, allowing to play on higher BPMs, since there is more time to fully parse the incoming word.
 
-That comes with a cost of lowered difficulty and score, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat, but it's still jank).
+That comes with a cost of lowered difficulty and score, though, since the sustained speed and typing fatigue decreases with such breaks, so, glad the difficulty calculation can pick that up (somewhat, but it's still **very** jank).
 
-This has been changed from the initial double spacing, which created uncomfortable and variable off-beats.
+By default, a Narrow word spacing is used as opposed to letter spacing, and there are three settings for this:
 
-To visualise how this looks, here's an example for all 1/3/5/7 letters long words (above this it wraps around, conveniently):
+- `Narrow` (Default): one letter gap between the words
+- `Full Beat`: the closest 1/1 with an exception where the word is too close to the beat (3, 7 word lengths). May create an odd rhythm since words can start on `even` beat after 1 and 7 letters long words
+- `Every Other Full Beat`: words are basically snapped to a second quarter in a full 4/4
+
+To visualise how the every other beat snap looks, here's an example for all 1/3/5/7 letters long words (above this length, it wraps around, conveniently, so it looks the same for 9/11/13/15 lengths):
 
 ```plaintext
 X marks where the next word starts
+Indexed from 1
 
-   |-full beat
-   | . |-half beat
-   | . . . | . . . | . . . | . . . |
+   -------- FULL BEAT SPACING --------
+   1   -   2   -   3   -   4   -   1
+   Odd     Even    Odd     Even    Odd
+   |       |       |       |       |
 1  I . . . X . . . | . . . | . . . |
 3  H E R . | . . . X . . . | . . . |
 5  P L A Y S . . . X . . . | . . . |
 7  W I T H O U T . | . . . X . . . |
-// Wrap around after 8 letters: 1 -> 3 -> 5 -> 7
-9  M E L B O U R N E . . . X . . . |
-11 I N D I V I D U A L S . | . . . X
+
+   ----- EVERY OTHER BEAT SPACING ----
+   1   -   2   -   3   -   4   -   1
+   Odd     Even    Odd     Even    Odd
+   |       |       |       |       |
+1  I . . . | . . . X . . . | . . . |
+3  H E R . | . . . X . . . | . . . |
+5  P L A Y S . . . | . . . | . . . X
+7  W I T H O U T . | . . . | . . . X
 ```
 
-To explain the spacing choice:
-
-- Words 1/5 letters long actually **end** on full beat, they use the same `one beat` spacing
-- Words 3/7 letters long **end** on `half beat`, so the spacing has to be `half beat + whole beat`
-
-The reason why 3/7 letters long have wider spacing is because the next word would appear too quick and it would not feel much different than the default mode without the extra spacing.
-
-Also, the spacing is different between the two pairs, because I didn't want the words to end on `half beat` if I always used the same spacing. It would kind of feel awkward to play.
-
-Technically, there is still a tiny detail about the rhythm, when starting the word on an `even beat` (every other 1/1), but i don't want to get too deep on this.
-
-There is a small exception to this rule when the words have small spacing (I think), you sort of start ignoring the "off half beat" if patterns are quite dense.
+With the increased spacing to `Every Other Full Beat`, I decided to make the gap wider for 5 letters long words, which might be way too much, but I had to do this to give more breathing room. The reason for this is that such customisation would most likely be used for bursting on higher BPMs and the 5 letters long words would appear too quick. With 3 letters long words it's "good enough".
 
 ##### Unintentional Bonus Mode
 
@@ -471,7 +472,7 @@ If I were to make the `Space` hit window very narrow, which would make it harshe
 
 #### Customisation
 
-![alt](https://i.imgur.com/B5zYJU4.png)
+![alt](https://i.imgur.com/59n9u0H.png)
 
 ### Scoring Changes
 
@@ -611,6 +612,9 @@ Initially, I added the Unstable Rate preview to the result screen as mentioned a
 Might be a bit too distracting, though...
 
 ![alt](https://i.imgur.com/qamL2EV.png)
+
+> [!Warning]
+> This might require a change to the `UI Scale` on some resolutions since the size can't be changed on this component...
 
 ## Replays
 
