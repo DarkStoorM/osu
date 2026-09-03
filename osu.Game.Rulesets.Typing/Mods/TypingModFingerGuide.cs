@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         public override string Acronym => "FG";
         public override LocalisableString Description => "Colours objects as they would appear on touch-typing guides";
         public override string Name => "Finger Guide";
-        public override ModType Type => ModType.System;
+        public override ModType Type => ModType.Fun;
 
         public void ApplyToDrawableHitObject(DrawableHitObject drawable)
         {

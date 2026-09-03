@@ -127,7 +127,7 @@ namespace osu.Game.Rulesets.Typing
                         new TypingModWords(),
                     };
 
-                case ModType.System:
+                case ModType.Fun:
                     return new Mod[]
                     {
                         new TypingModFingerGuide(),
