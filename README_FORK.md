@@ -139,7 +139,7 @@ But yeah, the real answer is that I was just curious if such thing would even be
 
 ### A Very Poor Screenshot + Explanation
 
-![img](https://i.imgur.com/pLbAL4T.png)
+![img](https://i.imgur.com/91Lmr8z.png)
 
 > [!Important]
 > I really need to record a video on this, should record one soon if I don't find anything else to add to this ruleset :thinking: (I hope so)
