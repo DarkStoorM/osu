@@ -28,6 +28,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Motivation](#motivation)
     - [The Big Question... What, and Why?](#the-big-question-what-and-why)
       - [About Beatmap Content Replacement](#about-beatmap-content-replacement)
+      - [So, why?](#so-why)
     - [A Very Poor Screenshot + Explanation](#a-very-poor-screenshot--explanation)
       - [About the Word Frequency and Word Generation](#about-the-word-frequency-and-word-generation)
       - [About Dictionaries](#about-dictionaries)
@@ -128,7 +129,7 @@ Of course, I've done no research on this, but I'm 100% sure the cognitive load w
 
 I took the same approach as my osu!taiko mod: take the first and last object from the beatmap and insert random stuff in-between. Those two objects define the `Playable Bounds`. **All** existing objects from the selected beatmap are deleted. Again, this might feel like a middle finger towards the mappers like with my osu!taiko mod, because I just got bored of the current content.
 
-Now, back to the second part of the Big Question, _Why?_
+#### So, why?
 
 Well, two answers:
 
@@ -136,6 +137,31 @@ Well, two answers:
 - Having some more fun with typing on new keyboard
 
 But yeah, the real answer is that I was just curious if such thing would even be playable inside osu!, and so far, I mean personally, I find it fun once you start picking up some more speed.
+
+There is probably something very important to explain:
+
+- As an experienced typist, would you care?
+- Just go on Monkeytype
+
+Obviously, an experienced typist would not find this fun, mostly due to the choice of words in the dictionaries. They were curated in a way that words mechanically feel "okay" _to me_, and the word scoring was QWERTY only. I didn't really care about other keyboard layouts.
+
+Also, an experienced typist is used to all finger movements and doesn't care if some words are "uncomfortable to type". This cuts the dictionary size by a lot just because I removed all words with finger transitions that "I just didn't like". This means that lots of words didn't make it in that most people are comfortable with.
+
+This would be a totally valid criticism, I'm not afraid of admitting that I have a skill issue and I had to make the game easier for myself.
+
+Another thing that immediately comes to your mind after seeing this ruleset is: "bro, just play some music and go on Monkeytype".
+
+True, but I feel like I could maybe slightly change your mind with these points:
+
+- _The song might change the atmosphere and give a reason to keep going_. Maybe you like a specific song, maybe some songs just feel nice to type to at a fixed rhythmic subdivision (think, "streamy" songs).
+- _You are "forced to type" at a steady rhythm_. On Monkeytype, true, you can take small, various in length breaks in-between the words, change your pace. I think that's just **boring**. Having to maintain consistency is that one specific layer I was looking for in typing. I can't really explain it, but it's a mix of consistency, strict timing and rhythm. To me, they mix very well even if the words don't really create a meaningful beatmap structure
+- _Scoring creates replayability_. Although very questionable to the vast majority of osu! players (I just know it), having to play a different set of words every time you start a beatmap actually makes it more interesting. I know, I know, that's not how osu! is supposed to be played and each beatmap has its own patterns created by the mapper. Seed can be locked with mod customisation (which could help with muscle memory), but being exposed to a whole new beatmap every time makes it more exciting to play. Once you hit that "GOOD RNG", everything changes, trust me
+- _Tight judgement is coupled with Scoring_. On top of a "different beatmap" each session, the quite tight `HitWindows` (based on Mania) can make you want to play again either for higher score or better accuracy. I know it is a fact that this can't really be compared to the "typing consistency" due to the difference in dictionaries, but still, improving the score on higher `Overall Difficulty` settings is quite rewarding
+- _There is no memorisation with random seed_. osu! is about retrying a map until FC, yes (unless you are a gifted top 20). I didn't like the idea of gradual learning of the same map. Here, it's a constant pressure of unique "patterns" (random words). Then again, memorisation of repeated patterns is how muscle memory grind works, but **the whole point of this ruleset is not to learn how to type**. You learn on specialised trainers and you only apply your progress here, then aim for max scores
+- _It might be very taiko-like after you really get into it_. Scroll speed is adjustable, and as we all know, taiko players are insane at reading fast scroll speeds. I can confirm this myself. Faster scroll speed makes it quite nice to hit the whole words as there is less to parse, except the reaction time is a big limiting factor, but, it's osu!, reaction time is quite low here (right?)
+- _This might look like Monkeytype, but plays like a rhythm game_. Although, can't have a rhythm game with just random patterns, but I will let you interpret this yourself. Also, the goal here was to not just dump English words on screen, but dump something just a bit more playable with manually selected words list
+
+So, saying that it basically is "Monkeytype with music" is also a valid criticism, and a strong one, but I don't really want to fight with that one. This ruleset ignores the "authored gameplay", that is true. Those two facts alone are the biggest weakness of this ruleset, but I am able to deal with that (in short, I don't care).
 
 ### A Very Poor Screenshot + Explanation
 
