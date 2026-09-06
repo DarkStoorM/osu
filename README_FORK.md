@@ -191,6 +191,16 @@ True, but I feel like I could maybe slightly change your mind with these points:
 
 So, saying that it basically is "Monkeytype with music" is also a valid criticism, and a strong one, but I don't really want to fight with that one. This ruleset ignores the "authored gameplay", that is true. Those two facts alone are the biggest weakness of this ruleset, but I am able to deal with that (in short, I don't care).
 
+The truth is, given the nature of how this ruleset works, I do agree that stripping the beatmap off its authored content (human crafted patterns) removes like 99% of the game. Every beatmap is unique, has its own leaderboard.
+
+Normally, you would associate _certain_ beatmap with _certain_ difficulty. One can be slow, but extremely technical, another can be just absurdly hard.
+
+Here, there is no association of a specific beatmap to difficulty, patterning or whatever. The only things you can say about this ruleset:
+
+- Nothing matters, beatmap is just metadata
+- Beatmap's song is ambience you type to
+- You only aim for high scores for given WPM and keep improving
+
 ### A Very Poor Screenshot + Explanation
 
 ![img](https://i.imgur.com/91Lmr8z.png)
