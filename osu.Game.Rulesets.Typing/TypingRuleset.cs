@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Typing
             WordDictionaries = WordDictionaryProvider.CreateDictionaries(resources);
         }
 
-        public override IResourceStore<byte[]> CreateResourceStore() => new DllResourceStore(typeof(TypingRuleset).Assembly);
+        public override IResourceStore<byte[]> CreateResourceStore() => new NamespacedResourceStore<byte[]>(new DllResourceStore(typeof(TypingRuleset).Assembly), @"Resources");
 
         public override IEnumerable<HitResult> GetValidHitResults()
         {

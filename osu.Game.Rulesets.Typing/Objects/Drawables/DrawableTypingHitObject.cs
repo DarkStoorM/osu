@@ -112,7 +112,7 @@ namespace osu.Game.Rulesets.Typing.Objects.Drawables
             Position = Vector2.Zero;
         }
 
-        public override IEnumerable<HitSampleInfo> GetSamples() => new[] { new HitSampleInfo(HitSampleInfo.HIT_NORMAL) };
+        public override IEnumerable<HitSampleInfo> GetSamples() => new[] { new HitSampleInfo("key-caps") };
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
