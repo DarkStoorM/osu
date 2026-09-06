@@ -9,6 +9,11 @@
 >
 > Currently, waiting for `.NET 10.0` upgrade and `ppy.osu.Game` package update.
 
+Also...
+
+> [!Warning]
+> For now, the only way to try the `TypingRuleset` out is to build the fork, because it will not be loaded by dropping the `osu.Game.Rulesets.Typing.dll` into your osu! folder. Current live osu! version is too old and it won't be able to load the ruleset.
+
 TL;DR
 
 This is not a technical README, but more of a thing that kind of reads like a blog post, so, a heads-up, if you hate reading, close this document. Also, this is not some AI auto-generated crap.
