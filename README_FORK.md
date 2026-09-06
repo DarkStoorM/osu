@@ -26,6 +26,8 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Changes to Statistics Screen](#changes-to-statistics-screen)
   - [Custom Ruleset: Typing](#custom-ruleset-typing)
     - [Motivation](#motivation)
+    - [A TL;DR on how to play this](#a-tldr-on-how-to-play-this)
+      - [Note on Letter Spacing](#note-on-letter-spacing)
     - [The Big Question... What, and Why?](#the-big-question-what-and-why)
       - [About Beatmap Content Replacement](#about-beatmap-content-replacement)
       - [So, why?](#so-why)
@@ -34,8 +36,6 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
       - [About Dictionaries](#about-dictionaries)
       - [Note On Manually Curated Dictionary](#note-on-manually-curated-dictionary)
       - [Note on Curated Full Alt dictionary](#note-on-curated-full-alt-dictionary)
-    - [A TL;DR On How To Use This](#a-tldr-on-how-to-use-this)
-      - [Note on Letter Spacing](#note-on-letter-spacing)
     - [ZERO Skin Elements](#zero-skin-elements)
     - [Work-in-progress](#work-in-progress)
     - [Custom Mod Requirement](#custom-mod-requirement)
@@ -109,6 +109,34 @@ For the lack of a better name of course.
 I've been stalling on this for quite a long time and finally, I decided to move the typing practice to osu!. Normally, I wouldn't care, but the main motivation was to learn touch-typing on [Corne](https://i.imgur.com/6dwFKmk.png), which I bought a while ago.
 
 I got pretty much bored of MonkeyType, and since I had it configured to the `scrolling tape`, it really reminded me of osu!taiko, so I created pretty much identical ruleset to this. To be clear, this is not the main source of typing practice due to multiple factors that differ from normal typing and this gameplay, and I guess everyone is aware of this.
+
+### A TL;DR on how to play this
+
+I know people absolutely **hate** reading, so I'm keeping this section at the top. If this is too confusing because of how many things are in the mod customisation, well, too bad, sorry.
+
+This ruleset is primarily made for `Words` mod, where you type random words from the selected dictionaries, the beatmap contents are **replaced**, no structure is preserved, as intended. This is the same concept as `TaikoModFullRandom`. I am fully aware of the fact that those beatmaps make zero sense structurally.
+
+- Go to Mod Selection
+- Select `Words` Mod
+- Customise the `Words` Mod mostly by adjusting the `Letter Spacing`:
+  - `Narrow`(\*) - letters land on `1/4`, used for lower BPMs to make the game "play faster" without changing the song rate (100 BPM evaluates to around 80 WPM, 150 BPM -> 120 BPM etc.)
+  - `Default` - default, letters land on `1/2`, used for 200~ BPM (~80WPM) or 100~ BPM (40 WPM)
+  - `Wide` - letters land on `1/1`. Not really used, maybe for starter WPMs around 40-60 (if songs were mapped to 200-300 BPM)
+- Probably add `Constant Speed` if there are any `Scroll Speed` changes (I come from osu!taiko and I hate SV changes)
+- Mod Selection shows the approximate `WPM` based on the most common BPM next to `Difficulty Attributes`
+- Adjust `Scroll Speed` with keybinds (F3-F4 by default) during the gameplay
+
+#### Note on Letter Spacing
+
+Very short:
+
+```plaintext
+          1/1
+    beat   | 4 2 4 | . . . | . . . |
+Narrow     W O R D
+Default    W . O . R . D
+Wide       W . . . O . . . R . . . D
+```
 
 ### The Big Question... What, and Why?
 
@@ -254,32 +282,6 @@ There is also a reason behind this experimental dictionary. In a rhythm game, yo
 While this is true that linguistic familiarity helps a ton here as your brain predicts which finger is going to be used next. You would already know how to type an incoming word, but in the end, it's all just about reacting with the correct finger to the next letter. It will probably not be accurate at all, but imagine extending osu!taiko to have 26 inputs and trying to hit a uniquely coloured object.
 
 I don't think that word complexity makes a huge difference here, because with players having exceptionally good reaction time in osu! already, reading absurdly fast scroll speeds, the adaptation would be pretty smooth, no matter if the words are something they have never seen before. A word is just a pattern represented by a group of inputs. It doesn't matter as much how complex the word is, it later comes down to how quickly you can translate a letter in the word to correct finger and spot.
-
-### A TL;DR On How To Use This
-
-This ruleset is primarily made for `Words` mod, where you type random words from the selected dictionaries, the beatmap contents are **replaced**, no structure is preserved, as intended. This is the same concept as `TaikoModFullRandom`. I am fully aware of the fact that those beatmaps make zero sense structurally.
-
-- Go to Mod Selection
-- Select `Words` Mod
-- Customise the `Words` Mod mostly by adjusting the `Letter Spacing`:
-  - `Narrow`(\*) - letters land on `1/4`, used for lower BPMs to make the game "play faster" without changing the song rate (100 BPM evaluates to around 80 WPM, 150 BPM -> 120 BPM etc.)
-  - `Default` - default, letters land on `1/2`, used for 200~ BPM (~80WPM) or 100~ BPM (40 WPM)
-  - `Wide` - letters land on `1/1`. Not really used, maybe for starter WPMs around 40-60 (if songs were mapped to 200-300 BPM)
-- Probably add `Constant Speed` if there are any `Scroll Speed` changes
-- Mod Selection shows the approximate `WPM` based on the most common BPM next to `Difficulty Attributes`
-- Adjust `Scroll Speed` with keybinds (F3-F4 by default)
-
-#### Note on Letter Spacing
-
-Very short:
-
-```plaintext
-          1/1
-    beat   | 4 2 4 | . . . | . . . |
-Narrow     W O R D
-Default    W . O . R . D
-Wide       W . . . O . . . R . . . D
-```
 
 ### ZERO Skin Elements
 
