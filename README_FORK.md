@@ -626,9 +626,13 @@ Does it matter? Nope, it's not something that should be measure anyway. It's lik
 
 ### Sharing Disclaimer
 
-I'm intentionally not sharing this, because I made this for myself, but, if you happened to find this, I don't think you will have fun playing. I'm too lazy to write a better documentation for the rulesets/mods, or make it easier to use in general.
+I'm intentionally not sharing this (right now), because I made this for myself, but, if you happened to find this, I don't think you will have fun playing. I'm too lazy to write a better documentation for the rulesets/mods, or make it easier to use in general.
 
 Also, I won't be sharing this in the [Custom Ruleset Directory](https://github.com/ppy/osu/discussions/13096), I dont think it's worth posting something this unpolished and badly coded.
+
+Once this becomes a standalone repository, I will not be accepting PRs and suggestions, because this is not something that will be actively developed.
+
+---
 
 ## Key Timing Distribution
 
