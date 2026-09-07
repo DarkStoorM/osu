@@ -67,7 +67,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
   - [Key Timing Distribution](#key-timing-distribution)
   - [Skinnable Key Timing Distribution](#skinnable-key-timing-distribution)
   - [Replays](#replays)
-    - [Missing Features](#missing-features)
+    - [Stuff to "Eventually" Do](#stuff-to-eventually-do)
 
 ---
 
@@ -675,9 +675,7 @@ I still don't know how to use osu! Realm, so it will eventually break.
 > [!Important]
 > Replay importing and exporting is not possible for now, I don't think I care enough to look into that. Probably it's not possible to do that outside of the legacy rulesets, but at least local scores have their replays saved.
 
-### Missing Features
-
-Some stuff I _might_ add/do if I won't get lazy:
+### Stuff to "Eventually" Do
 
 - Finally extract the typing ruleset and publicly share it
 - Remove `DifficultyCalculator`, because it doesn't even measure anything, or at least replace it with something super simple
