@@ -206,6 +206,8 @@ Here, there is no association of a specific beatmap to difficulty, patterning or
 - Beatmap's song is ambience you type to
 - You only aim for high scores for given WPM and keep improving
 
+Basically, what it means is that you don't say "someone is good on [x] beatmap", but "someone is good at [n] WPM under [x] settings".
+
 ### A Very Poor Screenshot + Explanation
 
 ![img](https://i.imgur.com/91Lmr8z.png)
@@ -678,3 +680,4 @@ I still don't know how to use osu! Realm, so it will eventually break.
 Some stuff I _might_ add/do if I won't get lazy:
 
 - Finally extract the typing ruleset and publicly share it
+- Remove `DifficultyCalculator`, because it doesn't even measure anything, or at least replace it with something super simple
