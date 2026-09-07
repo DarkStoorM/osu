@@ -56,6 +56,7 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
         - [The Issues](#the-issues)
       - [Customisation](#customisation)
     - [Scoring Changes](#scoring-changes)
+    - [DoubleTime / HalfTime Changes to HitWindows](#doubletime--halftime-changes-to-hitwindows)
     - [WPM In Beatmap Attributes](#wpm-in-beatmap-attributes)
       - [Other Beatmap Attributes](#other-beatmap-attributes)
     - [Questionable Change](#questionable-change)
@@ -589,6 +590,18 @@ That being said, a quick breakdown of total score based on the Letter Spacing:
 | On                      | 2 **500 000** | 1 **250 000** | **625 000** |
 
 `Spaces` are excluded from **Overall Difficulty** multiplier, so on `OD10`, the maximum score for SS with `Spaces` is `3 000 000`. Should barely be possible on higher WPMs anyway.
+
+---
+
+### DoubleTime / HalfTime Changes to HitWindows
+
+One thing I didn't really like was how applying a rate change would also make the timing stricter (or more lenient on `HalfTime`). I understand, the game plays faster, so there should theoretically be less time allowed to hit the object.
+
+Although... what difference does this make, timing-wise, if you play a `NoMod 240 bpm` or `DoubleTime 160 bpm`?
+
+I took the inspiration from osu!mania and reverted the `HitWindows` modifications by applying the DT/HT rage change back to the `HitWindows`.
+
+In my opinion, DT and HT are not difficulty mods. Well, technically, speed change is `difficulty` adjustment, but the additional `HitWindows` change on top of that is not necessary and the timing should remain the same no matter the rate change.
 
 ---
 
