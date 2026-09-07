@@ -5,7 +5,7 @@ using osu.Game.Rulesets.Mods;
 
 namespace osu.Game.Rulesets.Typing.Mods
 {
-    public class TypingModDoubleTime : ModDoubleTime
+    public class TypingModDoubleTime : ModDoubleTime, ITypingRateAdjustmentMod
     {
     }
 }

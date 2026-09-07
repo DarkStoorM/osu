@@ -264,7 +264,7 @@ namespace osu.Game.Rulesets.Typing
                                                   .Reverse()
                                                   .Select(window => new RulesetBeatmapAttribute.AdditionalMetric(
                                                       $"{window.result.GetDescription().ToUpperInvariant()} hit window",
-                                                      LocalisableString.Interpolate($@"±{hitWindows.WindowFor(window.result) / rate:0.##} ms"),
+                                                      LocalisableString.Interpolate($@"±{hitWindows.WindowFor(window.result):0.##} ms"),
                                                       colours.ForHitResult(window.result)
                                                   ))
                                                   .ToArray()

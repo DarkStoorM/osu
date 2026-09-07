@@ -9,6 +9,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
 {
     /// <summary>
     /// HitWindows based on osu!mania.
+    /// <para/>Speed change affecting the hit windows was also taken from osu!mania.
     /// </summary>
     public class TypingHitWindows : HitWindows
     {
@@ -30,6 +31,18 @@ namespace osu.Game.Rulesets.Typing.Scoring
         private double meh;
         private double miss;
 
+        private double overallDifficulty;
+        private double speedMultiplier = 1;
+
+        public double SpeedMultiplier
+        {
+            set
+            {
+                speedMultiplier = value;
+                updateWindows();
+            }
+        }
+
         public override bool IsHitResultAllowed(HitResult result)
         {
             switch (result)
@@ -48,12 +61,8 @@ namespace osu.Game.Rulesets.Typing.Scoring
 
         public override void SetDifficulty(double difficulty)
         {
-            perfect = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(difficulty, PERFECT_WINDOW_RANGE)) - 0.5;
-            great = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(difficulty, GREAT_WINDOW_RANGE)) - 0.5;
-            good = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(difficulty, GOOD_WINDOW_RANGE)) - 0.5;
-            ok = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(difficulty, OK_WINDOW_RANGE)) - 0.5;
-            meh = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(difficulty, MEH_WINDOW_RANGE)) - 0.5;
-            miss = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(difficulty, MISS_WINDOW_RANGE)) - 0.5;
+            overallDifficulty = difficulty;
+            updateWindows();
         }
 
         public override double WindowFor(HitResult result)
@@ -81,6 +90,16 @@ namespace osu.Game.Rulesets.Typing.Scoring
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
+        }
+
+        private void updateWindows()
+        {
+            perfect = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(overallDifficulty, PERFECT_WINDOW_RANGE) * speedMultiplier) + 0.5;
+            great = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(overallDifficulty, GREAT_WINDOW_RANGE) * speedMultiplier) + 0.5;
+            good = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(overallDifficulty, GOOD_WINDOW_RANGE) * speedMultiplier) + 0.5;
+            ok = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(overallDifficulty, OK_WINDOW_RANGE) * speedMultiplier) + 0.5;
+            meh = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(overallDifficulty, MEH_WINDOW_RANGE) * speedMultiplier) + 0.5;
+            miss = Math.Floor(IBeatmapDifficultyInfo.DifficultyRange(overallDifficulty, MISS_WINDOW_RANGE) * speedMultiplier) + 0.5;
         }
     }
 }
