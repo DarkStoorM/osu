@@ -58,7 +58,6 @@ I've been playing on osu!lazer for a long time, not only because I don't care ab
     - [Scoring Changes](#scoring-changes)
     - [WPM In Beatmap Attributes](#wpm-in-beatmap-attributes)
       - [Other Beatmap Attributes](#other-beatmap-attributes)
-    - [Nothing New](#nothing-new)
     - [Questionable Change](#questionable-change)
     - [Why Not Extract Ruleset?](#why-not-extract-ruleset)
     - [Difficulty Calculator for Typing Ruleset](#difficulty-calculator-for-typing-ruleset)
@@ -562,10 +561,6 @@ Although, it does not look very good in the mod select if HP is a two-digit...
 ![alt](https://i.imgur.com/wFhuzyy.png)
 
 That's a _whatever_.
-
-### Nothing New
-
-Most of the code was copied from Taiko ruleset + I don't know what I'm doing.
 
 ### Questionable Change
 
