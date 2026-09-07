@@ -572,6 +572,9 @@ if (beatmap.Ruleset.ShortName == "taiko" && ruleset.ShortName == "typing")
     return true;
 ```
 
+> [!Note]
+> This was a change to `osu.Game` and this will not be available in the built `.dll`. This will also later be removed when the ruleset becomes a standalone repository.
+
 ### Why Not Extract Ruleset?
 
 There is a Ruleset Collection in osu! repository, but that requires the ruleset to be its own, separate release with other rulesets cut out. Since I sometimes switch to Taiko, I don't want to launch a different game + I can modify things directly here.
