@@ -165,7 +165,7 @@ namespace osu.Game.Rulesets.Typing.Mods
         /// </summary>
         private Hand? lastHandUsed;
 
-        private TypingHitWindows initialHitWindows;
+        private TypingHitWindows initialHitWindows = null!;
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
