@@ -34,6 +34,9 @@ namespace osu.Game.Rulesets.Typing.Scoring
         private double overallDifficulty;
         private double speedMultiplier = 1;
 
+        /// <summary>
+        /// Multiplier applied to all HitWindows to retain a somewhat constant window no matter the rate change.
+        /// </summary>
         public double SpeedMultiplier
         {
             set

@@ -42,8 +42,8 @@ namespace osu.Game.Rulesets.Typing.Difficulty
 
         protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills)
         {
-            // Difficulty calculation will not be available if the word generation mods are not enabled,
-            // because this ruleset is meant to be played only with those mods due to some skills
+            // Difficulty calculation will not be available if the Words mod is not selected,
+            // because this ruleset is meant to be played with this mod specifically due to some skills
             // relying on letters being a part of a word, which in this context form a pattern
             if (!mods.Any(x => x is TypingModWords) || beatmap.HitObjects.Count == 0)
                 return new TypingDifficultyAttributes { Mods = mods };

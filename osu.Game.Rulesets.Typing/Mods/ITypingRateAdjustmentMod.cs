@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Typing.Scoring;
 
 namespace osu.Game.Rulesets.Typing.Mods
 {
+    // Note: this uses the osu!mania rate change application
     public interface ITypingRateAdjustmentMod : IApplicableToHitObject, IApplicableToBeatmap
     {
         BindableNumber<double> SpeedChange { get; }
@@ -20,7 +21,7 @@ namespace osu.Game.Rulesets.Typing.Mods
                 typingHitWindows.SpeedMultiplier = SpeedChange.Value;
         }
 
-        // Note 2: since Words mods removes all objects and creates NEW ones, the speed change from previously applied DT
+        // Note 2: since Words mod removes all objects and creates NEW ones, the speed change from previously applied DT
         // customisation was basically deleted and the hit windows were not being changed, so we have to re-apply this
         // change to newly created letters by the mod
         void IApplicableToBeatmap.ApplyToBeatmap(IBeatmap beatmap)
