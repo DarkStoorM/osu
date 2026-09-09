@@ -7,7 +7,7 @@
 >
 > I'm only keeping this fork, because I play _unranked_ anyway.
 >
-> Currently, waiting for `.NET 10.0` upgrade and `ppy.osu.Game` package update.
+> Currently, waiting for ~~`.NET 10.0` upgrade and~~ `ppy.osu.Game` package update.
 
 Also...
 
