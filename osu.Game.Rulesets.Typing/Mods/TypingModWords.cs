@@ -15,6 +15,7 @@ using osu.Game.Rulesets.Typing.Beatmaps;
 using osu.Game.Rulesets.Typing.Layouts;
 using osu.Game.Rulesets.Typing.Layouts.KeyboardData;
 using osu.Game.Rulesets.Typing.Objects;
+using osu.Game.Rulesets.Typing.Scoring;
 using static osu.Game.Rulesets.Typing.Layouts.KeyboardData.KeyboardLayout;
 
 namespace osu.Game.Rulesets.Typing.Mods
@@ -164,6 +165,8 @@ namespace osu.Game.Rulesets.Typing.Mods
         /// </summary>
         private Hand? lastHandUsed;
 
+        private TypingHitWindows initialHitWindows;
+
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
             // Breaks have to be deleted, because this mod generates new hit objects, and it WILL place them if the original beatmap had breaks
@@ -309,6 +312,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             }
 
             typingBeatmap = null!;
+            initialHitWindows = null!;
         }
 
         private void initialiseSettings()
@@ -325,6 +329,7 @@ namespace osu.Game.Rulesets.Typing.Mods
             // The very first timing point change check would report `true`, because there was no previously used timing point,
             // so treat the first timing point as the last one used
             lastUsedTimingControlPoint = currentTimingControlPoint;
+            initialHitWindows = (TypingHitWindows)typingBeatmap.HitObjects.First().HitWindows;
         }
 
         private string generateWord()
@@ -374,6 +379,12 @@ namespace osu.Game.Rulesets.Typing.Mods
             };
 
             hitObject.ApplyDefaults(typingBeatmap.ControlPointInfo, typingBeatmap.Difficulty);
+
+            // Since the initial game objects are deleted from this beatmap and we are creating new ones, the
+            // HitWindows have to be reapplied from the previous objects, because they had the rate adjustment
+            // windows applied. DT/HT mods are applied before Words, so there would be no way to get those mods
+            // to be applied to the new hit objects
+            hitObject.HitWindows = initialHitWindows;
 
             return hitObject;
         }
