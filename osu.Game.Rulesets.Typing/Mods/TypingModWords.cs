@@ -5,10 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
+using osu.Framework.Lists;
 using osu.Framework.Localisation;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Beatmaps.Timing;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Typing.Beatmaps;
@@ -169,8 +171,16 @@ namespace osu.Game.Rulesets.Typing.Mods
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
-            // Breaks have to be deleted, because this mod generates new hit objects, and it WILL place them if the original beatmap had breaks
-            beatmapConverter.Beatmap.Breaks.Clear();
+            // Breaks have to be deleted, because this mod generates new hit objects, and it WILL place them if the
+            // original beatmap had breaks.
+            // Note: Clearing the breaks as it used to do would throw an unobserved error, because the breaks list
+            // would be modified while BeatmapTitleWedge was still calculating the TotalBreakTime. Instead, the list
+            // is replaced with something new while the old reference is still being iterated on. This is totally fine
+            // if the tooltip shows the calculated drain time with the old list, because it's the full beatmap time
+            // that matters, which is presented in the title wedge. I prefer this way over throwing an error.
+            // Note 2: I am aware that it's not how you do things, but that's just the intended behaviour of this
+            // ruleset to not have any breaks, and I just needed a way to delete them
+            beatmapConverter.Beatmap.Breaks = new SortedList<BreakPeriod>();
         }
 
         public void ApplyToBeatmap(IBeatmap beatmap)
