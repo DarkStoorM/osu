@@ -185,7 +185,7 @@ namespace osu.Game.Rulesets.Typing
 
             // Nothing else to do here if the mod was not selected
             if (typingModWords == null)
-                return Array.Empty<RulesetBeatmapAttribute>();
+                yield break;
 
             // The Words mod has customisation for Letter Spacing, which can generate letters at double or half the beat length,
             // which naturally affects the WPM. This will make the changes reflect when customising the mod
@@ -234,44 +234,44 @@ namespace osu.Game.Rulesets.Typing
             if (typingModWords.LetterSpacing.Value != LetterSpacing.Default)
                 additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Letter Spacing Score", $"{scoreWithModMultiplier - max_score:N0}"));
 
-            if (Math.Abs(adjustedDifficulty.OverallDifficulty - 5) > double.Epsilon)
+            // Note: changing the slider always results in rounding error, but I guess this is better than rounding
+            // with `/10, *10` (slider moves by 0.1)
+            if (Math.Abs(adjustedDifficulty.OverallDifficulty - TypingScoreProcessor.OD_NEUTRAL_POINT) > double.Epsilon)
                 additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Overall Difficulty Score", $"{max_score * scoreMultiplier * (odMultiplier - 1):N0}"));
 
             if (typingModWords.AddBonusSpaceHitObjects.Value)
                 additionalMetrics.Add(new RulesetBeatmapAttribute.AdditionalMetric("Spaces Bonus Score", $"{bonusSpacesScore:N0}"));
 
-            var attributes = new List<RulesetBeatmapAttribute>
+            // This will sadly result in displaying a large number in the mod selection, but it was positioned next to a smaller
+            // attribute for this reason to not overlap. The resulting number will be close anyway because of the float formatting...
+            yield return new RulesetBeatmapAttribute("Total Score", @"TS", (float)max_score, (float)adjustedScore, (float)maxPossibleScore)
             {
-                // This will sadly result in displaying a large number in the mod selection, but it was positioned next to a smaller
-                // attribute for this reason to not overlap. The resulting number will be close anyway because of the float formatting...
-                new RulesetBeatmapAttribute("Total Score", @"TS", (float)max_score, (float)adjustedScore, (float)maxPossibleScore)
-                {
-                    Description = "Maximum achievable score based on selected mod customisation, which applies score adjustments. These values are affected by total mod score multiplier.",
-                    AdditionalMetrics = additionalMetrics.ToArray()
-                },
-                new RulesetBeatmapAttribute("HP", @"HP", beatmapInfo.Difficulty.DrainRate, adjustedDifficulty.DrainRate, 10)
-                {
-                    Description = "Affects the harshness of health drain and the health penalties for missing."
-                },
-                new RulesetBeatmapAttribute("WPM", @"WPM", (float)wpm, (float)wpmAdjusted, (float)wpm)
-                {
-                    Description = "Approximate Words Per Minute based on beatmap's most common BPM. This only applies to the Words mod and ignores the extra spacing between words."
-                },
-                new RulesetBeatmapAttribute("OD", @"OD", beatmapInfo.Difficulty.OverallDifficulty, adjustedDifficulty.OverallDifficulty, 10)
-                {
-                    Description = "Affects total score and timing requirements for hits",
-                    AdditionalMetrics = hitWindows.GetAllAvailableWindows()
-                                                  .Reverse()
-                                                  .Select(window => new RulesetBeatmapAttribute.AdditionalMetric(
-                                                      $"{window.result.GetDescription().ToUpperInvariant()} hit window",
-                                                      LocalisableString.Interpolate($@"±{hitWindows.WindowFor(window.result):0.##} ms"),
-                                                      colours.ForHitResult(window.result)
-                                                  ))
-                                                  .ToArray()
-                }
+                Description = "Maximum achievable score based on selected mod customisation, which applies score adjustments. These values are affected by total mod score multiplier.",
+                AdditionalMetrics = additionalMetrics.ToArray()
             };
 
-            return attributes;
+            yield return new RulesetBeatmapAttribute("HP", @"HP", beatmapInfo.Difficulty.DrainRate, adjustedDifficulty.DrainRate, 10)
+            {
+                Description = "Affects the harshness of health drain and the health penalties for missing."
+            };
+
+            yield return new RulesetBeatmapAttribute("WPM", @"WPM", (float)wpm, (float)wpmAdjusted, (float)wpm)
+            {
+                Description = "Approximate Words Per Minute based on beatmap's most common BPM. This only applies to the Words mod and ignores the extra spacing between words."
+            };
+
+            yield return new RulesetBeatmapAttribute("OD", @"OD", beatmapInfo.Difficulty.OverallDifficulty, adjustedDifficulty.OverallDifficulty, 10)
+            {
+                Description = "Affects total score and timing requirements for hits",
+                AdditionalMetrics = hitWindows.GetAllAvailableWindows()
+                                              .Reverse()
+                                              .Select(window => new RulesetBeatmapAttribute.AdditionalMetric(
+                                                  $"{window.result.GetDescription().ToUpperInvariant()} hit window",
+                                                  LocalisableString.Interpolate($@"±{hitWindows.WindowFor(window.result):0.##} ms"),
+                                                  colours.ForHitResult(window.result)
+                                              ))
+                                              .ToArray()
+            };
         }
 
         public override Drawable CreateIcon() => new SpriteIcon { Icon = FontAwesome.Regular.Keyboard };

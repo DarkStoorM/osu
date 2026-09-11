@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Typing.Scoring
         /// <summary>
         /// Value of Overall Difficulty (Accuracy) where the score multiplier is 1.
         /// </summary>
-        private const float od_neutral_point = 5f;
+        public const float OD_NEUTRAL_POINT = 5f;
 
         /// <summary>
         /// Maximum score multiplier applied by Overall Difficulty at OD 10.
@@ -89,12 +89,12 @@ namespace osu.Game.Rulesets.Typing.Scoring
             // E.g., if 7 is used, adjusting to the right will increment the multiplier more since there are fewer steps to 10.
             // While the maximum is already set, the Extended OD Limit can still bring this up a little.
             // The formula is already in place "just in case" the neutral point is changed
-            return od <= od_neutral_point
+            return od <= OD_NEUTRAL_POINT
                 ? 1.0
                   - od_max_multiplier
-                  + od / od_neutral_point * od_max_multiplier
+                  + od / OD_NEUTRAL_POINT * od_max_multiplier
                 : 1.0
-                  + (od - od_neutral_point) / (10f - od_neutral_point)
+                  + (od - OD_NEUTRAL_POINT) / (10f - OD_NEUTRAL_POINT)
                   * od_max_multiplier;
         }
 
