@@ -2,7 +2,7 @@
   <img width="500" alt="osu! logo" src="assets/lazer.png">
 </p>
 
-# osu!
+# osu
 
 [![Build status](https://github.com/ppy/osu/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/ppy/osu/actions/workflows/ci.yml)
 [![GitHub release](https://img.shields.io/github/release/ppy/osu.svg)](https://github.com/ppy/osu/releases/latest)
@@ -14,16 +14,6 @@ A free-to-win rhythm game. Rhythm is just a *click* away!
 
 This is the future – and final – iteration of the [osu!](https://osu.ppy.sh) game client which marks the beginning of an open era! Currently known by and released under the release codename "*lazer*". As in sharper than cutting-edge.
 
----
-
-## osu! Fork information
-
-This is a personal, customized osu! fork with certain changes that were made against the main osu! vision.
-
-Full information about the fork can be found in the [README_FORK](./README_FORK.md).
-
----
-
 ## Status
 
 This project is under constant development, but we do our best to keep things in a stable state. Players are encouraged to install from a release alongside their stable *osu!* client. This project will continue to evolve until we eventually reach the point where most users prefer it over the previous "osu!stable" release.
@@ -34,11 +24,11 @@ A few resources are available as starting points to getting involved and underst
 - You can learn more about our approach to [project management](https://github.com/ppy/osu/wiki/Project-management).
 - Track our current efforts [towards improving the game](https://github.com/orgs/ppy/projects/7/views/6).
 
-## Running osu!
+## Running osu
 
 If you are just looking to give the game a whirl, you can grab the latest release for your platform:
 
-### Latest release:
+### Latest release
 
 | [Windows 10+ (x64)](https://github.com/ppy/osu/releases/latest/download/install.exe) | macOS 12+ ([Intel](https://github.com/ppy/osu/releases/latest/download/osu.app.Intel.zip), [Apple Silicon](https://github.com/ppy/osu/releases/latest/download/osu.app.Apple.Silicon.zip)) | [Linux (x64)](https://github.com/ppy/osu/releases/latest/download/osu.AppImage) | [iOS 13.4+](https://osu.ppy.sh/home/testflight) | [Android 5+](https://github.com/ppy/osu/releases/latest/download/sh.ppy.osulazer.apk) |
 |--------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ------------- | ------------- | ------------- |
@@ -55,7 +45,7 @@ osu! is designed to allow user-created gameplay variations, called "rulesets". B
 
 You can see some examples of custom rulesets by visiting the [custom ruleset directory](https://github.com/ppy/osu/discussions/13096).
 
-## Developing osu!
+## Developing osu
 
 ### Prerequisites
 
