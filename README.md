@@ -2,7 +2,7 @@
   <img width="500" alt="osu! logo" src="assets/lazer.png">
 </p>
 
-# osu
+# osu!
 
 [![Build status](https://github.com/ppy/osu/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/ppy/osu/actions/workflows/ci.yml)
 [![GitHub release](https://img.shields.io/github/release/ppy/osu.svg)](https://github.com/ppy/osu/releases/latest)
@@ -24,11 +24,11 @@ A few resources are available as starting points to getting involved and underst
 - You can learn more about our approach to [project management](https://github.com/ppy/osu/wiki/Project-management).
 - Track our current efforts [towards improving the game](https://github.com/orgs/ppy/projects/7/views/6).
 
-## Running osu
+## Running osu!
 
 If you are just looking to give the game a whirl, you can grab the latest release for your platform:
 
-### Latest release
+### Latest release:
 
 | [Windows 10+ (x64)](https://github.com/ppy/osu/releases/latest/download/install.exe) | macOS 12+ ([Intel](https://github.com/ppy/osu/releases/latest/download/osu.app.Intel.zip), [Apple Silicon](https://github.com/ppy/osu/releases/latest/download/osu.app.Apple.Silicon.zip)) | [Linux (x64)](https://github.com/ppy/osu/releases/latest/download/osu.AppImage) | [iOS 13.4+](https://osu.ppy.sh/home/testflight) | [Android 5+](https://github.com/ppy/osu/releases/latest/download/sh.ppy.osulazer.apk) |
 |--------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ------------- | ------------- | ------------- |
@@ -45,7 +45,7 @@ osu! is designed to allow user-created gameplay variations, called "rulesets". B
 
 You can see some examples of custom rulesets by visiting the [custom ruleset directory](https://github.com/ppy/osu/discussions/13096).
 
-## Developing osu
+## Developing osu!
 
 ### Prerequisites
 
